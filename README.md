@@ -12,7 +12,7 @@
 │   ├── layouts
 │   └── pages
 │       └── index
-│           Home page
+│       │   Home page
 │       └── search
 │           Search result page
 └── package.json
