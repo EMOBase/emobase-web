@@ -8,7 +8,7 @@ export default function Greeting({ messages }: { messages: string[] }) {
 
   return (
     <div>
-      <h3>{greeting}! Thank you for visiting!</h3>
+      <h3 className="text-indigo-500">{greeting}! Thank you for visiting!</h3>
       <button onClick={() => setGreeting(randomMessage())}>New Greeting</button>
     </div>
   );
