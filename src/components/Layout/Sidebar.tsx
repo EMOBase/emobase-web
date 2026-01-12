@@ -67,9 +67,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
 
       <div className="flex-1 overflow-y-auto py-4 px-6 flex flex-col gap-8">
         <div className="flex flex-col gap-1.5">
-          <p className="px-3 text-xs font-bold text-text-muted uppercase tracking-wider mb-3">
-            Tools
-          </p>
           {navItems.map((item) => (
             <button
               key={item.id}

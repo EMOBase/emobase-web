@@ -9,7 +9,7 @@ export default function Greeting({ messages }: { messages: string[] }) {
   const [greeting, setGreeting] = useState(messages[0]);
 
   return (
-    <div className="p-8">
+    <div className="h-[2000px] p-8">
       <h3 className="text-indigo-500 mb-4">
         {greeting}! Thank you for visiting!
       </h3>
