@@ -93,9 +93,8 @@ const ThisSidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
             <SidebarGroupContent>
               <SidebarMenu>
                 {navItems.map((item) => (
-                  <SidebarMenuItem>
+                  <SidebarMenuItem key={item.id}>
                     <SidebarMenuButton
-                      key={item.id}
                       size="lg"
                       tooltip={item.label}
                       isActive={activeView === item.id}
@@ -126,9 +125,9 @@ const ThisSidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
             <SidebarGroupContent>
               <SidebarMenu>
                 {resourceItems.map((item) => (
-                  <SidebarMenuItem>
+                  <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton asChild size="lg" tooltip={item.label}>
-                      <a key={item.label} href="#">
+                      <a href="#">
                         <span className="material-symbols-outlined">
                           {item.icon}
                         </span>
