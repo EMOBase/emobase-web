@@ -15,6 +15,11 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
   const navItems = [
     {
+      id: "DASHBOARD" as const,
+      label: "Home",
+      icon: "home",
+    },
+    {
       id: "GENOME_BROWSER" as const,
       label: "Genome Browser",
       icon: "travel_explore",
