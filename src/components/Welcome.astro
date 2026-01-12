@@ -1,4 +1,6 @@
 ---
+import Greeting from '../components/Greeting'
+
 import astroLogo from '../assets/astro.svg';
 import background from '../assets/background.svg';
 ---
@@ -24,6 +26,7 @@ import background from '../assets/background.svg';
 					>
 				</a>
 			</section>
+      <Greeting messages={['Hello', 'Hey', 'Hi', 'Hola']} client:load/>
 		</section>
 	</main>
 
