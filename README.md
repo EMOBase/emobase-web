@@ -11,7 +11,7 @@
 │   ├── components
 │   ├── layouts
 │   └── pages
-│       └── index
+│       ├── index
 │       │   Home page
 │       └── search
 │           Search result page
