@@ -25,7 +25,7 @@ import Sidebar from "@/components/Layout/Sidebar";
     <title>EMOBase</title>
   </head>
   <body class="h-screen w-full overflow-hidden flex">
-    <Sidebar activeView="GENOME_BROWSER" />
+    <Sidebar activeView="GENOME_BROWSER" client:load />
     <main class="flex-1 overflow-y-auto">
       <slot />
     </main>
