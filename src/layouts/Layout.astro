@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css";
+import Sidebar from "@/components/Layout/Sidebar";
 ---
 
 <!doctype html>
@@ -9,9 +10,24 @@ import "@/styles/global.css";
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro Basics</title>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>EMOBase</title>
   </head>
-  <body>
-    <slot />
+  <body class="h-screen w-full overflow-hidden flex">
+    <Sidebar activeView="DASHBOARD" />
+    <main>
+      <slot />
+    </main>
   </body>
 </html>
