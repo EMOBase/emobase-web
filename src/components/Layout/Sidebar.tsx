@@ -84,7 +84,7 @@ const ThisSidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
                 </p>
               </div>
             </div>
-            <SidebarTrigger className="relative z-1" />
+            <SidebarTrigger className="relative z-1 -right-2 group-data-[collapsible=icon]:right-0" />
           </div>
         </SidebarHeader>
 
