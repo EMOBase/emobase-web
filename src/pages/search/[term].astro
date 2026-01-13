@@ -1,7 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+
+const { term } = Astro.params;
 ---
 
 <Layout>
-  <p>Search</p>
+  <p>Search result for "{term}"</p>
 </Layout>

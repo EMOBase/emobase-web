@@ -38,7 +38,7 @@ const navItems = [
     id: "PHENOTYPE_SEARCH" as const,
     label: "Phenotype Search",
     icon: "search",
-    href: "/search",
+    href: "/search/TC013553",
   },
   {
     id: "ID_CONVERTION" as const,
