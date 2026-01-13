@@ -18,47 +18,57 @@ type ViewType =
   | "DASHBOARD"
   | "GENOME_BROWSER"
   | "PHENOTYPE_SEARCH"
-  | "ID_CONVERTER"
+  | "ID_CONVERTION"
   | "ONTOLOGY_VIEWER";
 
-interface SidebarProps {
-  activeView: ViewType;
-  onNavigate?: (view: ViewType) => void;
-}
+const navItems = [
+  {
+    id: "DASHBOARD" as const,
+    label: "Home",
+    icon: "home",
+    href: "/",
+  },
+  {
+    id: "GENOME_BROWSER" as const,
+    label: "Genome Browser",
+    icon: "travel_explore",
+    href: "#",
+  },
+  {
+    id: "PHENOTYPE_SEARCH" as const,
+    label: "Phenotype Search",
+    icon: "search",
+    href: "/search",
+  },
+  {
+    id: "ID_CONVERTION" as const,
+    label: "Gene ID Converter",
+    icon: "transform",
+    href: "/querypipeline",
+  },
+  {
+    id: "ONTOLOGY_VIEWER" as const,
+    label: "Ontology Viewer",
+    icon: "schema",
+    href: "/ontology",
+  },
+];
 
-const ThisSidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
-  const navItems = [
-    {
-      id: "DASHBOARD" as const,
-      label: "Home",
-      icon: "home",
-    },
-    {
-      id: "GENOME_BROWSER" as const,
-      label: "Genome Browser",
-      icon: "travel_explore",
-    },
-    {
-      id: "PHENOTYPE_SEARCH" as const,
-      label: "Phenotype Search",
-      icon: "search",
-    },
-    {
-      id: "ID_CONVERTER" as const,
-      label: "Gene ID Converter",
-      icon: "transform",
-    },
-    {
-      id: "ONTOLOGY_VIEWER" as const,
-      label: "Ontology Viewer",
-      icon: "schema",
-    },
-  ];
+export const getActiveView = (url: string): ViewType | undefined => {
+  return navItems.find(({ href }) => href === url)?.id;
+};
 
-  const resourceItems = [
-    { label: "Documentation", icon: "description" },
-    { label: "Downloads", icon: "download" },
-  ];
+const resourceItems = [
+  { label: "Documentation", icon: "description" },
+  { label: "Downloads", icon: "download" },
+];
+
+type SidebarProps = {
+  url: string;
+};
+
+const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
+  const activeView = getActiveView(url);
 
   return (
     <SidebarProvider>
@@ -66,14 +76,14 @@ const ThisSidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
         <SidebarHeader>
           <div className="relative flex items-center justify-end gap-3">
             <div className="absolute left-0 w-full flex items-center gap-3 group-data-[collapsible=icon]:opacity-0 transition-opacity">
-              <div
+              <a
                 className="min-w-10 size-10 rounded-xl mustard-gradient flex items-center justify-center shadow-lg shadow-amber-500/20 text-white cursor-pointer"
-                onClick={() => onNavigate?.("DASHBOARD")}
+                href="/"
               >
                 <span className="material-symbols-outlined text-2xl">
                   pest_control
                 </span>
-              </div>
+              </a>
 
               <div className="flex-1 flex flex-col">
                 <h1 className="text-text-main text-xl font-bold leading-tight tracking-tight font-display text-nowrap">
@@ -95,22 +105,28 @@ const ThisSidebar: React.FC<SidebarProps> = ({ activeView, onNavigate }) => {
                 {navItems.map((item) => (
                   <SidebarMenuItem key={item.id}>
                     <SidebarMenuButton
+                      asChild
                       size="free"
                       tooltip={item.label}
                       isActive={activeView === item.id}
-                      onClick={() => onNavigate?.(item.id)}
                     >
-                      <span
-                        className={`material-symbols-outlined`}
-                        style={
-                          activeView === item.id
-                            ? { fontVariationSettings: "'FILL' 1" }
-                            : {}
-                        }
-                      >
-                        {item.icon}
-                      </span>
-                      <span className="text-sm font-medium">{item.label}</span>
+                      <a href={item.href}>
+                        <span
+                          className="material-symbols-outlined"
+                          style={
+                            activeView === item.id
+                              ? {
+                                  fontVariationSettings: "'FILL' 1, 'wght' 500",
+                                }
+                              : {}
+                          }
+                        >
+                          {item.icon}
+                        </span>
+                        <span className="text-sm font-medium">
+                          {item.label}
+                        </span>
+                      </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
