@@ -89,9 +89,7 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
                 <h1 className="text-text-main text-xl font-bold leading-tight tracking-tight font-display text-nowrap">
                   iBeetle Base
                 </h1>
-                <p className="text-text-muted text-xs font-normal">
-                  version 0.1
-                </p>
+                <p className="text-muted text-xs font-normal">version 0.1</p>
               </div>
             </div>
             <SidebarTrigger className="relative z-1 -right-2 group-data-[collapsible=icon]:right-0" />
@@ -135,7 +133,7 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
           </SidebarGroup>
 
           <SidebarGroup>
-            <SidebarGroupLabel className="px-3 text-xs font-bold text-text-muted uppercase tracking-wider mb-3">
+            <SidebarGroupLabel className="px-3 text-xs font-bold text-muted uppercase tracking-wider mb-3">
               Resources
             </SidebarGroupLabel>
             <SidebarGroupContent>
