@@ -42,7 +42,7 @@ const navItems = [
   },
   {
     id: "ID_CONVERTION" as const,
-    label: "Gene ID Converter",
+    label: "Gene ID Conversion",
     icon: "transform",
     href: "/querypipeline",
   },
