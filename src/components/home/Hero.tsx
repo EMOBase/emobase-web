@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+
 const examples = ["TC013553", "FBgn0001180", "larval head", "leg shortened"];
 
 const Hero = () => {
@@ -36,12 +38,9 @@ const Hero = () => {
             placeholder="Search for gene IDs or phenotypes..."
             type="text"
           />
-          <button
-            type="submit"
-            className="bg-primary hover:bg-amber-600 text-white px-8 py-3 rounded-xl font-bold text-sm transition-all shadow-md shadow-orange-500/20"
-          >
+          <Button type="submit" className="px-8 font-bold">
             Search
-          </button>
+          </Button>
         </form>
         <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-slate-500">
           <span className="font-semibold">Examples:</span>
