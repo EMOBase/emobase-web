@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useActionState } from "react";
+import { navigate } from "astro:transitions/client";
 
 import { Button } from "@/components/ui/button";
 
 const examples = ["TC013553", "FBgn0001180", "larval head", "leg shortened"];
 
 const Hero = () => {
-  const [inputValue, setInputValue] = useState("");
-  const handleSubmit = () => {};
+  const [, formAction] = useActionState((_: any, formData: FormData) => {
+    const searchTerm = formData.get("search");
+
+    if (typeof searchTerm === "string" && searchTerm.trim()) {
+      navigate(`/search/${searchTerm}`);
+    }
+  }, null);
 
   return (
     <section className="flex flex-col items-center justify-center text-center gap-8 p-10 md:p-16 lg:p-24 xl:p-32">
@@ -25,18 +31,19 @@ const Hero = () => {
       <div className="w-full max-w-2xl relative group">
         <div className="absolute inset-0 bg-gradient-to-r from-orange-200 to-amber-200 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none"></div>
         <form
-          onSubmit={handleSubmit}
+          action={formAction}
           className="relative bg-white p-2 rounded-2xl shadow-soft border border-slate-200 flex items-center focus-within:ring-2 focus-within:ring-primary/20 transition-all"
         >
           <span className="material-symbols-outlined text-2xl text-slate-400 ml-4">
             search
           </span>
           <input
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            className="block w-full px-4 py-3 bg-transparent border-none text-slate-800 placeholder-slate-400 focus:ring-0 text-lg outline-none"
-            placeholder="Search for gene IDs or phenotypes..."
+            name="search"
             type="text"
+            autoComplete="off"
+            autoCorrect="off"
+            placeholder="Search for gene IDs or phenotypes..."
+            className="block w-full px-4 py-3 bg-transparent border-none text-slate-800 placeholder-slate-400 focus:ring-0 text-lg outline-none"
           />
           <Button type="submit" className="px-8 font-bold">
             Search
