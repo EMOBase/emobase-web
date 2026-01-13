@@ -1,8 +1,14 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import Page from "@/components/home/Page";
+import Hero from "@/components/home/Hero";
+import ToolCards from "@/components/home/ToolCards";
 ---
 
 <Layout>
-  <Page />
+  <div class="flex-1 overflow-y-auto p-6 md:p-12 relative">
+    <div class="max-w-6xl mx-auto flex flex-col gap-12">
+      <Hero />
+      <ToolCards />
+    </div>
+  </div>
 </Layout>
