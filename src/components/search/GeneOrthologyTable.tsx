@@ -93,7 +93,11 @@ const GeneOrthologyTable: React.FC<GeneOrthologyTableProps> = ({
                 <td className="px-6 py-5 whitespace-nowrap text-sm text-slate-500">
                   {source.toLowerCase() === "eggnog6" ? (
                     <div className="flex items-center gap-1">
-                      <a className="text-slate-700 hover:text-slate-900 transition-colors flex items-center gap-1 font-mono text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded cursor-pointer">
+                      <a
+                        href={`http://eggnog6.embl.de/search/ogs/${group}/`}
+                        target="_blank"
+                        className="text-slate-700 hover:text-slate-900 transition-colors flex items-center gap-1 font-mono text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded cursor-pointer"
+                      >
                         {group}
                         <span className="material-symbols-outlined text-sm text-slate-400">
                           open_in_new
