@@ -14,48 +14,63 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 
-type ViewType =
-  | "DASHBOARD"
-  | "GENOME_BROWSER"
-  | "PHENOTYPE_SEARCH"
-  | "ID_CONVERTION"
-  | "ONTOLOGY_VIEWER";
+type NavItem = {
+  id:
+    | "DASHBOARD"
+    | "MY_GENES"
+    | "GENOME_BROWSER"
+    | "PHENOTYPE_SEARCH"
+    | "ID_CONVERTION"
+    | "ONTOLOGY_VIEWER";
+  label: string;
+  icon: string;
+  href: string;
+};
 
-const navItems = [
+const homeItems: NavItem[] = [
   {
-    id: "DASHBOARD" as const,
+    id: "DASHBOARD",
     label: "Home",
     icon: "home",
     href: "/",
   },
   {
-    id: "GENOME_BROWSER" as const,
+    id: "MY_GENES",
+    label: "My Genes",
+    icon: "star",
+    href: "/",
+  },
+];
+
+const toolItems: NavItem[] = [
+  {
+    id: "GENOME_BROWSER",
     label: "Genome Browser",
     icon: "travel_explore",
     href: "#",
   },
   {
-    id: "PHENOTYPE_SEARCH" as const,
+    id: "PHENOTYPE_SEARCH",
     label: "Phenotype Search",
     icon: "search",
     href: "/search/TC013553",
   },
   {
-    id: "ID_CONVERTION" as const,
+    id: "ID_CONVERTION",
     label: "Gene ID Conversion",
     icon: "transform",
     href: "/querypipeline",
   },
   {
-    id: "ONTOLOGY_VIEWER" as const,
+    id: "ONTOLOGY_VIEWER",
     label: "Ontology Viewer",
     icon: "schema",
     href: "/ontology",
   },
 ];
 
-export const getActiveView = (url: string): ViewType | undefined => {
-  return navItems.find(({ href }) => href === url)?.id;
+export const getActiveView = (url: string): NavItem["id"] | undefined => {
+  return homeItems.concat(toolItems).find((item) => item.href === url)?.id;
 };
 
 const resourceItems = [
@@ -69,6 +84,34 @@ type SidebarProps = {
 
 const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
   const activeView = getActiveView(url);
+
+  const renderNavs = (navItems: NavItem[]) =>
+    navItems.map((item) => (
+      <SidebarMenuItem key={item.id}>
+        <SidebarMenuButton
+          asChild
+          size="free"
+          tooltip={item.label}
+          isActive={activeView === item.id}
+        >
+          <a href={item.href}>
+            <span
+              className="material-symbols-outlined"
+              style={
+                activeView === item.id
+                  ? {
+                      fontVariationSettings: "'FILL' 1, 'wght' 500",
+                    }
+                  : {}
+              }
+            >
+              {item.icon}
+            </span>
+            <span className="text-sm font-medium">{item.label}</span>
+          </a>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    ));
 
   return (
     <SidebarProvider>
@@ -99,36 +142,16 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent>
-              <SidebarMenu>
-                {navItems.map((item) => (
-                  <SidebarMenuItem key={item.id}>
-                    <SidebarMenuButton
-                      asChild
-                      size="free"
-                      tooltip={item.label}
-                      isActive={activeView === item.id}
-                    >
-                      <a href={item.href}>
-                        <span
-                          className="material-symbols-outlined"
-                          style={
-                            activeView === item.id
-                              ? {
-                                  fontVariationSettings: "'FILL' 1, 'wght' 500",
-                                }
-                              : {}
-                          }
-                        >
-                          {item.icon}
-                        </span>
-                        <span className="text-sm font-medium">
-                          {item.label}
-                        </span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
+              <SidebarMenu>{renderNavs(homeItems)}</SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <SidebarGroupLabel className="px-3 text-xs font-bold text-muted uppercase tracking-wider mb-3">
+              Tools
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>{renderNavs(toolItems)}</SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
 
