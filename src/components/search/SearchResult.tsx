@@ -3,7 +3,7 @@ import React from "react";
 import { type GeneSearchResult } from "@/utils/services/geneService";
 import { type PhenotypeSearchResult } from "@/utils/services/phenotypeService";
 
-import GeneOrthologyTable from "./GeneOrthologyTable";
+import SearchResultByOrthology from "./SearchResultByOrthology";
 
 type SearchResultProps = {
   orthologyData: GeneSearchResult;
@@ -46,7 +46,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
         </nav>
       </div>
 
-      {orthologies && <GeneOrthologyTable orthologies={orthologies} />}
+      {orthologies && <SearchResultByOrthology orthologies={orthologies} />}
     </>
   );
 };

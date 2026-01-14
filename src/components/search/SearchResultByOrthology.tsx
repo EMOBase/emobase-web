@@ -3,27 +3,10 @@ import { mainSpecies } from "@/utils/mainSpecies";
 
 type OrthologyList = Exclude<GeneSearchResult["orthologies"], undefined>;
 
-const INITIAL_RESULTS = [
-  {
-    algorithm: "OrthoFinder",
-    triboliumHomolog: "TC013553",
-    drosophilaHomolog: "FBgn0001180",
-    treeLink: null,
-    starred: true,
-  },
-  {
-    algorithm: "Eggnog6",
-    triboliumHomolog: "TC013553",
-    drosophilaHomolog: "FBgn0001180",
-    treeLink: "EIZQT",
-    starred: true,
-  },
-];
-
-type GeneOrthologyTableProps = {
+type SearchResultByOrthologyProps = {
   orthologies: OrthologyList;
 };
-const GeneOrthologyTable: React.FC<GeneOrthologyTableProps> = ({
+const SearchResultByOrthology: React.FC<SearchResultByOrthologyProps> = ({
   orthologies,
 }) => {
   const allSpecies = orthologies[0].orthologs.map((o) => o.species);
@@ -117,11 +100,11 @@ const GeneOrthologyTable: React.FC<GeneOrthologyTableProps> = ({
       </div>
       <div className="bg-slate-50 px-6 py-3 border-t border-slate-200 flex items-center justify-between">
         <span className="text-xs text-slate-500">
-          Showing {INITIAL_RESULTS.length} results based on orthology search.
+          Showing {orthologies.length} results based on orthology search.
         </span>
       </div>
     </div>
   );
 };
 
-export default GeneOrthologyTable;
+export default SearchResultByOrthology;
