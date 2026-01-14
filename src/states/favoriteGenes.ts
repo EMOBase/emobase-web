@@ -6,7 +6,13 @@ type FavoriteGeneRecord = Record<string, boolean>;
 
 export const useFavoriteGenes = () => {
   const [favoriteGeneRecord, setFavoriteGeneRecord] =
-    useLocalStorage<FavoriteGeneRecord>(LOCAL_STORAGE_KEY, {});
+    useLocalStorage<FavoriteGeneRecord>(
+      LOCAL_STORAGE_KEY,
+      {},
+      {
+        initializeWithValue: false,
+      },
+    );
 
   const getFevoriteGenes = () => {
     return Object.keys(favoriteGeneRecord).map(
