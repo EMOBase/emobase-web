@@ -1,11 +1,38 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import SearchResult from "@/components/search/SearchResult";
+import { search as searchByOrthology } from "@/utils/services/geneService";
+import { search as searchByPhenotypes } from "@/utils/services/phenotypeService";
 
-const { term } = Astro.params;
+const { term = "" } = Astro.params;
 
 export const prerender = false;
+
+const orthologyData = await searchByOrthology(term);
+const phenotypeData = await searchByPhenotypes(term);
 ---
 
 <Layout>
-  <p>Search result for "{term}"</p>
+  <div class="flex-1 overflow-y-auto p-6 md:p-10 relative">
+    <div class="max-w-7xl mx-auto flex flex-col gap-8">
+      <div class="flex flex-col gap-8 animate-in fade-in duration-500">
+        <div
+          class="flex flex-col md:flex-row md:items-end justify-between gap-4"
+        >
+          <div>
+            <p class="text-sm font-medium text-slate-500 mb-1">
+              Search results for:
+            </p>
+            <h1 class="text-3xl font-display font-bold text-slate-900">
+              {term}
+            </h1>
+          </div>
+        </div>
+        <SearchResult
+          orthologyData={orthologyData}
+          phenotypeData={phenotypeData}
+        />
+      </div>
+    </div>
+  </div>
 </Layout>

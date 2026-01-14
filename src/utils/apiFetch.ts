@@ -4,7 +4,7 @@ const apiBaseUrl = import.meta.env.PUBLIC_APIS_BASE_URL;
 
 const urls = Object.fromEntries(
   API_SERVICES.map(
-    (service) => [service, `${apiBaseUrl}/v1/${service}`] as const,
+    (service) => [service, `${apiBaseUrl}/${service}/v1`] as const,
   ),
 );
 
