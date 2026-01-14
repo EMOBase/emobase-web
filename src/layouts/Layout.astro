@@ -1,6 +1,7 @@
 ---
 import "material-symbols/outlined.css";
 import { ClientRouter } from "astro:transitions";
+import LoadingIndicator from "astro-loading-indicator/component";
 
 import "@/styles/global.css";
 import Sidebar from "@/components/Layout/Sidebar";
@@ -26,6 +27,7 @@ const url = Astro.url.pathname;
     <title>EMOBase</title>
 
     <ClientRouter />
+    <LoadingIndicator color="var(--primary)" />
   </head>
   <body class="h-screen w-full overflow-hidden flex">
     <Sidebar url={url} client:load transition:persist />
