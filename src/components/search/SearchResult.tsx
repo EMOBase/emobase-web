@@ -22,8 +22,6 @@ const SearchResult: React.FC<SearchResultProps> = ({
   const phenotypeBadge = phenotypeData.total || 0;
   const orthologyBadge = (orthologies?.length || 0) + (otherGenes?.length || 0);
 
-  console.dir({ orthologies, otherGenes }, { depth: 10 });
-
   return (
     <>
       <div className="border-b border-slate-200">

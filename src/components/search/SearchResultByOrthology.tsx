@@ -1,11 +1,14 @@
 import type { GeneSearchResult } from "@/utils/services/geneService";
 import { mainSpecies } from "@/utils/mainSpecies";
+import IBBGeneId from "@/components/common/IBBGeneId";
+import FlybaseGeneId from "@/components/common/FlybaseGeneId";
 
 type OrthologyList = Exclude<GeneSearchResult["orthologies"], undefined>;
 
 type SearchResultByOrthologyProps = {
   orthologies: OrthologyList;
 };
+
 const SearchResultByOrthology: React.FC<SearchResultByOrthologyProps> = ({
   orthologies,
 }) => {
@@ -40,37 +43,29 @@ const SearchResultByOrthology: React.FC<SearchResultByOrthologyProps> = ({
             {orthologies.map(({ group, source, orthologs }, idx) => (
               <tr
                 key={idx}
-                className="hover:bg-orange-50/30 transition-colors group"
+                className="hover:bg-orange-50/30 transition-colors group [&>td]:align-top"
               >
                 <td className="px-6 py-5 whitespace-nowrap text-sm font-medium text-slate-900">
                   {source}
                 </td>
                 {orthologs.map(({ species, genes }) => (
                   <td className="px-6 py-5 whitespace-nowrap text-sm">
-                    {species === mainSpecies ? (
-                      <div className="flex items-center gap-2">
-                        <a className="text-primary hover:text-primary-bold font-bold hover:underline decoration-primary decoration-2 underline-offset-2 cursor-pointer">
-                          {genes[0].gene}
-                        </a>
-                        <span
-                          className="material-symbols-outlined text-amber-400 text-lg"
-                          style={{ fontVariationSettings: "'FILL' 1" }}
-                        >
-                          star
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1">
-                        <a className="group/link text-slate-700 hover:text-slate-900 transition-colors flex items-center gap-1 cursor-pointer">
-                          <span className="group-hover/link:underline decoration-slate-700 underline-offset-2">
-                            {genes[0].gene}
-                          </span>
-                          <span className="material-symbols-outlined text-sm text-slate-400">
-                            open_in_new
-                          </span>
-                        </a>
-                      </div>
-                    )}
+                    <div className="grid xl:grid-cols-2 gap-x-4 gap-y-2 w-fit">
+                      {genes.map(({ gene, synonyms }) => (
+                        <div className="flex items-center gap-1">
+                          {species === mainSpecies ? (
+                            <IBBGeneId gene={gene} />
+                          ) : species === "Dmel" ? (
+                            <FlybaseGeneId gene={gene} />
+                          ) : (
+                            <span>{gene}</span>
+                          )}
+                          {synonyms.length > 0 && (
+                            <span>({synonyms.join(", ")})</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </td>
                 ))}
                 <td className="px-6 py-5 whitespace-nowrap text-sm text-slate-500">
