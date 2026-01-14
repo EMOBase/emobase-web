@@ -98,6 +98,7 @@ const fetchIBs = async (gene: string) => {
     )) || []
   );
 };
+
 const fetchOrthology = async (gene: string) => {
   return (
     ((await apiFetch<Orthology[]>(

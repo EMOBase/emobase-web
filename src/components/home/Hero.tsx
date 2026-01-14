@@ -7,7 +7,7 @@ const examples = [
   "TC013553",
   "FBgn0001180",
   "rx",
-  "larval head",
+  "larva head",
   "leg shortened",
 ];
 
