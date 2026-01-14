@@ -30,7 +30,10 @@ const SearchResultByOrthology: React.FC<SearchResultByOrthologyProps> = ({
                 Algorithm
               </th>
               {allSpecies.map((s) => (
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <th
+                  key={s}
+                  className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                >
                   {speciesDisplay(s)} homologs
                 </th>
               ))}
@@ -40,19 +43,22 @@ const SearchResultByOrthology: React.FC<SearchResultByOrthologyProps> = ({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-slate-100">
-            {orthologies.map(({ group, source, orthologs }, idx) => (
+            {orthologies.map(({ group, source, orthologs }, index) => (
               <tr
-                key={idx}
+                key={index}
                 className="hover:bg-orange-50/30 transition-colors group [&>td]:align-top"
               >
                 <td className="px-6 py-5 whitespace-nowrap text-sm font-medium text-slate-900">
                   {source}
                 </td>
-                {orthologs.map(({ species, genes }) => (
-                  <td className="px-6 py-5 whitespace-nowrap text-sm">
+                {orthologs.map(({ species, genes }, index) => (
+                  <td
+                    key={index}
+                    className="px-6 py-5 whitespace-nowrap text-sm"
+                  >
                     <div className="grid xl:grid-cols-2 gap-x-4 gap-y-2 w-fit">
                       {genes.map(({ gene, synonyms }) => (
-                        <div className="flex items-center gap-1">
+                        <div key={gene} className="flex items-center gap-1">
                           {species === mainSpecies ? (
                             <IBBGeneId gene={gene} />
                           ) : species === "Dmel" ? (
