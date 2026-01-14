@@ -18,4 +18,8 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
+
+  server: {
+    host: true, // Listen on 0.0.0.0 for container networks
+  },
 });
