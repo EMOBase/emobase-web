@@ -4,12 +4,18 @@ import SearchResult from "@/components/search/SearchResult";
 import { search as searchByOrthology } from "@/utils/services/geneService";
 import { search as searchByPhenotypes } from "@/utils/services/phenotypeService";
 
-const { term = "" } = Astro.params;
-
 export const prerender = false;
 
+const { term = "" } = Astro.params;
+
+const penetrance = 0.8;
+
 const orthologyData = await searchByOrthology(term);
-const phenotypeData = await searchByPhenotypes(term);
+const phenotypeData = await searchByPhenotypes(term, penetrance);
+
+if (orthologyData?.genes?.length == 1) {
+  return Astro.redirect(`/details/${orthologyData.genes[0]}`);
+}
 ---
 
 <Layout>
