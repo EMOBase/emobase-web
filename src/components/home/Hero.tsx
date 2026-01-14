@@ -3,7 +3,13 @@ import { navigate } from "astro:transitions/client";
 
 import { Button } from "@/components/ui/button";
 
-const examples = ["TC013553", "FBgn0001180", "larval head", "leg shortened"];
+const examples = [
+  "TC013553",
+  "FBgn0001180",
+  "rx",
+  "larval head",
+  "leg shortened",
+];
 
 const Hero = () => {
   const [, formAction] = useActionState((_: any, formData: FormData) => {
