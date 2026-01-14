@@ -1,3 +1,5 @@
+import GeneFavoriteMark from "./GeneFavoriteMark";
+
 type IBBGeneIdProps = {
   gene: string;
 };
@@ -11,12 +13,7 @@ const IBBGeneId: React.FC<IBBGeneIdProps> = ({ gene }) => {
       >
         {gene}
       </a>
-      <span
-        className="material-symbols-outlined text-amber-400 text-lg"
-        style={{ fontVariationSettings: "'FILL' 1" }}
-      >
-        star
-      </span>
+      <GeneFavoriteMark gene={gene} />
     </div>
   );
 };

@@ -19,7 +19,6 @@ const phenotypeData = await searchByPhenotypes(
   itemsPerPage,
 );
 
-
 if (orthologyData?.genes?.length == 1) {
   return Astro.redirect(`/details/${orthologyData.genes[0]}`);
 }
@@ -44,6 +43,7 @@ if (orthologyData?.genes?.length == 1) {
         <SearchResult
           orthologyData={orthologyData}
           phenotypeData={phenotypeData}
+          client:load
         />
       </div>
     </div>
