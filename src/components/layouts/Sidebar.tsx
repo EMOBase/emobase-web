@@ -20,7 +20,7 @@ type NavItem = {
     | "MY_GENES"
     | "GENOME_BROWSER"
     | "PHENOTYPE_SEARCH"
-    | "ID_CONVERTION"
+    | "ID_CONVERTER"
     | "ONTOLOGY_VIEWER";
   label: string;
   icon: string;
@@ -56,8 +56,8 @@ const toolItems: NavItem[] = [
     href: "/search/TC013553",
   },
   {
-    id: "ID_CONVERTION",
-    label: "Gene ID Conversion",
+    id: "ID_CONVERTER",
+    label: "Gene ID Converter",
     icon: "transform",
     href: "/querypipeline",
   },
