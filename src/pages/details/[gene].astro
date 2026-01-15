@@ -1,9 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 
-export async function getStaticPaths() {
-  return [{ params: { gene: "TC013553" } }];
-}
+export const prerender = false;
 
 const { gene } = Astro.params;
 ---

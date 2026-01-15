@@ -5,6 +5,7 @@ import { type GeneSearchResult } from "@/utils/services/geneService";
 import { type PhenotypeSearchResult } from "@/utils/services/phenotypeService";
 
 import SearchResultByOrthology from "./SearchResultByOrthology";
+import SearchResultByPhenotype from "./SearchResultByPhenotype";
 
 const NothingFound = ({ term }: { term: string }) => {
   return (
@@ -143,7 +144,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
       </TabsContent>
       <TabsContent value="phenotype">
         {phenotypeData.total > 0 ? (
-          "Search by phenotype Result"
+          <SearchResultByPhenotype />
         ) : (
           <EmptyContent>No results found searching by phenototype</EmptyContent>
         )}
