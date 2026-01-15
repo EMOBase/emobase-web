@@ -1,5 +1,6 @@
 import React from "react";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { type GeneSearchResult } from "@/utils/services/geneService";
 import { type PhenotypeSearchResult } from "@/utils/services/phenotypeService";
 
@@ -23,53 +24,34 @@ const SearchResult: React.FC<SearchResultProps> = ({
   const orthologyBadge = (orthologies?.length || 0) + (otherGenes?.length || 0);
 
   return (
-    <>
-      <div className="border-b border-slate-200">
-        <nav aria-label="Tabs" className="flex gap-8 -mb-px">
-          <TabItem
-            label="Direct Hits"
-            count={directHitBadge}
-            isActive={false}
-          />
-          <TabItem
-            label="By Orthology"
-            count={orthologyBadge}
-            isActive={true}
-          />
-          <TabItem
-            label="By Phenotype"
-            count={phenotypeBadge}
-            isActive={false}
-          />
-        </nav>
-      </div>
+    <Tabs
+      defaultValue={
+        orthologyBadge > 0
+          ? "orthology"
+          : phenotypeBadge > 0
+            ? "phenotype"
+            : "direct"
+      }
+    >
+      <TabsList>
+        <TabsTrigger value="direct" badge={directHitBadge}>
+          Direct Hits
+        </TabsTrigger>
+        <TabsTrigger value="orthology" badge={orthologyBadge}>
+          By Orthology
+        </TabsTrigger>
+        <TabsTrigger value="phenotype" badge={phenotypeBadge}>
+          By Phenotype
+        </TabsTrigger>
+      </TabsList>
 
-      {orthologies && <SearchResultByOrthology orthologies={orthologies} />}
-    </>
+      <TabsContent value="direct">Nothing</TabsContent>
+      <TabsContent value="orthology">
+        {orthologies && <SearchResultByOrthology orthologies={orthologies} />}
+      </TabsContent>
+      <TabsContent value="phenotype">Search by phenotype Result</TabsContent>
+    </Tabs>
   );
 };
-
-const TabItem: React.FC<{
-  label: string;
-  count: number;
-  isActive: boolean;
-}> = ({ label, count, isActive }) => (
-  <a
-    className={`
-    whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 cursor-pointer transition-all
-    ${isActive ? "border-primary text-primary" : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"}
-  `}
-  >
-    {label}
-    <span
-      className={`
-      py-0.5 px-2.5 rounded-full text-xs font-semibold
-      ${isActive ? "bg-orange-100 text-primary" : "bg-slate-100 text-slate-600"}
-    `}
-    >
-      {count}
-    </span>
-  </a>
-);
 
 export default SearchResult;
