@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { cn } from "@/utils/classname";
+import PercentageRangeInput from "./PercentageRangeInput";
 
 const results = [
   {
@@ -103,55 +103,15 @@ const SearchResultByPhenotype = () => {
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 pb-3 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 mb-8">
         <div className="flex items-center gap-6 w-full sm:w-auto">
           <span className="text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
             Minimum Penetrance
           </span>
-          <div className="flex flex-col w-full sm:w-[320px]">
-            <div className="relative h-8 flex items-center">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                step="10"
-                value={penetrance * 100}
-                onChange={(e) => setPenetrance(parseInt(e.target.value) / 100)}
-                className={cn(
-                  "w-full appearance-none bg-transparent rounded",
-                  "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-3.5 [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:-mt-1.25 [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:z-20",
-                  "[&::-webkit-slider-runnable-track]:h-1 [&::-webkit-slider-runnable-track]:rounded",
-                )}
-                style={{
-                  background: `linear-gradient(to right, #d97706 0%, #d97706 ${penetrance * 100}%, #e2e8f0 ${penetrance * 100}%, #e2e8f0 100%)`,
-                  backgroundSize: "100% 4px",
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "center",
-                }}
-              />
-              <div className="absolute top-[22px] left-[6px] right-[6px] flex justify-between pointer-events-none">
-                {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((val) => (
-                  <div
-                    key={val}
-                    className={`w-px h-1.5 bg-slate-300 ${penetrance * 100 === val ? "bg-primary h-2" : ""}`}
-                  ></div>
-                ))}
-              </div>
-              <div className="absolute top-8 left-0 -right-1 flex justify-between text-[10px] font-medium text-slate-400 select-none">
-                <span>0%</span>
-                <span>50%</span>
-                <span>100%</span>
-              </div>
-              <div
-                className="absolute bottom-6 -translate-x-1/2 text-[10px] text-primary font-bold select-none"
-                style={{
-                  left: `${penetrance * 100}%`,
-                }}
-              >
-                {penetrance * 100}%
-              </div>
-            </div>
-          </div>
+          <PercentageRangeInput
+            value={penetrance * 100}
+            onChange={(v) => setPenetrance(v / 100)}
+          />
         </div>
         <div className="text-sm text-slate-500 self-start sm:self-center mt-4 sm:mt-0">
           Showing <span className="font-bold text-slate-900">1-10</span> of 27
