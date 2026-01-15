@@ -5,6 +5,13 @@ import {
   type PhenotypeSearchResult,
 } from "@/utils/services/phenotypeService";
 import { imageUrl } from "@/utils/services/imageService";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import IBBGeneId from "@/components/common/IBBGeneId";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 
@@ -103,7 +110,7 @@ const SearchResultByPhenotype = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 mb-8">
         <div className="flex items-center gap-6 w-full sm:w-auto">
           <span className="text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-            Minimum Penetrance
+            Penetrance &gt;=
           </span>
           <PercentageRangeInput
             value={penetrance * 100}
@@ -111,8 +118,11 @@ const SearchResultByPhenotype = ({
           />
         </div>
         <div className="text-sm text-slate-500 self-start sm:self-center mt-4 sm:mt-0">
-          Showing <span className="font-bold text-slate-900">1-10</span> of{" "}
-          {phenotypeData.total} results
+          Showing{" "}
+          <span className="font-bold text-slate-900">
+            {itemsPerPage * (page - 1) + 1}-{itemsPerPage * page}
+          </span>{" "}
+          of {phenotypeData.total} results
         </div>
       </div>
       <div className="bg-white rounded-xl shadow-card border border-slate-100 overflow-hidden mb-8">
@@ -153,25 +163,32 @@ const SearchResultByPhenotype = ({
         <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 text-sm text-slate-600">
             <span className="font-medium">Items per page:</span>
-            <div className="relative">
-              <select className="appearance-none bg-white border border-slate-200 rounded-md shadow-sm pl-3 pr-8 py-1.5 text-slate-700 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer">
-                <option>10</option>
-                <option>25</option>
-                <option>50</option>
-                <option>100</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
-                <span className="material-symbols-outlined text-lg">
-                  arrow_drop_down
-                </span>
-              </div>
-            </div>
+            <Select
+              value={itemsPerPage.toString()}
+              onValueChange={(v) => setItemsPerPage(parseInt(v))}
+            >
+              <SelectTrigger className="bg-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex items-center gap-4 text-sm text-slate-600">
             <span>
-              <span className="font-medium text-slate-900">1-10</span> of{" "}
-              <span className="font-medium text-slate-900">27</span> results
+              <span className="font-medium text-slate-900">
+                {itemsPerPage * (page - 1) + 1}-{itemsPerPage * page}
+              </span>{" "}
+              of{" "}
+              <span className="font-medium text-slate-900">
+                {phenotypeData.total}
+              </span>{" "}
+              results
             </span>
             <div className="flex items-center gap-1">
               <button
