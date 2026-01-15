@@ -1,7 +1,12 @@
 import { useState, Fragment } from "react";
 
-import { type PhenotypeSearchResult } from "@/utils/services/phenotypeService";
+import {
+  search as searchByPhenotypes,
+  type PhenotypeSearchResult,
+} from "@/utils/services/phenotypeService";
 import { imageUrl } from "@/utils/services/imageService";
+import IBBGeneId from "@/components/common/IBBGeneId";
+import useUpdateEffect from "@/hooks/useUpdateEffect";
 
 import PercentageRangeInput from "./PercentageRangeInput";
 
@@ -17,19 +22,7 @@ const ResultRow = ({ gene, phenotypes }: GenePhenotypesItem) => {
             gridRow: `span ${phenotypes.length}`,
           }}
         >
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <a
-                className="text-primary font-bold hover:underline font-display text-lg"
-                href="#"
-              >
-                {gene}
-              </a>
-              <button className="text-slate-300 hover:text-yellow-400 transition-colors">
-                <span className="material-symbols-outlined text-lg">star</span>
-              </button>
-            </div>
-          </div>
+          <IBBGeneId gene={gene} />
           <span className="md:hidden text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">
             Gene ID
           </span>
@@ -51,14 +44,24 @@ const ResultRow = ({ gene, phenotypes }: GenePhenotypesItem) => {
             </div>
             <div className="col-span-12 md:col-span-5">
               <div className="flex flex-wrap gap-2">
-                {images.map((image) => (
-                  <img
-                    key={image.id}
-                    alt="Larva phenotype evidence"
-                    className="h-28 w-auto rounded-lg border border-slate-200 shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-zoom-in"
-                    src={imageUrl(image.id)}
-                  />
-                ))}
+                {images.map((image) => {
+                  const imgSrc = imageUrl(image.id);
+                  return (
+                    <a
+                      href={imgSrc}
+                      target="_blank"
+                      className="shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-zoom-in"
+                    >
+                      <img
+                        key={image.id}
+                        src={imgSrc}
+                        alt="Phenotype evidence"
+                        loading="lazy"
+                        className="h-28 w-auto rounded-lg border border-slate-200"
+                      />
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </Fragment>
@@ -69,11 +72,31 @@ const ResultRow = ({ gene, phenotypes }: GenePhenotypesItem) => {
 };
 
 const SearchResultByPhenotype = ({
+  term,
   phenotypeData,
+  setPhenotypeData,
 }: {
+  term: string;
   phenotypeData: PhenotypeSearchResult;
+  setPhenotypeData: React.Dispatch<React.SetStateAction<PhenotypeSearchResult>>;
 }) => {
+  const [loading, setLoading] = useState(false);
   const [penetrance, setPenetrance] = useState(0.8);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [page, setPage] = useState(1);
+
+  useUpdateEffect(() => {
+    setLoading(true);
+    searchByPhenotypes(
+      term,
+      penetrance,
+      itemsPerPage * (page - 1),
+      itemsPerPage,
+    ).then((data) => {
+      setPhenotypeData(data);
+      setLoading(false);
+    });
+  }, [penetrance, itemsPerPage]);
 
   return (
     <>
@@ -99,7 +122,29 @@ const SearchResultByPhenotype = ({
           <div className="hidden md:flex md:col-span-5">Image Evidence</div>
         </div>
 
-        <div className="flex flex-col">
+        <div className="relative flex flex-col">
+          {loading && (
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/60 backdrop-blur-[2px] transition-all duration-300 animate-in fade-in">
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                  <div className="size-14 border-[3px] border-orange-100 border-t-primary rounded-full animate-spin"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary text-xl animate-pulse">
+                      pest_control
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <p className="text-sm font-bold text-slate-900 font-display tracking-tight">
+                    Updating Data
+                  </p>
+                  <p className="text-[11px] text-slate-500 font-medium">
+                    Querying iBeetle Hub database...
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
           {phenotypeData.data.map((item) => (
             <ResultRow key={item.gene} {...item} />
           ))}
