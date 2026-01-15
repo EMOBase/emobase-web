@@ -11,12 +11,23 @@ const urls = Object.fromEntries(
 export const apiFetch = async <T>(
   service: ApiService,
   request: string,
-  opts?: Parameters<typeof fetch>[1],
+  opts?: Omit<RequestInit, "headers" | "body"> & {
+    responseType?: "json" | "text" | "blob" | "formData" | "arrayBuffer";
+    body?: any;
+  },
 ) => {
   const baseURL = urls[service];
   const url = baseURL + request;
 
-  return await fetch(url, { ...opts }).then((response) => response.json() as T);
+  const { responseType = "json", body, ...restOpts } = opts ?? {};
+
+  return await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: !!body ? JSON.stringify(body) : undefined,
+    ...restOpts,
+  }).then((response) => response[responseType]() as T);
 };
 
 export const getApiBaseUrl = (service: ApiService) => urls[service];

@@ -144,7 +144,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
       </TabsContent>
       <TabsContent value="phenotype">
         {phenotypeData.total > 0 ? (
-          <SearchResultByPhenotype />
+          <SearchResultByPhenotype phenotypeData={phenotypeData} />
         ) : (
           <EmptyContent>No results found searching by phenototype</EmptyContent>
         )}

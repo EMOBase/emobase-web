@@ -1,47 +1,29 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
+
+import { type PhenotypeSearchResult } from "@/utils/services/phenotypeService";
+import { imageUrl } from "@/utils/services/imageService";
 
 import PercentageRangeInput from "./PercentageRangeInput";
 
-const results = [
-  {
-    id: "TC001720",
-    phenotypes: [
-      {
-        description: "head & thorax & abdomen orientation irregular",
-        penetrance: 80,
-      },
-      { description: "wings not closed", penetrance: 80 },
-    ],
-    images: [
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDm-K6vZXxVKqhArLDM1NIwCm3BOstGnXpOl9YFrQOFVMiHv8a1uHcxTsKNRXQBpDMxlx-gQ4I0gNfrRFyWa31M4ro28tKdSLTKJ4aVFpUvhhDz0L5r-18jVGucaxZYITVJuE9hT2sSS79vvaE-ZslOwLIAyOhD-e6HGPXSvR8c9biyHyw9l4SwinJq0j7TfPUD5YkHPaJhEBZXflzgV5mdEMKGZ8Vf0nqWYMCfsYyQuPsS1nU37IU8_OMU3n3jnjySUEbce4CMm-o8",
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCy0SQFv81QS9GEzOzdBi-ye1jmTHktpGZJnrJfJcEPNgb04_j-NCxeRzzzxsjbFQj17pMeGbQUkvKk4qhO4rUtPJaAs9FQlDrkVAb0FahW5i0ZN39aUT2nwImK9GvLdOdsGPv578zYk50TNYdS16-ETucFtDHiozEXI8R4zQKbyZ7HyUDVDH5jeXU8Wr__qHUADj8ApskV1gdX1OYkJJFRNozPLRv_eUYEEtTO5wZxprnPFoScovlhGEN0g7pdII8lEIHJ5cL5Cc9X",
-    ],
-  },
-  {
-    id: "TC001739",
-    phenotypes: [
-      { description: "head & thorax orientation irregular", penetrance: 80 },
-      { description: "wings not closed", penetrance: 80 },
-    ],
-    images: [
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuB7N1jfnpDb55z9XHuctGDQZRn-zP_hUwKjQh2xwDzKgH0-ImnwhA7nJbj2854zQ8PY1vAp-vhwfBqKQfBDDuTpRodUp61qXQ-CNoDAf6d9EGS0uExdvjV8X4pkGqxdTnw8VbiMwRhOqCscD3jhmfEgi-mJmzyWyEawom6iZDeSFZhDBehBoSeJyXoMu3mpvdRagtFbe4xjwtW1HTd9_wmNRAnG1TRuG9GY8P0AAQ-ww6dsDaDpWfIoK7L8WNjCrBlYDe2IABZVS1Qr",
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDKK5HBfP22UVVH2ct9FjzKeteeyMecd6fmdaQoEtVT9h29kcFTVzapn17RA9vfg9lty-pmoA8_B8H3TnNp4012Sf4Vj0TrF8-euLPn5-ztVvVM1wNwQN8Q92Svn-fhPHQ-pX7RLCFH8XTg49V2T1XVIn2DhoQ4GnNO0LOCQVR5rY_wXmbnViT0oKNGOxFyHOPyfU2OYRimeTKLj2nSlO-t2rY3HyDQ4dP1DT41XDi8MQ4juKNlZ6X6GRJUiQZMFbcggPVu_eMiLHbi",
-    ],
-  },
-];
+type GenePhenotypesItem = PhenotypeSearchResult["data"][number];
 
-const ResultRow = ({ result }: { result: (typeof results)[number] }) => {
+const ResultRow = ({ gene, phenotypes }: GenePhenotypesItem) => {
   return (
     <div className="group border-b border-slate-100 hover:bg-orange-50/30 transition-colors">
       <div className="grid grid-cols-12 gap-4 p-6">
-        <div className="col-span-12 md:col-span-2 flex flex-row md:flex-col items-center md:items-start justify-between md:justify-start gap-2">
+        <div
+          className="col-span-12 md:col-span-2 flex flex-row md:flex-col items-center md:items-start justify-between md:justify-start gap-2"
+          style={{
+            gridRow: `span ${phenotypes.length}`,
+          }}
+        >
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <a
                 className="text-primary font-bold hover:underline font-display text-lg"
                 href="#"
               >
-                {result.id}
+                {gene}
               </a>
               <button className="text-slate-300 hover:text-yellow-400 transition-colors">
                 <span className="material-symbols-outlined text-lg">star</span>
@@ -53,52 +35,44 @@ const ResultRow = ({ result }: { result: (typeof results)[number] }) => {
           </span>
         </div>
 
-        <div className="col-span-12 md:col-span-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex flex-col gap-6">
-            {result.phenotypes.map((p, i) => (
-              <div key={i} className="flex flex-col gap-2">
-                <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-slate-700 font-medium">
-                    {p.description}
-                  </span>
+        {phenotypes.map(({ description, penetrance, images = [] }, index) => (
+          <Fragment key={index}>
+            <div className="col-span-12 md:col-span-5">
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-slate-700 font-medium">
+                  {description}
+                </span>
+                {!!penetrance && (
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 border border-green-200">
-                    {p.penetrance}%
+                    {penetrance * 100}%
                   </span>
-                </div>
+                )}
               </div>
-            ))}
-          </div>
-
-          <div className="hidden md:flex flex-col gap-6">
-            {result.images.map((img, i) => (
-              <div key={i} className="h-full flex items-start">
-                <img
-                  alt="Larva phenotype evidence"
-                  className="h-28 w-auto rounded-lg border border-slate-200 shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-zoom-in"
-                  src={img}
-                />
+            </div>
+            <div className="col-span-12 md:col-span-5">
+              <div className="flex flex-wrap gap-2">
+                {images.map((image) => (
+                  <img
+                    key={image.id}
+                    alt="Larva phenotype evidence"
+                    className="h-28 w-auto rounded-lg border border-slate-200 shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-zoom-in"
+                    src={imageUrl(image.id)}
+                  />
+                ))}
               </div>
-            ))}
-          </div>
-
-          {/* Mobile Images */}
-          <div className="md:hidden flex gap-2 overflow-x-auto pb-2">
-            {result.images.map((img, i) => (
-              <img
-                key={i}
-                alt="Larva phenotype evidence"
-                className="h-24 w-auto rounded border border-slate-200 shadow-sm"
-                src={img}
-              />
-            ))}
-          </div>
-        </div>
+            </div>
+          </Fragment>
+        ))}
       </div>
     </div>
   );
 };
 
-const SearchResultByPhenotype = () => {
+const SearchResultByPhenotype = ({
+  phenotypeData,
+}: {
+  phenotypeData: PhenotypeSearchResult;
+}) => {
   const [penetrance, setPenetrance] = useState(0.8);
 
   return (
@@ -114,8 +88,8 @@ const SearchResultByPhenotype = () => {
           />
         </div>
         <div className="text-sm text-slate-500 self-start sm:self-center mt-4 sm:mt-0">
-          Showing <span className="font-bold text-slate-900">1-10</span> of 27
-          results
+          Showing <span className="font-bold text-slate-900">1-10</span> of{" "}
+          {phenotypeData.total} results
         </div>
       </div>
       <div className="bg-white rounded-xl shadow-card border border-slate-100 overflow-hidden mb-8">
@@ -126,8 +100,8 @@ const SearchResultByPhenotype = () => {
         </div>
 
         <div className="flex flex-col">
-          {results.map((res) => (
-            <ResultRow key={res.id} result={res} />
+          {phenotypeData.data.map((item) => (
+            <ResultRow key={item.gene} {...item} />
           ))}
         </div>
 
