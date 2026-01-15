@@ -67,7 +67,9 @@ const SearchResultByOrthology: React.FC<SearchResultByOrthologyProps> = ({
                             <span>{gene}</span>
                           )}
                           {synonyms.length > 0 && (
-                            <span>({synonyms.join(", ")})</span>
+                            <span className="text-slate-500">
+                              ({synonyms.join(", ")})
+                            </span>
                           )}
                         </div>
                       ))}
