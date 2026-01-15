@@ -55,12 +55,12 @@ const ResultRow = ({ gene, phenotypes }: GenePhenotypesItem) => {
                   const imgSrc = imageUrl(image.id);
                   return (
                     <a
+                      key={image.id}
                       href={imgSrc}
                       target="_blank"
                       className="shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-zoom-in"
                     >
                       <img
-                        key={image.id}
                         src={imgSrc}
                         alt="Phenotype evidence"
                         loading="lazy"
@@ -92,6 +92,8 @@ const SearchResultByPhenotype = ({
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
 
+  const totalPage = Math.ceil(phenotypeData.total / itemsPerPage);
+
   useUpdateEffect(() => {
     setLoading(true);
     searchByPhenotypes(
@@ -103,7 +105,7 @@ const SearchResultByPhenotype = ({
       setPhenotypeData(data);
       setLoading(false);
     });
-  }, [penetrance, itemsPerPage]);
+  }, [penetrance, page, itemsPerPage]);
 
   return (
     <>
@@ -120,7 +122,8 @@ const SearchResultByPhenotype = ({
         <div className="text-sm text-slate-500 self-start sm:self-center mt-4 sm:mt-0">
           Showing{" "}
           <span className="font-bold text-slate-900">
-            {itemsPerPage * (page - 1) + 1}-{itemsPerPage * page}
+            {itemsPerPage * (page - 1) + 1}-
+            {Math.min(itemsPerPage * page, phenotypeData.total)}
           </span>{" "}
           of {phenotypeData.total} results
         </div>
@@ -181,38 +184,45 @@ const SearchResultByPhenotype = ({
 
           <div className="flex items-center gap-4 text-sm text-slate-600">
             <span>
-              <span className="font-medium text-slate-900">
-                {itemsPerPage * (page - 1) + 1}-{itemsPerPage * page}
+              <span className="font-semibold text-slate-900">
+                {itemsPerPage * (page - 1) + 1}-
+                {Math.min(itemsPerPage * page, phenotypeData.total)}
               </span>{" "}
-              of{" "}
-              <span className="font-medium text-slate-900">
-                {phenotypeData.total}
-              </span>{" "}
-              results
+              of {phenotypeData.total} results
             </span>
             <div className="flex items-center gap-1">
               <button
-                className="p-1 rounded-md text-slate-400 disabled:opacity-50"
-                disabled
+                className="flex p-1 rounded-md text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
+                disabled={page === 1}
+                onClick={() => setPage(1)}
               >
                 <span className="material-symbols-outlined text-xl">
                   first_page
                 </span>
               </button>
               <button
-                className="p-1 rounded-md text-slate-400 disabled:opacity-50"
-                disabled
+                className="flex p-1 rounded-md text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
               >
                 <span className="material-symbols-outlined text-xl">
                   chevron_left
                 </span>
               </button>
-              <button className="p-1 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-colors">
+              <button
+                className="flex p-1 rounded-md text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
+                disabled={page === totalPage}
+                onClick={() => setPage((p) => p + 1)}
+              >
                 <span className="material-symbols-outlined text-xl">
                   chevron_right
                 </span>
               </button>
-              <button className="p-1 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-colors">
+              <button
+                className="flex p-1 rounded-md text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
+                disabled={page === totalPage}
+                onClick={() => setPage(totalPage)}
+              >
                 <span className="material-symbols-outlined text-xl">
                   last_page
                 </span>
