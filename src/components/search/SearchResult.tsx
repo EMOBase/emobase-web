@@ -11,6 +11,14 @@ type SearchResultProps = {
   phenotypeData: PhenotypeSearchResult;
 };
 
+const EmptyContent = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="w-full bg-white rounded-xl border border-slate-200 shadow-sm min-h-[400px] flex items-center justify-center">
+      <p className="text-slate-400 font-medium">{children}</p>
+    </div>
+  );
+};
+
 const SearchResult: React.FC<SearchResultProps> = ({
   orthologyData,
   phenotypeData,
@@ -45,11 +53,23 @@ const SearchResult: React.FC<SearchResultProps> = ({
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="direct">Nothing</TabsContent>
-      <TabsContent value="orthology">
-        {orthologies && <SearchResultByOrthology orthologies={orthologies} />}
+      <TabsContent value="direct">
+        <EmptyContent>No direct hits found for this query</EmptyContent>
       </TabsContent>
-      <TabsContent value="phenotype">Search by phenotype Result</TabsContent>
+      <TabsContent value="orthology">
+        {orthologies && orthologies.length ? (
+          <SearchResultByOrthology orthologies={orthologies} />
+        ) : (
+          <EmptyContent>No results found searching by orthology</EmptyContent>
+        )}
+      </TabsContent>
+      <TabsContent value="phenotype">
+        {phenotypeData.total > 0 ? (
+          "Search by phenotype Result"
+        ) : (
+          <EmptyContent>No results found searching by phenototype</EmptyContent>
+        )}
+      </TabsContent>
     </Tabs>
   );
 };
