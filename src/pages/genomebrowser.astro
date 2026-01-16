@@ -1,0 +1,28 @@
+---
+import BlankLayout from "@/layouts/BlankLayout.astro";
+import { mainSpecies } from "@/utils/mainSpecies";
+
+export const prerender = false;
+
+const loc = Astro.url.searchParams.get("loc");
+
+const genomebrowserBaseUrl = import.meta.env.PUBLIC_UI_PAGE_GENOMEBROWSER;
+
+const getUrl = () => {
+  if (mainSpecies === "Tcas") {
+    if (!loc) {
+      return `${genomebrowserBaseUrl}`;
+    } else {
+      return `${genomebrowserBaseUrl}?assembly=Tcas5.2&tracks=tcas5_iBeetle.sorted.gff,tcas5_ncbi.sorted.gff,ib.sorted.gff&tracklist=true&loc=${loc}`;
+    }
+  } else if (!loc) {
+    return `${genomebrowserBaseUrl}/?config=data%2Fconfig.json`;
+  } else {
+    return `${genomebrowserBaseUrl}/?assembly=genomic.fna&tracks=genomic.sorted.gff&tracklist=true&loc=${loc}&config=data%2Fconfig.json`;
+  }
+};
+---
+
+<BlankLayout>
+  <iframe src={getUrl()} width="100%" height="100%" allowfullscreen></iframe>
+</BlankLayout>
