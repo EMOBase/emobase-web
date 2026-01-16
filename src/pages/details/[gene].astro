@@ -2,10 +2,17 @@
 import Layout from "@/layouts/Layout.astro";
 import GeneHeader from "@/components/details/GeneHeader";
 import TableOfContents from "@/components/details/TableOfContents";
+import { fetchIBs } from "@/utils/services/geneService";
+import { fetchByGene as fetchPhenotypesByGene } from "@/utils/services/phenotypeService";
 
 export const prerender = false;
 
 const { gene = "" } = Astro.params;
+
+const dsRNAs = await fetchIBs(gene);
+const phenotypes = await fetchPhenotypesByGene(gene);
+console.log("dsRNAs", dsRNAs);
+console.log("phenotypes", phenotypes);
 ---
 
 <Layout>
