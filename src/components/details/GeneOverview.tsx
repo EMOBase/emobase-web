@@ -1,13 +1,14 @@
 import { Icon } from "@/components/ui/icon";
 import GeneFavoriteMark from "@/components/common/GeneFavoriteMark";
 
-type GeneHeaderProps = {
+type GeneOverviewProps = {
+  id: string;
   gene: string;
 };
 
-const GeneHeader: React.FC<GeneHeaderProps> = ({ gene }) => {
+const GeneOverview: React.FC<GeneOverviewProps> = ({ id, gene }) => {
   return (
-    <div className="flex flex-col gap-4 border-b border-slate-200 pb-8">
+    <div id={id} className="flex flex-col gap-4 border-b border-slate-200 pb-8">
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3 mb-2">
@@ -91,4 +92,4 @@ const GeneHeader: React.FC<GeneHeaderProps> = ({ gene }) => {
   );
 };
 
-export default GeneHeader;
+export default GeneOverview;
