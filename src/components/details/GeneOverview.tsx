@@ -1,12 +1,21 @@
 import { Icon } from "@/components/ui/icon";
 import GeneFavoriteMark from "@/components/common/GeneFavoriteMark";
+import { type TriboliumGene } from "@/utils/services/geneService";
 
 type GeneOverviewProps = {
   id: string;
   gene: string;
+  triboliumGene: TriboliumGene;
 };
 
-const GeneOverview: React.FC<GeneOverviewProps> = ({ id, gene }) => {
+const GeneOverview: React.FC<GeneOverviewProps> = ({
+  id,
+  gene,
+  triboliumGene,
+}) => {
+  const { seqname, start, end } = triboliumGene;
+  const genomicLocation = `${seqname}:${start}..${end}`;
+
   return (
     <div id={id} className="flex flex-col gap-4 border-b border-slate-200 pb-8">
       <div className="flex items-start justify-between">
@@ -38,9 +47,12 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({ id, gene }) => {
           </span>
           <div className="flex items-center gap-2">
             <Icon name="dns" className="text-neutral-400 text-xl" />
-            <span className="font-mono text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              NC_007420.3:8101361..8105747
-            </span>
+            <a
+              href={`/genomebrowser/?loc=${genomicLocation}`}
+              className="text-neutral-700 dark:text-neutral-300 hover:text-primary font-mono text-sm font-medium"
+            >
+              {genomicLocation}
+            </a>
             <button className="text-neutral-400 hover:text-primary transition-colors">
               <Icon name="content_copy" className="text-base" />
             </button>

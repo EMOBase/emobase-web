@@ -7,7 +7,7 @@ import PublicationCRUD from "@/components/details/PublicationCRUD";
 import PhenotypeCRUD from "@/components/details/PhenotypeCRUD";
 import IBScreen from "@/components/details/IBScreen";
 import TableOfContents from "@/components/details/TableOfContents";
-import { fetchIBs } from "@/utils/services/geneService";
+import { fetchIBs, fetchTriboliumGenes } from "@/utils/services/geneService";
 import { fetchByGene as fetchPhenotypesByGene } from "@/utils/services/phenotypeService";
 import { stringToURLHash } from "@/utils/stringToURLHash";
 
@@ -15,8 +15,10 @@ export const prerender = false;
 
 const { gene = "" } = Astro.params;
 
+const triboliumGene = (await fetchTriboliumGenes([gene]))[0];
 const dsRNAs = await fetchIBs(gene);
 const phenotypes = await fetchPhenotypesByGene(gene);
+
 const communityPhenotypes =
   phenotypes === undefined
     ? undefined
@@ -36,10 +38,7 @@ const iBeetlePhenotypes =
             }
             return acc;
           },
-          {} as Record<
-            string,
-            Awaited<ReturnType<typeof fetchPhenotypesByGene>>
-          >,
+          {} as Record<string, typeof phenotypes>,
         );
 
 const sections = [
@@ -112,7 +111,12 @@ const toc = sections.map((panel) => ({
     <div class="flex-1 overflow-y-auto p-6 md:p-10 scroll-smooth">
       <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
         <div class="flex-1 flex flex-col gap-8 min-w-0">
-          <GeneOverview id="overview" gene={gene} client:load />
+          <GeneOverview
+            id="overview"
+            gene={gene}
+            triboliumGene={triboliumGene}
+            client:load
+          />
         </div>
         <TableOfContents items={toc} />
       </div>
