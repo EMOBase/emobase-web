@@ -1,9 +1,22 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import GeneHeader from "@/components/details/GeneHeader";
+import TableOfContents from "@/components/details/TableOfContents";
 
 export const prerender = false;
 
-const { gene } = Astro.params;
+const { gene = "" } = Astro.params;
 ---
 
-<Layout> Details of gene {gene}</Layout>
+<Layout>
+  <div class="flex-1 overflow-hidden relative flex">
+    <div class="flex-1 overflow-y-auto p-6 md:p-10 scroll-smooth">
+      <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
+        <div class="flex-1 flex flex-col gap-8 min-w-0">
+          <GeneHeader gene={gene} client:load />
+        </div>
+        <TableOfContents />
+      </div>
+    </div>
+  </div>
+</Layout>
