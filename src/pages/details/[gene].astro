@@ -1,9 +1,15 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import GeneHeader from "@/components/details/GeneHeader";
+import GeneOverview from "@/components/details/GeneOverview";
+import OrthologySection from "@/components/details/OrthologySection";
+import GOAnnotationCRUD from "@/components/details/GOAnnotationCRUD";
+import PublicationCRUD from "@/components/details/PublicationCRUD";
+import PhenotypeCRUD from "@/components/details/PhenotypeCRUD";
+import IBScreen from "@/components/details/IBScreen";
 import TableOfContents from "@/components/details/TableOfContents";
 import { fetchIBs } from "@/utils/services/geneService";
 import { fetchByGene as fetchPhenotypesByGene } from "@/utils/services/phenotypeService";
+import { stringToURLHash } from "@/utils/stringToURLHash";
 
 export const prerender = false;
 
@@ -11,8 +17,94 @@ const { gene = "" } = Astro.params;
 
 const dsRNAs = await fetchIBs(gene);
 const phenotypes = await fetchPhenotypesByGene(gene);
-console.log("dsRNAs", dsRNAs);
-console.log("phenotypes", phenotypes);
+const communityPhenotypes =
+  phenotypes === undefined
+    ? undefined
+    : phenotypes.filter((p) => !p.iBeetleExperiment);
+const iBeetlePhenotypes =
+  phenotypes === undefined
+    ? undefined
+    : phenotypes
+        .filter((p) => p.iBeetleExperiment)
+        .reduce(
+          (acc, p) => {
+            const dsRNAName = p.dsRNA.name || "Unknown";
+            if (acc[dsRNAName]) {
+              acc[dsRNAName].push(p);
+            } else {
+              acc[dsRNAName] = [p];
+            }
+            return acc;
+          },
+          {} as Record<
+            string,
+            Awaited<ReturnType<typeof fetchPhenotypesByGene>>
+          >,
+        );
+
+const sections = [
+  {
+    header: "Overview",
+    component: GeneOverview,
+    props: {
+      gene,
+    },
+  },
+  {
+    header: "Closest fly homologs",
+    component: OrthologySection,
+    props: {
+      gene,
+    },
+  },
+  {
+    header: "Gene ontology",
+    component: GOAnnotationCRUD,
+    props: {
+      gene,
+    },
+  },
+  {
+    header: "Publications",
+    component: PublicationCRUD,
+    props: {
+      gene,
+    },
+  },
+  {
+    header: "RNAi phenotypes contributed by the community",
+    shortHeader: "Community phenotypes",
+    component: PhenotypeCRUD,
+    props: {
+      gene,
+      phenotypes: communityPhenotypes,
+    },
+  },
+  ...(dsRNAs || []).map((dsrna) => ({
+    header: `RNAi phenotypes from iBeetle screen ${dsrna.id}`,
+    shortHeader: `iBeetle screen ${dsrna.id}`,
+    component: IBScreen,
+    props: {
+      dsrna,
+      phenotypes: iBeetlePhenotypes?.[dsrna.id] || [],
+    },
+  })),
+];
+
+const getSectionId = ({
+  header,
+  shortHeader,
+}: {
+  header: string;
+  shortHeader?: string;
+}) => {
+  return stringToURLHash(shortHeader || header);
+};
+
+const toc = sections.map((panel) => ({
+  id: getSectionId(panel),
+  title: panel.shortHeader || panel.header,
+}));
 ---
 
 <Layout>
@@ -20,9 +112,9 @@ console.log("phenotypes", phenotypes);
     <div class="flex-1 overflow-y-auto p-6 md:p-10 scroll-smooth">
       <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
         <div class="flex-1 flex flex-col gap-8 min-w-0">
-          <GeneHeader gene={gene} client:load />
+          <GeneOverview id="overview" gene={gene} client:load />
         </div>
-        <TableOfContents />
+        <TableOfContents items={toc} />
       </div>
     </div>
   </div>

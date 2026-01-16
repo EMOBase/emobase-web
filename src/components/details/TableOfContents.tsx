@@ -1,4 +1,13 @@
-const TableOfContents = () => {
+import { cn } from "@/utils/classname";
+
+type TableOfContentsProps = {
+  items: {
+    title: string;
+    id: string;
+  }[];
+};
+
+const TableOfContents: React.FC<TableOfContentsProps> = ({ items }) => {
   return (
     <aside className="w-full lg:w-64 flex-shrink-0 hidden lg:block">
       <div className="sticky top-6 flex flex-col gap-6">
@@ -9,24 +18,25 @@ const TableOfContents = () => {
             </h3>
           </div>
           <nav className="flex flex-col p-2 space-y-1">
-            <a
-              className="flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-900 bg-orange-50 rounded-lg group transition-colors"
-              href="#"
-            >
-              <span>Overview</span>
-              <span className="size-1.5 rounded-full bg-primary"></span>
-            </a>
-            {["homologs", "ontology", "publications", "phenotypes"].map(
-              (id) => (
+            {items.map(({ id, title }) => {
+              const isActive = id === "overview";
+
+              return (
                 <a
                   key={id}
-                  className="flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg group transition-colors capitalize"
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg group transition-colors",
+                    isActive && "text-slate-900 bg-orange-50",
+                  )}
                   href={`#${id}`}
                 >
-                  <span>{id}</span>
+                  <span>{title}</span>
+                  {isActive && (
+                    <span className="size-1.5 rounded-full bg-primary"></span>
+                  )}
                 </a>
-              ),
-            )}
+              );
+            })}
           </nav>
         </div>
       </div>
