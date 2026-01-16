@@ -2,6 +2,8 @@ import { Icon } from "@/components/ui/icon";
 import GeneFavoriteMark from "@/components/common/GeneFavoriteMark";
 import { type TriboliumGene } from "@/utils/services/geneService";
 
+import ViewSequencesButton from "./ViewSequencesButton";
+
 type GeneOverviewProps = {
   id: string;
   gene: string;
@@ -9,15 +11,39 @@ type GeneOverviewProps = {
 };
 
 const GeneOverview: React.FC<GeneOverviewProps> = ({
-  id,
+  id: sectionId,
   gene,
   triboliumGene,
 }) => {
-  const { seqname, start, end } = triboliumGene;
+  const { seqname, start, end, id, mRNAs, CDS, proteins } = triboliumGene;
   const genomicLocation = `${seqname}:${start}..${end}`;
 
+  const sequencesButtons = [
+    {
+      text: "mRNA sequences",
+      title: `${id} mRNAs`,
+      sequences: mRNAs,
+      icon: "data_object",
+    },
+    {
+      text: "Coding sequences",
+      title: `${id} CDS`,
+      sequences: CDS,
+      icon: "code",
+    },
+    {
+      text: "Protein sequences",
+      title: `${id} Proteins`,
+      sequences: proteins,
+      icon: "biotech",
+    },
+  ];
+
   return (
-    <div id={id} className="flex flex-col gap-4 border-b border-slate-200 pb-8">
+    <div
+      id={sectionId}
+      className="flex flex-col gap-4 border-b border-slate-200 pb-8"
+    >
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3 mb-2">
@@ -63,19 +89,8 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
             View Info
           </span>
           <div className="flex flex-col gap-2 text-sm">
-            {[
-              { label: "mRNA Sequences", icon: "data_object" },
-              { label: "Coding Sequences", icon: "code" },
-              { label: "Protein Sequences", icon: "biotech" },
-            ].map((link) => (
-              <a
-                key={link.label}
-                className="flex items-center gap-2 text-neutral-600 hover:text-primary transition-colors dark:text-neutral-400 dark:hover:text-primary"
-                href="#"
-              >
-                <Icon name={link.icon} className="text-base" />
-                {link.label}
-              </a>
+            {sequencesButtons.map((props) => (
+              <ViewSequencesButton {...props} />
             ))}
           </div>
         </div>
