@@ -51,7 +51,7 @@ const Hero = () => {
             placeholder="Search for gene IDs or phenotypes..."
             className="block w-full px-4 py-3 bg-transparent border-none text-slate-800 placeholder-slate-400 focus:ring-0 text-lg outline-none"
           />
-          <Button type="submit" className="px-8 font-bold">
+          <Button type="submit" className="px-8 font-bold rounded-xl">
             Search
           </Button>
         </form>

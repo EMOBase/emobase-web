@@ -75,9 +75,15 @@ const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">
+              <Icon name="content_copy" className="text-lg" />
+              Copy
+            </Button>
           </DialogClose>
-          <Button type="submit">Save changes</Button>
+          <Button>
+            <Icon name="download" className="text-lg" />
+            Download
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
