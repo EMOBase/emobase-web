@@ -1,12 +1,12 @@
 ---
 import Layout from "@/layouts/default.astro";
-import GeneOverview from "@/components/details/GeneOverview";
-import OrthologySection from "@/components/details/OrthologySection";
-import GOAnnotationCRUD from "@/components/details/GOAnnotationCRUD";
-import PublicationCRUD from "@/components/details/PublicationCRUD";
-import PhenotypeCRUD from "@/components/details/PhenotypeCRUD";
-import IBScreen from "@/components/details/IBScreen";
-import TableOfContents from "@/components/details/TableOfContents";
+import GeneOverview from "@/components/pages/details/GeneOverview";
+import OrthologySection from "@/components/pages/details/OrthologySection";
+import GOAnnotationCRUD from "@/components/pages/details/GOAnnotationCRUD";
+import PublicationCRUD from "@/components/pages/details/PublicationCRUD";
+import PhenotypeCRUD from "@/components/pages/details/PhenotypeCRUD";
+import IBScreen from "@/components/pages/details/IBScreen";
+import TableOfContents from "@/components/pages/details/TableOfContents";
 import { fetchIBs, fetchTriboliumGenes } from "@/utils/services/geneService";
 import { fetchByGene as fetchPhenotypesByGene } from "@/utils/services/phenotypeService";
 import { stringToURLHash } from "@/utils/stringToURLHash";
