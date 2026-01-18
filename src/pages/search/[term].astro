@@ -19,7 +19,7 @@ const phenotypeData = await searchByPhenotypes(
   itemsPerPage,
 );
 
-if (orthologyData?.genes?.length == 1) {
+if (orthologyData?.genes && orthologyData.genes.length > 0) {
   return Astro.redirect(`/details/${orthologyData.genes[0]}`);
 }
 ---

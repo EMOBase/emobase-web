@@ -30,32 +30,19 @@ const SearchResult: React.FC<SearchResultProps> = ({
   const [phenotypeData, setPhenotypeData] =
     useState<PhenotypeSearchResult>(defaultPhenotypeData);
 
-  const genes = orthologyData.genes;
   const orthologies = orthologyData.orthologies;
   const otherGenes = orthologyData.otherGenes;
 
-  const directHitBadge = genes?.length || 0;
   const phenotypeBadge = phenotypeData.total || 0;
   const orthologyBadge = (orthologies?.length || 0) + (otherGenes?.length || 0);
 
-  if (directHitBadge === 0 && orthologyBadge === 0 && phenotypeBadge === 0) {
+  if (orthologyBadge === 0 && phenotypeBadge === 0) {
     return <NothingFound term={term} />;
   }
 
   return (
-    <Tabs
-      defaultValue={
-        orthologyBadge > 0
-          ? "orthology"
-          : phenotypeBadge > 0
-            ? "phenotype"
-            : "direct"
-      }
-    >
+    <Tabs defaultValue={phenotypeBadge > 0 ? "phenotype" : "orthology"}>
       <TabsList>
-        <TabsTrigger value="direct" badge={directHitBadge}>
-          Direct Hits
-        </TabsTrigger>
         <TabsTrigger value="orthology" badge={orthologyBadge}>
           By Orthology
         </TabsTrigger>
@@ -64,9 +51,6 @@ const SearchResult: React.FC<SearchResultProps> = ({
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="direct">
-        <EmptyContent>No direct hits found for this query</EmptyContent>
-      </TabsContent>
       <TabsContent value="orthology">
         {orthologies && orthologies.length ? (
           <SearchResultByOrthology orthologies={orthologies} />
