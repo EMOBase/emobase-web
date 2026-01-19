@@ -39,6 +39,19 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
     },
   ];
 
+  const links = [
+    {
+      label: "BeetleAtlas Expression",
+      icon: "open_in_new",
+      href: `https://motif.mvls.gla.ac.uk/BeetleAtlas/?search=gene&gene=${gene}&idtype=geneID`,
+    },
+    {
+      label: "OrthoDB Orthologs",
+      icon: "open_in_new",
+      href: `http://www.orthodb.org/?query=${gene}`,
+    },
+  ];
+
   return (
     <div
       id={sectionId}
@@ -99,14 +112,12 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
             Quick Links
           </span>
           <div className="flex flex-col gap-2 text-sm">
-            {[
-              { label: "BeetleAtlas Expression", icon: "open_in_new" },
-              { label: "OrthoDB Orthologs", icon: "open_in_new" },
-            ].map((link) => (
+            {links.map((link) => (
               <a
                 key={link.label}
+                href={link.href}
+                target="_blank"
                 className="flex items-center gap-2 text-neutral-600 hover:text-primary transition-colors dark:text-neutral-400 dark:hover:text-primary"
-                href="#"
               >
                 <Icon name={link.icon} className="text-base" />
                 {link.label}
