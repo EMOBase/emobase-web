@@ -7,10 +7,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import CopyButton from "@/components/common/CopyButton";
+import DownloadButton from "@/components/common/DownloadButton";
 import { type Sequence } from "@/utils/services/geneService";
-
-import CopyButton from "./CopyButton";
-import DownloadButton from "./DownloadButton";
 
 type ViewSequencesButtonProps = {
   text: string;
@@ -47,7 +46,7 @@ const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
 
   return (
     <Dialog>
-      <DialogTrigger className="flex items-center gap-2 text-neutral-600 hover:text-primary transition-colors dark:text-neutral-400 dark:hover:text-primary">
+      <DialogTrigger className="cursor-pointer flex items-center gap-2 text-neutral-600 hover:text-primary transition-colors dark:text-neutral-400 dark:hover:text-primary">
         <Icon name={icon} className="text-base" />
         {text}
       </DialogTrigger>

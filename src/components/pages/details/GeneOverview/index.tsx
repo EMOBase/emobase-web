@@ -1,5 +1,6 @@
 import { Icon } from "@/components/ui/icon";
 import GeneFavoriteMark from "@/components/common/GeneFavoriteMark";
+import CopyButton from "@/components/common/CopyButton";
 import { type TriboliumGene } from "@/utils/services/geneService";
 
 import ViewSequencesButton from "./ViewSequencesButton";
@@ -77,9 +78,7 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
             <span className="font-mono text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {gene}
             </span>
-            <button className="text-neutral-400 hover:text-primary transition-colors">
-              <Icon name="content_copy" className="text-base" />
-            </button>
+            <CopyButton icon content={gene} />
           </div>
           <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 mt-4">
             Genomic Location
@@ -92,9 +91,7 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
             >
               {genomicLocation}
             </a>
-            <button className="text-neutral-400 hover:text-primary transition-colors">
-              <Icon name="content_copy" className="text-base" />
-            </button>
+            <CopyButton icon content={genomicLocation} />
           </div>
         </div>
         <div className="md:col-span-3">
@@ -103,7 +100,7 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
           </span>
           <div className="flex flex-col gap-2 text-sm">
             {sequencesButtons.map((props) => (
-              <ViewSequencesButton {...props} />
+              <ViewSequencesButton key={props.text} {...props} />
             ))}
           </div>
         </div>
