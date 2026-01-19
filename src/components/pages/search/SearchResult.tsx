@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FlybaseGeneId from "@/components/common/FlybaseGeneId";
@@ -61,13 +61,15 @@ const SearchResult: React.FC<SearchResultProps> = ({
               Found <i className="font-medium italic">Drosophila</i> genes:
             </p>
             <div className="flex items-center gap-3">
-              {otherGenes.map(({ gene, species }) =>
-                species === "Dmel" ? (
-                  <FlybaseGeneId gene={gene} />
-                ) : (
-                  <span>{gene}</span>
-                ),
-              )}
+              {otherGenes.map(({ gene, species }) => (
+                <Fragment key={gene}>
+                  {species === "Dmel" ? (
+                    <FlybaseGeneId gene={gene} />
+                  ) : (
+                    <span>{gene}</span>
+                  )}
+                </Fragment>
+              ))}
             </div>
             <p>
               which have no orthologous gene in{" "}
