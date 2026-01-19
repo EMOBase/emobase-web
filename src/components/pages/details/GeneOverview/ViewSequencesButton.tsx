@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { type Sequence } from "@/utils/services/geneService";
 
+import CopyButton from "./CopyButton";
+
 type ViewSequencesButtonProps = {
   text: string;
   title: string;
@@ -36,7 +38,13 @@ const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
     return sum + 1 + Math.ceil(sequence.seq.length / 10 / 3);
   }, 0);
 
-  console.log("lineCount", lineCount);
+  const rawFasta = sequences
+    .map((sequence) => {
+      return `>${sequence.id}\n${sequence.seq}`;
+    })
+    .join("\n");
+
+  const filename = title.replace(" ", "_").toLowerCase() + ".fa";
 
   return (
     <Dialog>
@@ -74,12 +82,7 @@ const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
           </div>
         </div>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">
-              <Icon name="content_copy" className="text-lg" />
-              Copy
-            </Button>
-          </DialogClose>
+          <CopyButton content={rawFasta} variant="outline" />
           <Button variant="primary">
             <Icon name="download" className="text-lg" />
             Download
