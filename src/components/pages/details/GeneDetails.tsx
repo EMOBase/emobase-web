@@ -60,7 +60,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
       header: "Genome Browser",
       component: GenomeBrowser,
       props: {
-        gene,
+        triboliumGene,
       },
     },
     {

@@ -4,7 +4,11 @@ type OrthologySectionProps = {
 };
 
 const OrthologySection: React.FC<OrthologySectionProps> = ({ id }) => {
-  return <div id={id}>Orthology section</div>;
+  return (
+    <div id={id} className="h-[500px]">
+      Closest Fly Homologs
+    </div>
+  );
 };
 
 export default OrthologySection;

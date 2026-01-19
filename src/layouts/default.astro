@@ -31,7 +31,7 @@ const url = Astro.url.pathname;
   </head>
   <body class="h-screen w-full overflow-hidden flex">
     <Sidebar url={url} client:load transition:persist />
-    <main class="flex-1 overflow-y-auto">
+    <main class="flex-1 overflow-y-auto scroll-smooth">
       <slot />
     </main>
   </body>
