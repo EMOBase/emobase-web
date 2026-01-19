@@ -14,13 +14,11 @@ const phenotypes = await fetchPhenotypesByGene(gene);
 ---
 
 <Layout>
-  <div class="p-6 md:p-10">
-    <GeneDetails
-      gene={gene}
-      triboliumGene={triboliumGene}
-      dsRNAs={dsRNAs}
-      phenotypes={phenotypes}
-      client:load
-    />
-  </div>
+  <GeneDetails
+    gene={gene}
+    triboliumGene={triboliumGene}
+    dsRNAs={dsRNAs}
+    phenotypes={phenotypes}
+    client:load
+  />
 </Layout>
