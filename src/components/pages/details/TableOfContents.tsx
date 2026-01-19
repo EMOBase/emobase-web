@@ -10,7 +10,7 @@ type TableOfContentsProps = {
 const TableOfContents: React.FC<TableOfContentsProps> = ({ items }) => {
   return (
     <aside className="w-full lg:w-64 flex-shrink-0 hidden lg:block">
-      <div className="sticky top-6 flex flex-col gap-6">
+      <div className="sticky top-6 md:top-10 flex flex-col gap-6">
         <div className="bg-white rounded-xl shadow-sticky border border-slate-200 p-1">
           <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50 rounded-t-lg">
             <h3 className="font-bold text-slate-800 text-sm uppercase tracking-wide">
