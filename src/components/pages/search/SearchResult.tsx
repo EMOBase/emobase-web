@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import FlybaseGeneId from "@/components/common/FlybaseGeneId";
 import { type GeneSearchResult } from "@/utils/services/geneService";
 import { type PhenotypeSearchResult } from "@/utils/services/phenotypeService";
 
@@ -54,6 +55,25 @@ const SearchResult: React.FC<SearchResultProps> = ({
       <TabsContent value="orthology">
         {orthologies && orthologies.length ? (
           <SearchResultByOrthology orthologies={orthologies} />
+        ) : otherGenes && otherGenes.length ? (
+          <div className="flex flex-col gap-3 text-slate-700">
+            <p>
+              Found <i className="font-medium italic">Drosophila</i> genes:
+            </p>
+            <div className="flex items-center gap-3">
+              {otherGenes.map(({ gene, species }) =>
+                species === "Dmel" ? (
+                  <FlybaseGeneId gene={gene} />
+                ) : (
+                  <span>{gene}</span>
+                ),
+              )}
+            </div>
+            <p>
+              which have no orthologous gene in{" "}
+              <i className="font-medium italic">Tribolium</i>.
+            </p>
+          </div>
         ) : (
           <EmptyContent>No results found searching by orthology</EmptyContent>
         )}
