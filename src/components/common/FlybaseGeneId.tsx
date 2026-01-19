@@ -1,3 +1,5 @@
+import { Icon } from "@/components/ui/icon";
+
 type FlybaseGeneIdProps = {
   gene: string;
 };
@@ -13,9 +15,7 @@ const FlybaseGeneId: React.FC<FlybaseGeneIdProps> = ({ gene }) => {
         <span className="group-hover/link:underline decoration-slate-700 underline-offset-2">
           {gene}
         </span>
-        <span className="material-symbols-outlined text-sm text-slate-400">
-          open_in_new
-        </span>
+        <Icon name="open_in_new" className="text-xl text-slate-400" />
       </a>
     </div>
   );

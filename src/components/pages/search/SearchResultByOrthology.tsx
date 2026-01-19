@@ -1,5 +1,6 @@
 import type { GeneSearchResult } from "@/utils/services/geneService";
 import { mainSpecies } from "@/utils/mainSpecies";
+import { Icon } from "@/components/ui/icon";
 import IBBGeneId from "@/components/common/IBBGeneId";
 import FlybaseGeneId from "@/components/common/FlybaseGeneId";
 
@@ -85,9 +86,10 @@ const SearchResultByOrthology: React.FC<SearchResultByOrthologyProps> = ({
                         className="text-slate-700 hover:text-slate-900 transition-colors flex items-center gap-1 font-mono text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded cursor-pointer"
                       >
                         {group}
-                        <span className="material-symbols-outlined text-sm text-slate-400">
-                          open_in_new
-                        </span>
+                        <Icon
+                          name="open_in_new"
+                          className="text-xl text-slate-400"
+                        />
                       </a>
                     </div>
                   ) : (

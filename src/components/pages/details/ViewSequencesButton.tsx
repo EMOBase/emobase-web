@@ -80,7 +80,7 @@ const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
               Copy
             </Button>
           </DialogClose>
-          <Button>
+          <Button variant="primary">
             <Icon name="download" className="text-lg" />
             Download
           </Button>
