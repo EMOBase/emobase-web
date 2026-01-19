@@ -1,15 +1,8 @@
 ---
 import Layout from "@/layouts/default.astro";
-import GeneOverview from "@/components/pages/details/GeneOverview";
-import OrthologySection from "@/components/pages/details/OrthologySection";
-import GOAnnotationCRUD from "@/components/pages/details/GOAnnotationCRUD";
-import PublicationCRUD from "@/components/pages/details/PublicationCRUD";
-import PhenotypeCRUD from "@/components/pages/details/PhenotypeCRUD";
-import IBScreen from "@/components/pages/details/IBScreen";
-import TableOfContents from "@/components/pages/details/TableOfContents";
 import { fetchIBs, fetchTriboliumGenes } from "@/utils/services/geneService";
 import { fetchByGene as fetchPhenotypesByGene } from "@/utils/services/phenotypeService";
-import { stringToURLHash } from "@/utils/stringToURLHash";
+import GeneDetails from "@/components/pages/details/GeneDetails";
 
 export const prerender = false;
 
@@ -18,108 +11,18 @@ const { gene = "" } = Astro.params;
 const triboliumGene = (await fetchTriboliumGenes([gene]))[0];
 const dsRNAs = await fetchIBs(gene);
 const phenotypes = await fetchPhenotypesByGene(gene);
-
-const communityPhenotypes =
-  phenotypes === undefined
-    ? undefined
-    : phenotypes.filter((p) => !p.iBeetleExperiment);
-const iBeetlePhenotypes =
-  phenotypes === undefined
-    ? undefined
-    : phenotypes
-        .filter((p) => p.iBeetleExperiment)
-        .reduce(
-          (acc, p) => {
-            const dsRNAName = p.dsRNA.name || "Unknown";
-            if (acc[dsRNAName]) {
-              acc[dsRNAName].push(p);
-            } else {
-              acc[dsRNAName] = [p];
-            }
-            return acc;
-          },
-          {} as Record<string, typeof phenotypes>,
-        );
-
-const sections = [
-  {
-    header: "Overview",
-    component: GeneOverview,
-    props: {
-      gene,
-    },
-  },
-  {
-    header: "Closest fly homologs",
-    component: OrthologySection,
-    props: {
-      gene,
-    },
-  },
-  {
-    header: "Gene ontology",
-    component: GOAnnotationCRUD,
-    props: {
-      gene,
-    },
-  },
-  {
-    header: "Publications",
-    component: PublicationCRUD,
-    props: {
-      gene,
-    },
-  },
-  {
-    header: "RNAi phenotypes contributed by the community",
-    shortHeader: "Community phenotypes",
-    component: PhenotypeCRUD,
-    props: {
-      gene,
-      phenotypes: communityPhenotypes,
-    },
-  },
-  ...(dsRNAs || []).map((dsrna) => ({
-    header: `RNAi phenotypes from iBeetle screen ${dsrna.id}`,
-    shortHeader: `iBeetle screen ${dsrna.id}`,
-    component: IBScreen,
-    props: {
-      dsrna,
-      phenotypes: iBeetlePhenotypes?.[dsrna.id] || [],
-    },
-  })),
-];
-
-const getSectionId = ({
-  header,
-  shortHeader,
-}: {
-  header: string;
-  shortHeader?: string;
-}) => {
-  return stringToURLHash(shortHeader || header);
-};
-
-const toc = sections.map((panel) => ({
-  id: getSectionId(panel),
-  title: panel.shortHeader || panel.header,
-}));
 ---
 
 <Layout>
   <div class="flex-1 overflow-hidden relative flex">
     <div class="flex-1 overflow-y-auto p-6 md:p-10 scroll-smooth">
-      <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
-        <div class="flex-1 flex flex-col gap-8 min-w-0">
-          <GeneOverview
-            id="overview"
-            gene={gene}
-            triboliumGene={triboliumGene}
-            client:load
-          />
-        </div>
-        <TableOfContents items={toc} />
-      </div>
+      <GeneDetails
+        gene={gene}
+        triboliumGene={triboliumGene}
+        dsRNAs={dsRNAs}
+        phenotypes={phenotypes}
+        client:load
+      />
     </div>
   </div>
 </Layout>
