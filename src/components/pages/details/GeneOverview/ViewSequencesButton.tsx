@@ -1,17 +1,16 @@
 import { Icon } from "@/components/ui/icon";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogFooter,
-  DialogClose,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { type Sequence } from "@/utils/services/geneService";
 
 import CopyButton from "./CopyButton";
+import DownloadButton from "./DownloadButton";
 
 type ViewSequencesButtonProps = {
   text: string;
@@ -82,11 +81,12 @@ const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
           </div>
         </div>
         <DialogFooter>
-          <CopyButton content={rawFasta} variant="outline" />
-          <Button variant="primary">
-            <Icon name="download" className="text-lg" />
-            Download
-          </Button>
+          <CopyButton variant="outline" content={rawFasta} />
+          <DownloadButton
+            variant="primary"
+            content={rawFasta}
+            filename={filename}
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>
