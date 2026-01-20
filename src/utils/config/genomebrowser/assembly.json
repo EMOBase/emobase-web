@@ -1,0 +1,19 @@
+{
+  "name": "Tcas5.2",
+  "sequence": {
+    "type": "ReferenceSequenceTrack",
+    "trackId": "Tcas5.2-ReferenceSequenceTrack",
+    "adapter": {
+      "type": "BgzipFastaAdapter",
+      "fastaLocation": {
+        "uri": "https://ibeetle-base.uni-goettingen.de/download/reference/GCF_000002335.3_Tcas5.2_genomic.fna.gz"
+      },
+      "faiLocation": {
+        "uri": "https://ibeetle-base.uni-goettingen.de/download/reference/GCF_000002335.3_Tcas5.2_genomic.fna.gz.fai"
+      },
+      "gziLocation": {
+        "uri": "https://ibeetle-base.uni-goettingen.de/download/reference/GCF_000002335.3_Tcas5.2_genomic.fna.gz.gzi"
+      }
+    }
+  }
+}

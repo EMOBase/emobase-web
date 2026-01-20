@@ -1,0 +1,50 @@
+{
+  "name": "default",
+  "view": {
+    "id": "linearGenomeView",
+    "type": "LinearGenomeView",
+    "tracks": [
+      {
+        "type": "FeatureTrack",
+        "configuration": "tcas5_iBeetle.sorted.gff",
+        "displays": [
+          {
+            "type": "LinearBasicDisplay",
+            "height": 50,
+            "configuration": "tcas5_iBeetle.sorted.gff-LinearBasicDisplay"
+          }
+        ]
+      },
+      {
+        "type": "FeatureTrack",
+        "configuration": "tcas5_ncbi.sorted.gff",
+        "displays": [
+          {
+            "type": "LinearBasicDisplay",
+            "height": 50,
+            "configuration": "tcas5_ncbi.sorted.gff-LinearBasicDisplay"
+          }
+        ]
+      },
+      {
+        "type": "FeatureTrack",
+        "configuration": "ib.sorted.gff",
+        "displays": [
+          {
+            "type": "LinearBasicDisplay",
+            "height": 50,
+            "configuration": "ib.sorted.gff-LinearBasicDisplay"
+          }
+        ]
+      }
+    ],
+    "hideHeader": true,
+    "hideHeaderOverview": true,
+    "hideNoTracksActive": true,
+    "trackSelectorType": "hierarchical",
+    "trackLabels": "offset",
+    "showCenterLine": false,
+    "showCytobandsSetting": false,
+    "showGridlines": true
+  }
+}

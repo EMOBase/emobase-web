@@ -1,0 +1,103 @@
+[
+  {
+    "type": "FeatureTrack",
+    "trackId": "tcas5_iBeetle.sorted.gff",
+    "name": "iBeetle OGS3",
+    "formatDetails": {
+      "feature": "jexl:{name:'<a href=https://ibeetle-base.uni-goettingen.de/details/'+feature.name+'>'+feature.name+'</a>'}"
+    },
+    "assemblyNames": ["Tcas5.2"],
+    "description": "The current official gene model (OGS) provided by the iBeetle consortium (Prof. M. Stanke, L. Gerischer; Greifswald).",
+    "category": ["Current gene prediction"],
+    "adapter": {
+      "type": "Gff3TabixAdapter",
+      "gffGzLocation": {
+        "uri": "https://ibeetle-base.uni-goettingen.de/download/gene-prediction/tcas5_iBeetle.renamed.sorted.gff.gz"
+      },
+      "index": {
+        "location": {
+          "uri": "https://ibeetle-base.uni-goettingen.de/download/gene-prediction/tcas5_iBeetle.renamed.sorted.gff.gz.tbi"
+        }
+      }
+    }
+  },
+  {
+    "type": "FeatureTrack",
+    "trackId": "tcas5_ncbi.sorted.gff",
+    "name": "NCBI",
+    "formatDetails": {
+      "feature": "jexl:{dbxref:'<a href=https://www.ncbi.nlm.nih.gov/gene/'+split(feature.dbxref, ':')[1]+'>'+feature.dbxref+'</a>'}"
+    },
+    "assemblyNames": ["Tcas5.2"],
+    "description": "Gene prediction from NCBI based on TCAS 5.2",
+    "category": ["Current gene prediction"],
+    "adapter": {
+      "type": "Gff3TabixAdapter",
+      "gffGzLocation": {
+        "uri": "https://ibeetle-base.uni-goettingen.de/download/gene-prediction/tcas5_ncbi.sorted.gff.gz"
+      },
+      "index": {
+        "location": {
+          "uri": "https://ibeetle-base.uni-goettingen.de/download/gene-prediction/tcas5_ncbi.sorted.gff.gz.tbi"
+        }
+      }
+    }
+  },
+  {
+    "type": "FeatureTrack",
+    "trackId": "ib.sorted.gff",
+    "name": "iBeetle dsRNA",
+    "assemblyNames": ["Tcas5.2"],
+    "description": "dsRNA used in the iBeetle screen to knock down genes using RNAi (10.1093/nar/gku1054)",
+    "category": ["dsRNA"],
+    "adapter": {
+      "type": "Gff3TabixAdapter",
+      "gffGzLocation": {
+        "uri": "https://ibeetle-base.uni-goettingen.de/download/dsRNA/ib.gff.gz"
+      },
+      "index": {
+        "location": {
+          "uri": "https://ibeetle-base.uni-goettingen.de/download/dsRNA/ib.gff.gz.tbi"
+        }
+      }
+    }
+  },
+  {
+    "type": "FeatureTrack",
+    "trackId": "au4.liftover.sorted.gff",
+    "name": "au4",
+    "assemblyNames": ["Tcas5.2"],
+    "description": "au4 (Augustus 4) is based on the unpublished genome version Tcas4 and has been lifted to Tcas5.2. This gene model is an interim model between OGS2 and OGS3.",
+    "category": ["Former gene prediction"],
+    "adapter": {
+      "type": "Gff3TabixAdapter",
+      "gffGzLocation": {
+        "uri": "https://ibeetle-base.uni-goettingen.de/download/gene-prediction/au4.liftover.sorted.gff.gz"
+      },
+      "index": {
+        "location": {
+          "uri": "https://ibeetle-base.uni-goettingen.de/download/gene-prediction/au4.liftover.sorted.gff.gz.tbi"
+        }
+      }
+    }
+  },
+  {
+    "type": "FeatureTrack",
+    "trackId": "OGS2.sorted.gff",
+    "name": "OGS2",
+    "assemblyNames": ["Tcas5.2"],
+    "description": "Former official gene set based on Tcas 3.0 lifted to Tcas 5.2 (doi:10.1038/nature06784)",
+    "category": ["Former gene prediction"],
+    "adapter": {
+      "type": "Gff3TabixAdapter",
+      "gffGzLocation": {
+        "uri": "https://ibeetle-base.uni-goettingen.de/download/gene-prediction/OGS2.renamed.sorted.gff.gz"
+      },
+      "index": {
+        "location": {
+          "uri": "https://ibeetle-base.uni-goettingen.de/download/gene-prediction/OGS2.renamed.sorted.gff.gz.tbi"
+        }
+      }
+    }
+  }
+]

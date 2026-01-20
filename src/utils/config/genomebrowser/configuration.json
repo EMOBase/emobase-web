@@ -1,0 +1,15 @@
+{
+  "theme": {
+    "palette": {
+      "primary": {
+        "main": "#6B261F"
+      },
+      "secondary": {
+        "main": "#EEEEEE"
+      },
+      "tertiary": {
+        "main": "#EEEEEE"
+      }
+    }
+  }
+}
