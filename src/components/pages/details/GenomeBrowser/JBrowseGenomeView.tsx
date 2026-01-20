@@ -10,8 +10,6 @@ type JBrowseGenomeViewProps = {
   location: string;
 };
 
-const baseURL = import.meta.env.PUBLIC_UI_PAGE_GENOMEBROWSER;
-
 const JBrowseGenomeView: React.FC<JBrowseGenomeViewProps> = ({ location }) => {
   const [seq, coords] = location.split(":");
   const [startStr, endStr] = coords.split("..");
