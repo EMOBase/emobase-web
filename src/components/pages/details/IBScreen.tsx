@@ -8,7 +8,11 @@ type IBScreenProps = {
 };
 
 const IBScreen: React.FC<IBScreenProps> = ({ id }) => {
-  return <div id={id}>IBScreen</div>;
+  return (
+    <div id={id} className="h-screen">
+      IBScreen
+    </div>
+  );
 };
 
 export default IBScreen;
