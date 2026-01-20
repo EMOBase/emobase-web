@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Icon } from "@/components/ui/icon";
 import {
   Dialog,
@@ -68,12 +69,12 @@ const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
             <div className="flex-1 ml-12 pl-4 pr-6 py-4">
               <pre className="font-mono text-sm leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-line">
                 {sequences.map((sequence) => (
-                  <>
+                  <Fragment key={sequence.id}>
                     <span className="text-primary font-bold">{`>${sequence.id}`}</span>
                     {"\n"}
                     {padEvery(sequence.seq, 10)}
                     {"\n"}
-                  </>
+                  </Fragment>
                 ))}
               </pre>
             </div>
