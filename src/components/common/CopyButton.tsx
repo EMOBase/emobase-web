@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 
 type CopyButtonProps = {
-  icon: boolean;
+  icon?: boolean;
   content: string;
 } & Omit<React.ComponentProps<typeof Button>, "children" | "onClick">;
 
