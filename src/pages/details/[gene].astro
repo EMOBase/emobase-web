@@ -13,6 +13,14 @@ const dsRNAs = await fetchIBs(gene);
 const phenotypes = await fetchPhenotypesByGene(gene);
 ---
 
+<style is:global>
+  #genome-browser > div > div {
+    background: transparent;
+  }
+  #genome-browser > div > div > div {
+    box-shadow: none;
+  }
+</style>
 <Layout>
   <GeneDetails
     gene={gene}
