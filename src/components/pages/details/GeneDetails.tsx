@@ -121,7 +121,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
-      <div className="flex-1 flex flex-col gap-8 min-w-0">
+      <div className="flex-1 flex flex-col gap-10 min-w-0">
         {sections.map((section) => {
           const sectionId = getSectionId(section);
           const props = section.props;
