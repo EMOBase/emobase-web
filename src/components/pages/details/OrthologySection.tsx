@@ -14,7 +14,9 @@ const OrthologySection: React.FC<OrthologySectionProps> = ({
   id,
   homologs,
 }) => {
-  const [selectedGene, setSelectedGene] = useState(homologs[0].id || null);
+  const [selectedGene, setSelectedGene] = useState<string | null>(
+    homologs[0]?.id ?? null,
+  );
 
   return (
     <div id={id}>
@@ -51,7 +53,7 @@ const OrthologySection: React.FC<OrthologySectionProps> = ({
                   className={`transition-colors hover:bg-gray-50 border-l-4 border-transparent`}
                 >
                   <td className="px-6 py-4">
-                    <FlyBaseGeneId gene={h.id} className={`font-bold`} />
+                    <FlyBaseGeneId gene={h.id} className={`font-semibold`} />
                   </td>
 
                   <td className="px-6 py-4 text-gray-500 text-xs">
