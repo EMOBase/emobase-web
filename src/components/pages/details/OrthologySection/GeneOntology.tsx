@@ -1,44 +1,65 @@
 import { useState } from "react";
 
-import { type DrosophilaGene } from "@/utils/services/geneService";
-type GeneOntologyProps = {
-  gene: string;
-  homologs: (DrosophilaGene & { source: string[] })[];
-};
+import { type GOAnnotation } from "@/utils/constants/goannotation";
 
-const terms = [
-  {
-    id: "GO:0009798",
-    name: "axis specification",
-    category: "Biological Process",
-  },
-  {
-    id: "GO:0048699",
-    name: "generation of neurons",
-    category: "Biological Process",
-  },
-  {
-    id: "GO:0007179",
-    name: "transforming growth factor beta receptor signaling pathway",
-    category: "Biological Process",
-  },
-  {
-    id: "GO:0008285",
-    name: "negative regulation of cell proliferation",
-    category: "Biological Process",
-  },
-];
+import type { Homolog } from "./types";
 
-const categories = [
-  "Biological Process",
-  "Molecular Function",
-  "Cellular Component",
+const aspects = [
+  { id: "P", title: "Biological Process" },
+  { id: "F", title: "Molecular Function" },
+  { id: "C", title: "Cellular Component" },
 ] as const;
 
-const GeneOntology: React.FC<GeneOntologyProps> = ({ gene }) => {
-  const [activeTab, setActiveTab] = useState<(typeof categories)[number]>(
-    categories[0],
+type TabId = (typeof aspects)[number]["id"];
+
+const sorted = (annos: GOAnnotation[]) => {
+  return [...annos].sort((a, b) => {
+    const aName = a.term.name;
+    const bName = b.term.name;
+    if (aName > bName) {
+      return 1;
+    } else if (aName < bName) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+};
+
+const uniq = (annos: GOAnnotation[]) => {
+  const res: GOAnnotation[] = [];
+  sorted(annos).forEach((anno, idx, arr) => {
+    if (idx === 0 || anno.term.name !== arr[idx - 1].term.name) {
+      res.push(anno);
+    }
+  });
+  return res;
+};
+
+type GeneOntologyProps = {
+  homolog: Homolog;
+};
+
+const GeneOntology: React.FC<GeneOntologyProps> = ({ homolog }) => {
+  const [activeTab, setActiveTab] = useState<TabId>(aspects[0].id);
+
+  const { id, annotations } = homolog;
+
+  const annotationMap = annotations.reduce(
+    (acc, item) => {
+      if (item.term.aspect && Object.keys(acc).includes(item.term.aspect)) {
+        acc[item.term.aspect].push(item);
+      }
+      return acc;
+    },
+    {
+      P: [],
+      F: [],
+      C: [],
+    } as Record<TabId, GOAnnotation[]>,
   );
+
+  const tabAnns = uniq(annotationMap[activeTab]);
 
   return (
     <div
@@ -47,32 +68,31 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({ gene }) => {
     >
       <div className="bg-gray-50/50 border-b border-gray-200 px-6 py-3 flex items-center justify-between">
         <h4 className="text-[10px] font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2">
-          Gene Ontology terms for: {gene}
+          Gene Ontology terms for: {id}
         </h4>
       </div>
 
       <div className="flex flex-col md:flex-row min-h-[300px]">
-        {/* Tab Sidebar */}
         <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-gray-200 bg-gray-50/30 p-4 space-y-1">
-          {categories.map((cat) => (
+          {aspects.map(({ id, title }) => (
             <button
-              key={cat}
-              onClick={() => setActiveTab(cat)}
+              key={id}
+              onClick={() => setActiveTab(id)}
               className={`w-full flex items-center gap-3 px-4 py-3 text-[11px] font-bold uppercase tracking-wider rounded-md rounded-l-xs transition-all ${
-                activeTab === cat
+                activeTab === id
                   ? "text-gray-900 bg-white shadow-sm border-l-4 border-primary"
                   : "text-gray-400 hover:text-primary hover:bg-white/50"
               }`}
             >
-              {cat}
+              {title}
             </button>
           ))}
         </div>
 
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6 max-h-[80vh] overflow-y-auto">
           <div className="space-y-2">
-            {terms.length > 0 ? (
-              terms.map((term) => (
+            {tabAnns.length > 0 ? (
+              tabAnns.map(({ term }) => (
                 <a
                   key={term.id}
                   href={`https://amigo.geneontology.org/amigo/term/${term.id}`}

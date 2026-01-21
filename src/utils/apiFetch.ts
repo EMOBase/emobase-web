@@ -1,3 +1,5 @@
+import qs from "qs";
+
 import { API_SERVICES, type ApiService } from "./constants/api";
 
 const apiBaseUrl = import.meta.env.PUBLIC_APIS_BASE_URL;
@@ -14,12 +16,12 @@ export const apiFetch = async <T>(
   opts?: Omit<RequestInit, "headers" | "body"> & {
     responseType?: "json" | "text" | "blob" | "formData" | "arrayBuffer";
     body?: any;
+    query?: Record<string, string | string[] | null | undefined>;
   },
 ) => {
+  const { responseType = "json", body, query, ...restOpts } = opts ?? {};
   const baseURL = urls[service];
-  const url = baseURL + request;
-
-  const { responseType = "json", body, ...restOpts } = opts ?? {};
+  const url = baseURL + request + (query ? `?${qs.stringify(query)}` : "");
 
   return await fetch(url, {
     headers: {

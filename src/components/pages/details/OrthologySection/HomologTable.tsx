@@ -1,9 +1,10 @@
 import FlyBaseGeneId from "@/components/common/FlyBaseGeneId";
-import { type DrosophilaGene } from "@/utils/services/geneService";
+
+import type { Homolog } from "./types";
 
 type HomologTableProps = {
-  homologs: (DrosophilaGene & { source: string[] })[];
-  onViewGO: (gene: string) => void;
+  homologs: Homolog[];
+  onViewGO: (homolog: Homolog) => void;
 };
 
 const HomologTable: React.FC<HomologTableProps> = ({ homologs, onViewGO }) => {
@@ -57,7 +58,7 @@ const HomologTable: React.FC<HomologTableProps> = ({ homologs, onViewGO }) => {
                 <td className="px-6 py-4 flex justify-end">
                   <a
                     href="#ortholog-gene-ontology"
-                    onClick={() => onViewGO(h.id)}
+                    onClick={() => onViewGO(h)}
                     className="text-gray-400 hover:text-primary transition-colors text-[10px] font-bold uppercase tracking-widest flex items-center gap-1"
                   >
                     View Ontology{" "}

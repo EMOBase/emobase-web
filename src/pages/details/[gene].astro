@@ -7,6 +7,8 @@ import {
   fetchDrosophilaGenes,
 } from "@/utils/services/geneService";
 import { fetchByGene as fetchPhenotypesByGene } from "@/utils/services/phenotypeService";
+import { fetchByGenes as fetchGOByGenes } from "@/utils/services/goAnnotationService";
+import { fetchByIds as fetchTermsByIds } from "@/utils/services/ontologyService";
 import GeneDetails from "@/components/pages/details/GeneDetails";
 
 export const prerender = false;
@@ -27,12 +29,35 @@ const orthologySources = (orthology.orthologs || []).reduce(
   },
   {} as Record<string, string[]>,
 );
+
 const orthologousGenes = Object.entries(orthologySources)
   .sort(([, a], [, b]) => b.length - a.length)
   .map(([gene]) => gene);
+const anns = await fetchGOByGenes(orthologousGenes);
+const missingNames = new Set(
+  anns.filter((a) => !a.term.name).map((a) => a.term.id),
+);
+if (missingNames.size > 0) {
+  const terms = await fetchTermsByIds("GO", Array.from(missingNames));
+  const termMap = new Map(terms.map((t) => [t.id, t.name]));
+  anns.forEach((a) => {
+    if (!a.term.name) {
+      a.term.name = termMap.get(a.term.id) || "";
+    }
+  });
+}
+const annsById = anns.reduce(
+  (acc, a) => {
+    acc[a.gene] = [...(acc[a.gene] ?? []), a];
+    return acc;
+  },
+  {} as Record<string, typeof anns>,
+);
+
 const homologs = (await fetchDrosophilaGenes(orthologousGenes)).map((gene) => ({
   ...gene,
   source: orthologySources[gene.id],
+  annotations: annsById[gene.id],
 }));
 ---
 

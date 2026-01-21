@@ -1,23 +1,23 @@
 import { useState } from "react";
 
 import { Icon } from "@/components/ui/icon";
-import { type DrosophilaGene } from "@/utils/services/geneService";
 
 import HomologTable from "./HomologTable";
 import GeneOntology from "./GeneOntology";
+import type { Homolog } from "./types";
 
 type OrthologySectionProps = {
   id: string;
   gene: string;
-  homologs: (DrosophilaGene & { source: string[] })[];
+  homologs: Homolog[];
 };
 
 const OrthologySection: React.FC<OrthologySectionProps> = ({
   id,
   homologs,
 }) => {
-  const [selectedGene, setSelectedGene] = useState<string | null>(
-    homologs[0]?.id ?? null,
+  const [selectedHomolog, setSelectedHomolog] = useState<Homolog | null>(
+    homologs[0] ?? null,
   );
 
   return (
@@ -26,8 +26,8 @@ const OrthologySection: React.FC<OrthologySectionProps> = ({
         <Icon name="group_work" className="text-primary" />
         Closest Fly Homologs
       </h2>
-      <HomologTable homologs={homologs} onViewGO={setSelectedGene} />
-      {selectedGene && <GeneOntology homologs={homologs} gene={selectedGene} />}
+      <HomologTable homologs={homologs} onViewGO={setSelectedHomolog} />
+      {selectedHomolog && <GeneOntology homolog={selectedHomolog} />}
     </div>
   );
 };
