@@ -47,6 +47,14 @@ const OrthologySection: React.FC<OrthologySectionProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
+              {homologs.length === 0 && (
+                <td
+                  colSpan={5}
+                  className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 italic"
+                >
+                  No fly homologs found for this gene.
+                </td>
+              )}
               {homologs.map((h) => (
                 <tr
                   key={h.id}
@@ -65,8 +73,8 @@ const OrthologySection: React.FC<OrthologySectionProps> = ({
                   <td className="px-6 py-4 italic font-medium text-gray-800">
                     {h.fullname}
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="text-gray-400 hover:text-primary transition-colors text-[10px] font-bold uppercase tracking-widest flex items-center justify-end gap-1">
+                  <td className="px-6 py-4 flex justify-end">
+                    <button className="text-gray-400 hover:text-primary transition-colors text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
                       View Ontology{" "}
                       <span className="material-symbols-outlined text-[16px]">
                         chevron_right
