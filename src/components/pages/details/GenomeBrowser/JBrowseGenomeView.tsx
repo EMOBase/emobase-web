@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { type TriboliumGene } from "@/utils/services/geneService";
 import assembly from "@/utils/config/genomebrowser/assembly.json";
 import tracks from "@/utils/config/genomebrowser/tracks.json";
 import defaultSession from "@/utils/config/genomebrowser/default_session.json";
@@ -7,12 +8,13 @@ import defaultSession from "@/utils/config/genomebrowser/default_session.json";
 import configuration from "@/utils/config/genomebrowser/configuration.json";
 
 type JBrowseGenomeViewProps = {
-  location: string;
+  triboliumGene: TriboliumGene;
 };
 
-const JBrowseGenomeView: React.FC<JBrowseGenomeViewProps> = ({ location }) => {
-  const [seq, coords] = location.split(":");
-  const [startStr, endStr] = coords.split("..");
+const JBrowseGenomeView: React.FC<JBrowseGenomeViewProps> = ({
+  triboliumGene,
+}) => {
+  const { seqname, start: startStr, end: endStr } = triboliumGene;
 
   const start = parseInt(startStr);
   const end = parseInt(endStr);
@@ -21,7 +23,7 @@ const JBrowseGenomeView: React.FC<JBrowseGenomeViewProps> = ({ location }) => {
   const zoomedInStart = start - halfLength < 0 ? 0 : start - halfLength;
   const zoomedInEnd = end + halfLength;
   const zoomedInLocation = {
-    refName: seq,
+    refName: seqname,
     start: Math.floor(zoomedInStart),
     end: Math.floor(zoomedInEnd),
   };
