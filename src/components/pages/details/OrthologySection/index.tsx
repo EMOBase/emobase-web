@@ -26,7 +26,7 @@ const OrthologySection: React.FC<OrthologySectionProps> = ({
         <Icon name="group_work" className="text-primary" />
         Closest Fly Homologs
       </h2>
-      <HomologTable homologs={homologs} />
+      <HomologTable homologs={homologs} onViewGO={setSelectedGene} />
       {selectedGene && <GeneOntology homologs={homologs} gene={selectedGene} />}
     </div>
   );

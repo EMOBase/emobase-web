@@ -58,7 +58,7 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({ gene }) => {
             <button
               key={cat}
               onClick={() => setActiveTab(cat)}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-[11px] font-bold uppercase tracking-wider rounded-md rounded-l-none transition-all ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-[11px] font-bold uppercase tracking-wider rounded-md rounded-l-xs transition-all ${
                 activeTab === cat
                   ? "text-gray-900 bg-white shadow-sm border-l-4 border-primary"
                   : "text-gray-400 hover:text-primary hover:bg-white/50"

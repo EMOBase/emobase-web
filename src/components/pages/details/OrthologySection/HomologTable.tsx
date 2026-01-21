@@ -3,9 +3,10 @@ import { type DrosophilaGene } from "@/utils/services/geneService";
 
 type HomologTableProps = {
   homologs: (DrosophilaGene & { source: string[] })[];
+  onViewGO: (gene: string) => void;
 };
 
-const HomologTable: React.FC<HomologTableProps> = ({ homologs }) => {
+const HomologTable: React.FC<HomologTableProps> = ({ homologs, onViewGO }) => {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-6">
       <div className="overflow-x-auto">
@@ -59,6 +60,7 @@ const HomologTable: React.FC<HomologTableProps> = ({ homologs }) => {
                 <td className="px-6 py-4 flex justify-end">
                   <a
                     href="#ortholog-gene-ontology"
+                    onClick={() => onViewGO(h.id)}
                     className="text-gray-400 hover:text-primary transition-colors text-[10px] font-bold uppercase tracking-widest flex items-center gap-1"
                   >
                     View Ontology{" "}
