@@ -1,6 +1,11 @@
 ---
 import Layout from "@/layouts/default.astro";
-import { fetchIBs, fetchTriboliumGenes } from "@/utils/services/geneService";
+import {
+  fetchIBs,
+  fetchTriboliumGenes,
+  fetchOrthology,
+  fetchDrosophilaGenes,
+} from "@/utils/services/geneService";
 import { fetchByGene as fetchPhenotypesByGene } from "@/utils/services/phenotypeService";
 import GeneDetails from "@/components/pages/details/GeneDetails";
 
@@ -11,6 +16,24 @@ const { gene = "" } = Astro.params;
 const triboliumGene = (await fetchTriboliumGenes([gene]))[0];
 const dsRNAs = await fetchIBs(gene);
 const phenotypes = await fetchPhenotypesByGene(gene);
+
+const orthology = await fetchOrthology(gene);
+const orthologySources = (orthology.orthologs || []).reduce(
+  (acc, o) => {
+    if (o.source) {
+      acc[o.gene] = [o.source, ...(acc[o.gene] || [])];
+    }
+    return acc;
+  },
+  {} as Record<string, string[]>,
+);
+const orthologousGenes = Object.entries(orthologySources)
+  .sort(([, a], [, b]) => b.length - a.length)
+  .map(([gene]) => gene);
+const homologs = (await fetchDrosophilaGenes(orthologousGenes)).map((gene) => ({
+  ...gene,
+  source: orthologySources[gene.id],
+}));
 ---
 
 <style is:global>
@@ -27,6 +50,7 @@ const phenotypes = await fetchPhenotypesByGene(gene);
     triboliumGene={triboliumGene}
     dsRNAs={dsRNAs}
     phenotypes={phenotypes}
+    homologs={homologs}
     client:load
   />
 </Layout>

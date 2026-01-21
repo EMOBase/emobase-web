@@ -1,5 +1,8 @@
 import { type IBDsRNA } from "@/utils/constants/ibeetle";
-import { type TriboliumGene } from "@/utils/services/geneService";
+import type {
+  TriboliumGene,
+  DrosophilaGene,
+} from "@/utils/services/geneService";
 import { type Phenotype } from "@/utils/constants/phenotype";
 import { stringToURLHash } from "@/utils/stringToURLHash";
 
@@ -17,6 +20,7 @@ type GeneDetailsProps = {
   triboliumGene: TriboliumGene;
   dsRNAs: IBDsRNA[];
   phenotypes: Phenotype[];
+  homologs: (DrosophilaGene & { source: string[] })[];
 };
 
 const GeneDetails: React.FC<GeneDetailsProps> = ({
@@ -24,6 +28,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
   triboliumGene,
   dsRNAs,
   phenotypes,
+  homologs,
 }) => {
   const communityPhenotypes =
     phenotypes === undefined
@@ -68,6 +73,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
       component: OrthologySection,
       props: {
         gene,
+        homologs,
       },
     },
     {
