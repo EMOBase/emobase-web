@@ -40,10 +40,7 @@ const HomologTable: React.FC<HomologTableProps> = ({ homologs, onViewGO }) => {
               </td>
             )}
             {homologs.map((h) => (
-              <tr
-                key={h.id}
-                className={`transition-colors hover:bg-gray-50 border-l-4 border-transparent`}
-              >
+              <tr key={h.id} className={`transition-colors hover:bg-gray-50`}>
                 <td className="px-6 py-4">
                   <FlyBaseGeneId gene={h.id} className={`font-semibold`} />
                 </td>
