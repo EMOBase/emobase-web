@@ -22,8 +22,8 @@ const JBrowseGenomeView: React.FC<JBrowseGenomeViewProps> = ({ location }) => {
   const zoomedInEnd = end + halfLength;
   const zoomedInLocation = {
     refName: seq,
-    start: zoomedInStart,
-    end: zoomedInEnd,
+    start: Math.floor(zoomedInStart),
+    end: Math.floor(zoomedInEnd),
   };
   const zoomedInLocationStr = `${zoomedInLocation.refName}:${zoomedInLocation.start}..${zoomedInLocation.end}`;
 
