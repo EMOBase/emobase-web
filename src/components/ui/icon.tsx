@@ -12,7 +12,7 @@ const Icon: React.FC<IconProps> = ({ name, fill, weight = 400, className }) => {
   const weightSetting = `'wght' ${weight}`;
 
   return (
-    <span className={cn("flex", className)}>
+    <span className={cn("inline-flex", className)}>
       <span
         className="material-symbols-outlined"
         style={{
