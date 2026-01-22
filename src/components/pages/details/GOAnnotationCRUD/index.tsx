@@ -1,5 +1,8 @@
 import { Icon } from "@/components/ui/icon";
-import { Button } from "@/components/ui/button";
+import useAsyncData from "@/hooks/useAsyncData";
+import { fetchByGenes } from "@/utils/services/goAnnotationService";
+
+import ProposeTermButton from "./ProposeTermButton";
 
 const terms = [
   {
@@ -27,6 +30,8 @@ const GOAnnotationCRUD: React.FC<GOAnnotationCRUDProps> = ({
   title,
   gene,
 }) => {
+  const { data, loading } = useAsyncData(() => fetchByGenes([gene]));
+
   return (
     <div id={id}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
@@ -81,13 +86,8 @@ const GOAnnotationCRUD: React.FC<GOAnnotationCRUDProps> = ({
               </div>
             ))}
           </div>
-          <div className="mt-10 pt-6 border-t border-neutral-100 dark:border-neutral-800">
-            <Button variant="outline" onClick={() => {}} className="px-4 py-2">
-              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">
-                add
-              </span>
-              Propose a GO term
-            </Button>
+          <div className="mt-8 pt-6 border-t border-neutral-100 dark:border-neutral-800">
+            <ProposeTermButton />
           </div>
         </div>
       </div>
