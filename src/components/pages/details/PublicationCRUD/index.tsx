@@ -1,7 +1,12 @@
+import { useEffect } from "react";
+
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+import useAsyncData from "@/hooks/useAsyncData";
+import { fetchByGene } from "@/utils/services/publicationService";
 
 import PublicationList from "./PublicationList";
+import usePublications from "./usePublications";
 
 type PublicationCRUDProps = {
   id: string;
@@ -9,7 +14,20 @@ type PublicationCRUDProps = {
   gene: string;
 };
 
-const PublicationCRUD: React.FC<PublicationCRUDProps> = ({ id, title }) => {
+const PublicationCRUD: React.FC<PublicationCRUDProps> = ({
+  id,
+  title,
+  gene,
+}) => {
+  const { data, loading } = useAsyncData(() => fetchByGene(gene));
+
+  const publications = usePublications((state) => state.data);
+  const setPublications = usePublications((state) => state.setData);
+
+  useEffect(() => {
+    if (data) setPublications(data);
+  }, [data]);
+
   return (
     <div id={id}>
       <div className="flex items-center justify-between mb-4">
@@ -22,7 +40,8 @@ const PublicationCRUD: React.FC<PublicationCRUDProps> = ({ id, title }) => {
           Add a Publication
         </Button>
       </div>
-      <PublicationList />
+
+      <PublicationList publications={publications} />
     </div>
   );
 };
