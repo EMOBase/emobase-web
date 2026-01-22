@@ -80,23 +80,29 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({
       <div className="bg-gray-50/50 border-b border-gray-200 px-6 py-3 flex items-center justify-between">
         <h4 className="text-[10px] font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2">
           Gene Ontology terms for:
-          <Select
-            value={selectedHomolog.id}
-            onValueChange={(v) =>
-              onSelectHomolog(homologs.find((h) => h.id === v) ?? null)
-            }
-          >
-            <SelectTrigger className="rounded-xs border-none shadow-none font-display text-xs data-[size=default]:h-auto py-0.5 pl-1.5 pr-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {homologs.map(({ id }) => (
-                <SelectItem key={id} value={id}>
-                  {id}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {homologs.length === 1 ? (
+            <span className="font-display normal-case">
+              {selectedHomolog.id}
+            </span>
+          ) : (
+            <Select
+              value={selectedHomolog.id}
+              onValueChange={(v) =>
+                onSelectHomolog(homologs.find((h) => h.id === v) ?? null)
+              }
+            >
+              <SelectTrigger className="rounded-xs border-none shadow-none font-display text-xs data-[size=default]:h-auto py-0.5 pl-1.5 pr-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {homologs.map(({ id }) => (
+                  <SelectItem key={id} value={id}>
+                    {id}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </h4>
       </div>
 
