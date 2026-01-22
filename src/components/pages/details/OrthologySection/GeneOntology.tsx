@@ -1,5 +1,12 @@
 import { useState } from "react";
 
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { type GOAnnotation } from "@/utils/constants/goannotation";
 
 import type { Homolog } from "./types";
@@ -37,15 +44,19 @@ const uniq = (annos: GOAnnotation[]) => {
 };
 
 type GeneOntologyProps = {
-  homolog: Homolog;
+  homologs: Homolog[];
+  selectedHomolog: Homolog;
+  onSelectHomolog: (h: Homolog | null) => void;
 };
 
-const GeneOntology: React.FC<GeneOntologyProps> = ({ homolog }) => {
+const GeneOntology: React.FC<GeneOntologyProps> = ({
+  homologs,
+  selectedHomolog,
+  onSelectHomolog,
+}) => {
   const [activeTab, setActiveTab] = useState<TabId>(aspects[0].id);
 
-  const { id, annotations } = homolog;
-
-  const annotationMap = annotations.reduce(
+  const annotationMap = selectedHomolog.annotations.reduce(
     (acc, item) => {
       if (item.term.aspect && Object.keys(acc).includes(item.term.aspect)) {
         acc[item.term.aspect].push(item);
@@ -68,7 +79,24 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({ homolog }) => {
     >
       <div className="bg-gray-50/50 border-b border-gray-200 px-6 py-3 flex items-center justify-between">
         <h4 className="text-[10px] font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2">
-          Gene Ontology terms for: {id}
+          Gene Ontology terms for:
+          <Select
+            value={selectedHomolog.id}
+            onValueChange={(v) =>
+              onSelectHomolog(homologs.find((h) => h.id === v) ?? null)
+            }
+          >
+            <SelectTrigger className="rounded-xs border-none shadow-none font-display text-xs data-[size=default]:h-auto py-0.5 pl-1.5 pr-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {homologs.map(({ id }) => (
+                <SelectItem key={id} value={id}>
+                  {id}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </h4>
       </div>
 
@@ -90,9 +118,9 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({ homolog }) => {
         </div>
 
         <div className="flex-1 p-6 max-h-[80vh] overflow-y-auto">
-          <div className="space-y-2">
-            {tabAnns.length > 0 ? (
-              tabAnns.map(({ term }) => (
+          {tabAnns.length > 0 ? (
+            <div className="space-y-2">
+              {tabAnns.map(({ term }) => (
                 <a
                   key={term.id}
                   href={`https://amigo.geneontology.org/amigo/term/${term.id}`}
@@ -112,18 +140,15 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({ homolog }) => {
                     open_in_new
                   </span>
                 </a>
-              ))
-            ) : (
-              <div className="h-full flex flex-col items-center justify-center text-center py-12">
-                <span className="material-symbols-outlined text-gray-300 text-[40px] mb-2">
-                  sentiment_neutral
-                </span>
-                <p className="text-gray-400 text-sm">
-                  No terms found for this category
-                </p>
-              </div>
-            )}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="h-full flex flex-col items-center justify-center text-center py-12">
+              <p className="text-gray-400 text-sm">
+                No terms found for this category
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

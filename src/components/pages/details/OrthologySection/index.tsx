@@ -27,7 +27,13 @@ const OrthologySection: React.FC<OrthologySectionProps> = ({
         Closest Fly Homologs
       </h2>
       <HomologTable homologs={homologs} onViewGO={setSelectedHomolog} />
-      {selectedHomolog && <GeneOntology homolog={selectedHomolog} />}
+      {selectedHomolog && (
+        <GeneOntology
+          homologs={homologs}
+          selectedHomolog={selectedHomolog}
+          onSelectHomolog={setSelectedHomolog}
+        />
+      )}
     </div>
   );
 };
