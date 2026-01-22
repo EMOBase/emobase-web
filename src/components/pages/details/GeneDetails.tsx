@@ -132,10 +132,17 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
           const sectionId = getSectionId(section);
           const props = section.props;
           const Component = section.component as React.FC<
-            typeof props & { id: string }
+            typeof props & { id: string; title: string }
           >;
 
-          return <Component key={sectionId} id={sectionId} {...props} />;
+          return (
+            <Component
+              key={sectionId}
+              id={sectionId}
+              title={section.header}
+              {...props}
+            />
+          );
         })}
       </div>
       <TableOfContents items={toc} />
