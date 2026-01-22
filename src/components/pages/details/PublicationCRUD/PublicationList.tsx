@@ -4,33 +4,6 @@ import { twMerge } from "tailwind-merge";
 import { Icon } from "@/components/ui/icon";
 import type { Publication } from "@/utils/constants/publication";
 
-const pubs = [
-  {
-    id: "1",
-    title:
-      "Delimiting the conserved features of hunchback function for the trunk organization of insects.",
-    authors: "Marques-Souza et al.",
-    journal: "Development (Cambridge, England)",
-    year: 2008,
-  },
-  {
-    id: "2",
-    title:
-      "Regulation of the Tribolium homologues of caudal and hunchback in Drosophila: evidence for maternal gradient systems in a short germ embryo.",
-    authors: "Wolff et al.",
-    journal: "Development (Cambridge, England)",
-    year: 1998,
-  },
-  {
-    id: "3",
-    title:
-      "The genes orthodenticle and hunchback substitute for bicoid in the beetle Tribolium.",
-    authors: "Reinhard Schröder et al.",
-    journal: "Nature",
-    year: 2003,
-  },
-];
-
 const getAuthorSummary = (publication: Publication) => {
   const firstAuthor = publication.authors[0];
   const numOfAuthors = publication.authors.length;
