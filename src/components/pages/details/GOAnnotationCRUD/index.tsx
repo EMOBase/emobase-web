@@ -31,12 +31,11 @@ const GOAnnotationCRUD: React.FC<GOAnnotationCRUDProps> = ({
   gene,
 }) => {
   const { data, loading } = useAsyncData(() => fetchByGenes([gene]));
-
   return (
     <div id={id}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
         <h2 className="font-display text-2xl font-bold text-neutral-800 dark:text-white flex items-center gap-2">
-          <Icon name="account_tree" className="text-primary" />
+          <Icon name="account_tree" weight={500} className="text-primary" />
           {title}
         </h2>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-neutral-800 rounded-md text-xs font-medium text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
