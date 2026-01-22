@@ -50,9 +50,7 @@ const GOAnnotationCRUD: React.FC<GOAnnotationCRUDProps> = ({
             {terms.map((term) => (
               <div key={term.id} className="group">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className="text-base font-bold text-primary">
-                    {term.id}
-                  </span>
+                  <span className="text-base font-bold">{term.id}</span>
                   <span className="text-base font-medium text-neutral-800 dark:text-neutral-200">
                     - {term.name}
                   </span>
@@ -79,7 +77,7 @@ const GOAnnotationCRUD: React.FC<GOAnnotationCRUDProps> = ({
                     <span className="hover:text-primary cursor-pointer transition-colors">
                       PMID:{term.pmid}
                     </span>
-                    <Icon name="open_in_new" className="text-xs" />
+                    <Icon name="open_in_new" className="text-sm" />
                   </div>
                 </div>
               </div>
