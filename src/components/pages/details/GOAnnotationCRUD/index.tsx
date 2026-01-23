@@ -15,7 +15,7 @@ const terms = [
     id: "GO:0001921",
     name: "positive regulation of receptor recycling",
     pmid: "19999",
-    citations: 123,
+    citations: "what the hell",
   },
 ];
 
@@ -69,11 +69,17 @@ const GOAnnotationCRUD: React.FC<GOAnnotationCRUDProps> = ({
                 </div>
                 <div className="flex items-center gap-4 text-xs text-neutral-500 dark:text-neutral-400 pl-4">
                   <div className="flex items-center gap-2">
-                    <Icon name="double_arrow" className="text-base" />
+                    <Icon
+                      name="keyboard_double_arrow_right"
+                      className="text-base"
+                    />
                     <span>{term.citations}</span>
+                    <Icon
+                      name="keyboard_double_arrow_left"
+                      className="text-base"
+                    />
                   </div>
                   <div className="flex items-center gap-1">
-                    <Icon name="link" className="text-sm" />
                     <span className="hover:text-primary cursor-pointer transition-colors">
                       PMID:{term.pmid}
                     </span>
