@@ -70,10 +70,14 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: var(--color-neutral-500);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--color-neutral-400) 80%,
+    transparent
+  );
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: color-mix(in oklab, var(--color-red-500) 80%, transparent);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);

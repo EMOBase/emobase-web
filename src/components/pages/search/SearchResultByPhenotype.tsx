@@ -150,7 +150,7 @@ const SearchResultByPhenotype = ({
               value={itemsPerPage.toString()}
               onValueChange={(v) => setItemsPerPage(parseInt(v))}
             >
-              <SelectTrigger className="bg-white">
+              <SelectTrigger size="sm" className="bg-white">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
