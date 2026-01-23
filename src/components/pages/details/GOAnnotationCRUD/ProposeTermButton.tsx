@@ -1,3 +1,5 @@
+import { useRef, useActionState } from "react";
+
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +11,99 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+const ProposeTermForm = ({ ref }: { ref: React.Ref<HTMLFormElement> }) => {
+  return (
+    <form ref={ref} className="space-y-6">
+      <div className="group">
+        <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
+          *GO ID:{" "}
+          <Icon name="help" className="text-lg text-neutral-400 cursor-help" />
+        </label>
+        <input
+          className="w-full rounded-sm border border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 placeholder:text-neutral-300 dark:text-white"
+          placeholder="GO: 0000000"
+          type="text"
+          name="goId"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
+          *Gene product
+        </label>
+        <div className="relative">
+          <select
+            name="geneProduct"
+            className="w-full rounded-sm border border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 appearance-none dark:text-white"
+          >
+            <option>protein</option>
+            <option>mRNA</option>
+            <option>ncRNA</option>
+          </select>
+          <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+            <span className="material-symbols-outlined text-neutral-400">
+              arrow_drop_down
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
+          *Evidence code:
+          <Icon name="help" className="text-lg text-neutral-400 cursor-help" />
+          <Icon name="open_in_new" className="text-lg text-neutral-400" />
+        </label>
+        <input
+          className="w-full rounded-sm border border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 placeholder:text-neutral-300 dark:text-white"
+          placeholder="e.g. IMP"
+          type="text"
+          name="evidence"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
+          *PubMed ID:{" "}
+          <Icon name="help" className="text-lg text-neutral-400 cursor-help" />
+        </label>
+        <input
+          className="w-full rounded-sm border border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 placeholder:text-neutral-300 dark:text-white"
+          placeholder="PMID: e.g. 18586236"
+          type="text"
+          name="pmid"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
+          Quotation:{" "}
+          <Icon name="help" className="text-lg text-neutral-400 cursor-help" />
+        </label>
+        <textarea
+          className="w-full rounded-sm border border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 placeholder:text-neutral-300 min-h-[140px] resize-none dark:text-white"
+          placeholder="Relevant section from the publication"
+          name="quotation"
+        ></textarea>
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
+          *Lab name:
+        </label>
+        <input
+          className="w-full rounded-sm border border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 dark:text-white"
+          type="text"
+          name="lab"
+        />
+      </div>
+    </form>
+  );
+};
+
 const ProposeTermButton = () => {
+  const formRef = useRef<HTMLFormElement>(null);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -39,99 +133,16 @@ const ProposeTermButton = () => {
             automatically linked.
           </p>
 
-          <div className="space-y-6">
-            <div className="group">
-              <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
-                *GO ID:{" "}
-                <Icon
-                  name="help"
-                  className="text-lg text-neutral-400 cursor-help"
-                />
-              </label>
-              <input
-                className="w-full rounded-sm border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 placeholder:text-neutral-300 dark:text-white"
-                placeholder="GO: 0000000"
-                type="text"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
-                *Gene product
-              </label>
-              <div className="relative">
-                <select className="w-full rounded-sm border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 appearance-none dark:text-white">
-                  <option>protein</option>
-                  <option>mRNA</option>
-                  <option>ncRNA</option>
-                </select>
-                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                  <span className="material-symbols-outlined text-neutral-400">
-                    arrow_drop_down
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
-                *Evidence code:
-                <Icon
-                  name="help"
-                  className="text-lg text-neutral-400 cursor-help"
-                />
-                <Icon name="open_in_new" className="text-lg text-neutral-400" />
-              </label>
-              <input
-                className="w-full rounded-sm border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 placeholder:text-neutral-300 dark:text-white"
-                placeholder="e.g. IMP"
-                type="text"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
-                *PubMed ID:{" "}
-                <Icon
-                  name="help"
-                  className="text-lg text-neutral-400 cursor-help"
-                />
-              </label>
-              <input
-                className="w-full rounded-sm border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 placeholder:text-neutral-300 dark:text-white"
-                placeholder="PMID: e.g. 18586236"
-                type="text"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
-                Quotation:{" "}
-                <Icon
-                  name="help"
-                  className="text-lg text-neutral-400 cursor-help"
-                />
-              </label>
-              <textarea
-                className="w-full rounded-sm border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 placeholder:text-neutral-300 min-h-[140px] resize-none dark:text-white"
-                placeholder="Relevant section from the publication"
-              ></textarea>
-            </div>
-
-            <div>
-              <label className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 mb-1.5">
-                *Lab name:
-              </label>
-              <input
-                className="w-full rounded-sm border-neutral-300 bg-white px-3 py-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary dark:bg-neutral-800 dark:border-neutral-700 dark:text-white"
-                type="text"
-              />
-            </div>
-          </div>
+          <ProposeTermForm ref={formRef} />
         </div>
         <DialogFooter>
           <Button variant="outline">Submit & Propose another</Button>
-          <Button variant="primary">Submit</Button>
+          <Button
+            variant="primary"
+            onClick={() => formRef.current?.requestSubmit()}
+          >
+            Submit
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
