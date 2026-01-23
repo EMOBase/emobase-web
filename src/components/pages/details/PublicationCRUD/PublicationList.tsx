@@ -118,6 +118,13 @@ const PublicationList: React.FC<PublicationListProps> = ({
         <div className="relative h-40">
           <BeetleLoading title="Getting Data" />
         </div>
+      ) : publications.length === 0 ? (
+        <div className="flex flex-col items-center justify-center text-center h-40">
+          <Icon name="search_off" className="text-neutral-300 text-5xl mb-4" />
+          <p className="text-neutral-400 text-sm">
+            No publications found associated with this gene.
+          </p>
+        </div>
       ) : (
         <div className="space-y-8">
           {publications.map((pub, idx) => (
