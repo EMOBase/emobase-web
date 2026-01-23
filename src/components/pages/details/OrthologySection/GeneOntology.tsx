@@ -81,7 +81,7 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({
         <h4 className="text-[10px] font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2">
           Gene Ontology terms for:
           {homologs.length === 1 ? (
-            <span className="font-display normal-case">
+            <span className="text-xs font-display normal-case">
               {selectedHomolog.id}
             </span>
           ) : (
@@ -91,7 +91,7 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({
                 onSelectHomolog(homologs.find((h) => h.id === v) ?? null)
               }
             >
-              <SelectTrigger className="rounded-xs border-none shadow-none font-display text-xs data-[size=default]:h-auto py-0.5 pl-1.5 pr-1">
+              <SelectTrigger className="rounded-xs border-none shadow-none font-display text-xs py-0.5 pl-1.5 pr-1">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
