@@ -109,7 +109,7 @@ const PublicationItem: React.FC<PublicationItemProps> = ({
             <DialogHeader>
               <DialogTitle>Cite</DialogTitle>
             </DialogHeader>
-            <div className="p-5 rounded-lg bg-neutral-100 text-sm leading-relaxed font-medium border border-neutral-200 mx-6">
+            <div className="p-5 rounded-lg bg-neutral-50 text-sm leading-relaxed font-medium border border-neutral-200 mx-6">
               {publication.reference}
             </div>
             <DialogFooter>
