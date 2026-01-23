@@ -1,4 +1,3 @@
-import { useActionState } from "react";
 import { navigate } from "astro:transitions/client";
 
 import { Button } from "@/components/ui/button";
@@ -12,13 +11,15 @@ const examples = [
 ];
 
 const Hero = () => {
-  const [, formAction] = useActionState((_: any, formData: FormData) => {
-    const searchTerm = formData.get("search");
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
+    const formData = new FormData(e.target as HTMLFormElement);
+    const searchTerm = formData.get("search");
     if (typeof searchTerm === "string" && searchTerm.trim()) {
-      navigate(`/search/${searchTerm}`);
+      navigate(`/search/${searchTerm.trim()}`);
     }
-  }, null);
+  };
 
   return (
     <section className="flex flex-col items-center justify-center text-center gap-8 p-10 md:p-16 lg:p-24 xl:p-32">
@@ -37,7 +38,7 @@ const Hero = () => {
       <div className="w-full max-w-2xl relative group">
         <div className="absolute inset-0 bg-gradient-to-r from-orange-200 to-amber-200 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none"></div>
         <form
-          action={formAction}
+          onSubmit={handleSubmit}
           className="relative bg-white p-2 rounded-2xl shadow-soft border border-slate-200 flex items-center focus-within:ring-2 focus-within:ring-primary/20 transition-all"
         >
           <span className="material-symbols-outlined text-2xl text-slate-400 ml-4">
