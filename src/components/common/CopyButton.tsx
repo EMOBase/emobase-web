@@ -11,9 +11,15 @@ import {
 type CopyButtonProps = {
   icon?: boolean;
   content: string;
+  object?: string;
 } & Omit<React.ComponentProps<typeof Button>, "children" | "onClick">;
 
-const CopyButton: React.FC<CopyButtonProps> = ({ icon, content, ...props }) => {
+const CopyButton: React.FC<CopyButtonProps> = ({
+  icon,
+  content,
+  object,
+  ...props
+}) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
@@ -24,7 +30,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({ icon, content, ...props }) => {
   };
 
   const buttonIcon = copied ? "check" : "content_copy";
-  const buttonText = copied ? "Copied" : "Copy";
+  const buttonText = copied ? "Copied" : object ? `Copy ${object}` : "Copy";
 
   if (icon) {
     return (

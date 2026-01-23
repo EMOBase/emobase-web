@@ -2,6 +2,16 @@ import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { Icon } from "@/components/ui/icon";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import CopyButton from "@/components/common/CopyButton";
 import BeetleLoading from "@/components/common/BeetleLoading";
 import type { Publication } from "@/utils/constants/publication";
 
@@ -92,12 +102,26 @@ const PublicationItem: React.FC<PublicationItemProps> = ({
         >
           {full ? "Less" : "More"}
         </button>
-        <button
-          onClick={() => {}}
-          className="px-3 py-1 rounded bg-neutral-100 text-neutral-600 text-[10px] font-bold hover:bg-neutral-200 transition-colors uppercase tracking-wider"
-        >
-          Cite
-        </button>
+        <Dialog>
+          <DialogTrigger className="px-3 py-1 rounded bg-neutral-100 text-neutral-600 text-[10px] font-bold hover:bg-neutral-200 transition-colors uppercase tracking-wider">
+            Cite
+          </DialogTrigger>
+          <DialogContent className="max-w-xl max-h-9/10 flex flex-col">
+            <DialogHeader>
+              <DialogTitle>Cite</DialogTitle>
+            </DialogHeader>
+            <div className="p-5 rounded-lg bg-neutral-100 text-sm leading-relaxed font-medium border border-neutral-200 mx-6">
+              {publication.reference}
+            </div>
+            <DialogFooter>
+              <CopyButton
+                variant="primary"
+                object="Citation"
+                content={publication.reference}
+              />
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
