@@ -2,6 +2,7 @@ import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { Icon } from "@/components/ui/icon";
+import BeetleLoading from "@/components/common/BeetleLoading";
 import type { Publication } from "@/utils/constants/publication";
 
 const getAuthorSummary = (publication: Publication) => {
@@ -103,21 +104,31 @@ const PublicationItem: React.FC<PublicationItemProps> = ({
 };
 
 type PublicationListProps = {
+  loading: boolean;
   publications: Publication[];
 };
 
-const PublicationList: React.FC<PublicationListProps> = ({ publications }) => {
+const PublicationList: React.FC<PublicationListProps> = ({
+  loading,
+  publications,
+}) => {
   return (
     <div className="bg-white border border-neutral-200 rounded-xl shadow-sm p-8">
-      <div className="space-y-8">
-        {publications.map((pub, idx) => (
-          <PublicationItem
-            publication={pub}
-            key={pub.id}
-            className={idx !== 0 ? "pt-6 border-t border-neutral-100" : ""}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div className="relative h-40">
+          <BeetleLoading title="Getting Data" />
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {publications.map((pub, idx) => (
+            <PublicationItem
+              publication={pub}
+              key={pub.id}
+              className={idx !== 0 ? "pt-6 border-t border-neutral-100" : ""}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

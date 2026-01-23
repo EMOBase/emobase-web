@@ -19,7 +19,7 @@ const PublicationCRUD: React.FC<PublicationCRUDProps> = ({
   title,
   gene,
 }) => {
-  const { data, loading } = useAsyncData(() => fetchByGene(gene));
+  const { data, loading } = useAsyncData(() => fetchByGene(gene), []);
 
   const publications = usePublications((state) => state.data);
   const setPublications = usePublications((state) => state.setData);
@@ -41,7 +41,7 @@ const PublicationCRUD: React.FC<PublicationCRUDProps> = ({
         </Button>
       </div>
 
-      <PublicationList publications={publications} />
+      <PublicationList loading={loading} publications={publications} />
     </div>
   );
 };
