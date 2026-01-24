@@ -62,7 +62,7 @@ const ProposeTermForm = ({
   const form = useForm({
     defaultValues,
     validators: {
-      onBlur: formSchema,
+      onChange: formSchema,
     },
     onSubmit: async ({ value }) => {
       console.log("onSubmit", value);
