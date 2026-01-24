@@ -89,10 +89,10 @@ const AnnotationList: React.FC<AnnotationListProps> = ({
                 </a>
                 <span
                   className={twMerge(
-                    "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tight",
+                    "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tight border",
                     isReviewed
-                      ? "bg-green-50 text-green-600 broder-green-100"
-                      : "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-500 border border-amber-100 dark:border-amber-900/30",
+                      ? "bg-green-50 text-green-600 border-green-100"
+                      : "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-500 border-amber-100 dark:border-amber-900/30",
                   )}
                 >
                   {isReviewed ? "REVIEWED" : annotation.status}
