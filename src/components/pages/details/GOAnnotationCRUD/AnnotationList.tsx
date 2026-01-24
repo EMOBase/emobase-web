@@ -74,7 +74,7 @@ const AnnotationList: React.FC<AnnotationListProps> = ({
               <a
                 href={getLinkGeneOntologyTerm(annotation)}
                 target="_blank"
-                className="text-neutral-400 hover:text-primary transition-colors"
+                className="inline-flex text-neutral-400 hover:text-primary transition-colors"
               >
                 <Icon name="open_in_new" className="text-lg" />
               </a>
