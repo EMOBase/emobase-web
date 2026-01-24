@@ -16,7 +16,9 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { GENE_PRODUCTS } from "@/utils/constants/goannotation";
+import { GENE_PRODUCTS, GO_ASPECTS } from "@/utils/constants/goannotation";
+
+import TermInputField from "./TermInputField";
 
 const hints = {
   goId: "The ID of the GO term you assign to the gene product.",
@@ -33,7 +35,14 @@ const hints = {
 };
 
 const formSchema = z.object({
-  goId: z.string().min(1, "GO ID is required"),
+  term: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      aspect: z.enum(["", ...GO_ASPECTS] as const),
+    })
+    .refine((data) => data.id !== "GO:", "GO ID is required")
+    .refine((data) => !!data.name && data.aspect, "GO ID is invalid"),
   geneProduct: z.enum(GENE_PRODUCTS),
   evidence: z.string().min(1, "Evidence code is required"),
   pmid: z.string().min(1, "PubMed ID is required"),
@@ -44,7 +53,11 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const defaultValues: FormValues = {
-  goId: "",
+  term: {
+    id: "GO:",
+    name: "",
+    aspect: "",
+  },
   geneProduct: "protein",
   evidence: "",
   pmid: "",
@@ -78,34 +91,25 @@ const ProposeTermForm = ({
       }}
       className="space-y-6"
     >
-      <FieldGroup>
-        <form.Field
-          name="goId"
-          children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid;
-            return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name} hint={hints.goId}>
-                  *GO ID:
-                </FieldLabel>
-                <Input
-                  ref={firstInputRef}
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  aria-invalid={isInvalid}
-                  placeholder="GO:0000000"
-                  autoComplete="off"
-                />
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
-        />
-      </FieldGroup>
+      <form.Field
+        name="term"
+        children={(field) => {
+          const isInvalid =
+            field.state.meta.isTouched && !field.state.meta.isValid;
+          return (
+            <TermInputField
+              ref={firstInputRef}
+              isInvalid={isInvalid}
+              errors={field.state.meta.errors}
+              id={field.name}
+              name={field.name}
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={field.handleChange}
+            />
+          );
+        }}
+      />
 
       <FieldGroup>
         <form.Field
