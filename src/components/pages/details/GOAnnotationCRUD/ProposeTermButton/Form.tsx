@@ -2,6 +2,11 @@ import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 
 import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Field,
@@ -188,16 +193,21 @@ const ProposeTermForm = ({
                 <FieldLabel htmlFor={field.name} hint={hints.pmid}>
                   *PubMed ID:
                 </FieldLabel>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  aria-invalid={isInvalid}
-                  placeholder="e.g. 18586236"
-                  autoComplete="off"
-                />
+                <InputGroup>
+                  <InputGroupInput
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={isInvalid}
+                    placeholder="e.g. 18586236"
+                    autoComplete="off"
+                  />
+                  <InputGroupAddon align="inline-start">
+                    <span className="text-muted-foreground">PMID:</span>
+                  </InputGroupAddon>
+                </InputGroup>
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
             );
