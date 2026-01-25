@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 
+import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,11 @@ import ProposeTermForm from "./Form";
 const ProposeTermButton = ({ gene }: { gene: string }) => {
   const [open, setOpen] = useState(false);
   const closeForm = () => setOpen(false);
+
+  const [submittingType, setSubmittingType] = useState<"keep" | "close" | null>(
+    null,
+  );
+
   const formRef = useRef<HTMLFormElement>(null);
   const firstInputRef = useRef<HTMLInputElement>(null);
 
@@ -66,13 +72,26 @@ const ProposeTermButton = ({ gene }: { gene: string }) => {
             firstInputRef={firstInputRef}
             gene={gene}
             closeForm={closeForm}
+            finishSubmit={() => setSubmittingType(null)}
           />
         </div>
         <DialogFooter>
-          <Button variant="outline" form="go-form" value="submit">
+          <Button
+            variant="outline"
+            form="go-form"
+            value="submit"
+            onClick={() => setSubmittingType("keep")}
+          >
+            {submittingType === "keep" && <Spinner />}
             Submit & Propose another
           </Button>
-          <Button variant="primary" form="go-form" value="submit&close">
+          <Button
+            variant="primary"
+            form="go-form"
+            value="submit&close"
+            onClick={() => setSubmittingType("close")}
+          >
+            {submittingType === "close" && <Spinner />}
             Submit
           </Button>
         </DialogFooter>

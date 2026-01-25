@@ -85,12 +85,14 @@ const ProposeTermForm = ({
   firstInputRef,
   gene,
   closeForm,
+  finishSubmit,
 }: {
   id: string;
   ref: React.Ref<HTMLFormElement>;
   firstInputRef: React.Ref<HTMLInputElement>;
   gene: string;
   closeForm: () => void;
+  finishSubmit: () => void;
 }) => {
   const addGOAnnotation = useGOAnnotations((state) => state.add);
 
@@ -105,6 +107,7 @@ const ProposeTermForm = ({
         gene,
         ...value,
       }).then(() => {
+        finishSubmit();
         if (meta.shouldClose) closeForm();
       });
     },
