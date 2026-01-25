@@ -1,4 +1,6 @@
+import { Fragment } from "react";
 import { twMerge } from "tailwind-merge";
+import { clsx } from "clsx";
 
 import { Icon } from "@/components/ui/icon";
 import BeetleLoading from "@/components/common/BeetleLoading";
@@ -60,49 +62,60 @@ const AnnotationList: React.FC<AnnotationListProps> = ({
   }
 
   return (
-    <div className="space-y-8">
-      {annotations.map((annotation) => {
+    <div className="grid auto-rows-auto gap-y-2 gap-x-2 items-start">
+      {annotations.map((annotation, index) => {
         const isReviewed = annotation.status === "INTERNAL";
 
         return (
-          <div key={annotation.id} className="group">
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              <a
-                href={getLinkGeneOntologyTerm(annotation)}
-                target="_blank"
-                className="group/link inline-flex flex items-center gap-2 hover:text-primary transition-colors"
-              >
-                <span className="text-base font-bold">
-                  {annotation.term.id}
+          <Fragment key={annotation.id}>
+            <a
+              href={getLinkGeneOntologyTerm(annotation)}
+              target="_blank"
+              className="group/link flex gap-1.5 hover:text-primary transition-colors"
+            >
+              <span className="text-base font-bold">{annotation.term.id}</span>
+              <span>-</span>
+              <span>
+                <span className="text-base font-medium text-neutral-800 group-hover/link:text-primary/90 dark:text-neutral-200 mr-1.5">
+                  {annotation.term.name}
                 </span>
-                <span className="text-base font-medium text-neutral-800 group-hover/link:text-primary/90 dark:text-neutral-200">
-                  - {annotation.term.name}
-                </span>
-                <Icon name="open_in_new" className="text-lg text-neutral-400" />
-              </a>
+                <Icon
+                  name="open_in_new"
+                  className="h-5 align-middle text-lg text-neutral-400"
+                />
+              </span>
+            </a>
 
-              <div className="flex items-center gap-2 ml-2">
-                <a
-                  href={getLinkEvidence(annotation)}
-                  target="_blank"
-                  className="flex items-center gap-0.5 px-2 py-0.5 rounded bg-neutral-100 text-[10px] font-bold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700"
-                >
-                  {annotation.evidence}{" "}
-                  <Icon name="open_in_new" className="text-xs" />
-                </a>
-                <span
-                  className={twMerge(
-                    "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tight border",
-                    isReviewed
-                      ? "bg-green-50 text-green-600 border-green-100"
-                      : "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-500 border-amber-100 dark:border-amber-900/30",
-                  )}
-                >
-                  {isReviewed ? "REVIEWED" : annotation.status}
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 text-xs text-neutral-500 dark:text-neutral-400 pl-4">
+            <span className="h-6 flex items-center">
+              <a
+                href={getLinkEvidence(annotation)}
+                target="_blank"
+                className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-neutral-100 text-[10px] font-bold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700"
+              >
+                {annotation.evidence}{" "}
+                <Icon name="open_in_new" className="text-xs" />
+              </a>
+            </span>
+
+            <span className="justify-self-end h-6 flex items-center">
+              <span
+                className={twMerge(
+                  "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tight border",
+                  isReviewed
+                    ? "bg-green-50 text-green-500 border-green-100"
+                    : "bg-amber-50 text-amber-500 dark:bg-amber-900/20 dark:text-amber-500 border-amber-100 dark:border-amber-900/30",
+                )}
+              >
+                {isReviewed ? "REVIEWED" : annotation.status}
+              </span>
+            </span>
+
+            <div
+              className={clsx(
+                "col-span-3 flex items-center gap-4 text-xs text-neutral-500 dark:text-neutral-400",
+                index !== annotations.length - 1 && "mb-6",
+              )}
+            >
               {annotation.quotation && (
                 <div className="flex items-center gap-2">
                   <Icon
@@ -127,7 +140,7 @@ const AnnotationList: React.FC<AnnotationListProps> = ({
                 <Icon name="open_in_new" className="text-sm" />
               </a>
             </div>
-          </div>
+          </Fragment>
         );
       })}
     </div>

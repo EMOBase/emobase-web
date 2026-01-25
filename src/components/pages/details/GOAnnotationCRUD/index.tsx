@@ -44,7 +44,7 @@ const GOAnnotationCRUD: React.FC<GOAnnotationCRUDProps> = ({
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-sm overflow-hidden">
         <div className="p-8">
           <AnnotationList loading={loading} annotations={annotations} />
-          <div className="mt-8 pt-6 border-t border-neutral-100 dark:border-neutral-800">
+          <div className="mt-7 pt-6 border-t border-neutral-100 dark:border-neutral-800">
             <ProposeTermButton gene={gene} />
           </div>
         </div>
