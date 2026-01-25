@@ -103,14 +103,19 @@ const AnnotationList: React.FC<AnnotationListProps> = ({
               </div>
             </div>
             <div className="flex items-center gap-4 text-xs text-neutral-500 dark:text-neutral-400 pl-4">
-              <div className="flex items-center gap-2">
-                <Icon
-                  name="keyboard_double_arrow_right"
-                  className="text-base"
-                />
-                <span>{annotation.quotation}</span>
-                <Icon name="keyboard_double_arrow_left" className="text-base" />
-              </div>
+              {annotation.quotation && (
+                <div className="flex items-center gap-2">
+                  <Icon
+                    name="keyboard_double_arrow_right"
+                    className="text-base"
+                  />
+                  <span>{annotation.quotation}</span>
+                  <Icon
+                    name="keyboard_double_arrow_left"
+                    className="text-base"
+                  />
+                </div>
+              )}
               <a
                 href={getLinkReference(annotation)}
                 target="_blank"
