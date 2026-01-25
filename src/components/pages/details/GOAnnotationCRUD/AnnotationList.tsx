@@ -67,17 +67,20 @@ const AnnotationList: React.FC<AnnotationListProps> = ({
         return (
           <div key={annotation.id} className="group">
             <div className="flex flex-wrap items-center gap-2 mb-2">
-              <span className="text-base font-bold">{annotation.term.id}</span>
-              <span className="text-base font-medium text-neutral-800 dark:text-neutral-200">
-                - {annotation.term.name}
-              </span>
               <a
                 href={getLinkGeneOntologyTerm(annotation)}
                 target="_blank"
-                className="inline-flex text-neutral-400 hover:text-primary transition-colors"
+                className="group/link inline-flex flex items-center gap-2 hover:text-primary transition-colors"
               >
-                <Icon name="open_in_new" className="text-lg" />
+                <span className="text-base font-bold">
+                  {annotation.term.id}
+                </span>
+                <span className="text-base font-medium text-neutral-800 group-hover/link:text-primary/90 dark:text-neutral-200">
+                  - {annotation.term.name}
+                </span>
+                <Icon name="open_in_new" className="text-lg text-neutral-400" />
               </a>
+
               <div className="flex items-center gap-2 ml-2">
                 <a
                   href={getLinkEvidence(annotation)}
