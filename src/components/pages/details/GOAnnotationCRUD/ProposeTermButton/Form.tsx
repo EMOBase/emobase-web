@@ -72,11 +72,11 @@ const defaultValues: FormValues = {
 };
 
 type FormMeta = {
-  close?: boolean;
+  shouldClose?: boolean;
 };
 
 const defaultMeta: FormMeta = {
-  close: false,
+  shouldClose: false,
 };
 
 const ProposeTermForm = ({
@@ -105,7 +105,7 @@ const ProposeTermForm = ({
         gene,
         ...value,
       }).then(() => {
-        if (meta.close) closeForm();
+        if (meta.shouldClose) closeForm();
       });
     },
   });
@@ -126,8 +126,7 @@ const ProposeTermForm = ({
             submitterValue = submitter.value;
           }
         }
-        console.log("submitter value", submitterValue);
-        form.handleSubmit({ close: submitterValue === "submit&close" });
+        form.handleSubmit({ shouldClose: submitterValue === "submit&close" });
       }}
       className="space-y-6"
     >

@@ -69,20 +69,10 @@ const ProposeTermButton = ({ gene }: { gene: string }) => {
           />
         </div>
         <DialogFooter>
-          <Button
-            variant="outline"
-            form="go-form"
-            value="submit"
-            onClick={(e) => formRef.current?.requestSubmit(e.currentTarget)}
-          >
+          <Button variant="outline" form="go-form" value="submit">
             Submit & Propose another
           </Button>
-          <Button
-            variant="primary"
-            form="go-form"
-            value="submit&close"
-            onClick={(e) => formRef.current?.requestSubmit(e.currentTarget)}
-          >
+          <Button variant="primary" form="go-form" value="submit&close">
             Submit
           </Button>
         </DialogFooter>
