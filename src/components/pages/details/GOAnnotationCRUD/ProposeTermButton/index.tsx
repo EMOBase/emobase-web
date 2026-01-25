@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,14 @@ import {
 
 import ProposeTermForm from "./Form";
 
-const ProposeTermButton = () => {
+const ProposeTermButton = ({ gene }: { gene: string }) => {
+  const [open, setOpen] = useState(false);
+  const closeForm = () => setOpen(false);
   const formRef = useRef<HTMLFormElement>(null);
   const firstInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="px-4 py-2">
           <Icon name="add" weight={500} className="text-xl" />
@@ -58,13 +60,28 @@ const ProposeTermButton = () => {
             consortium.
           </p>
 
-          <ProposeTermForm ref={formRef} firstInputRef={firstInputRef} />
+          <ProposeTermForm
+            id="go-form"
+            ref={formRef}
+            firstInputRef={firstInputRef}
+            gene={gene}
+            closeForm={closeForm}
+          />
         </div>
         <DialogFooter>
-          <Button variant="outline">Submit & Propose another</Button>
+          <Button
+            variant="outline"
+            form="go-form"
+            value="submit"
+            onClick={(e) => formRef.current?.requestSubmit(e.currentTarget)}
+          >
+            Submit & Propose another
+          </Button>
           <Button
             variant="primary"
-            onClick={() => formRef.current?.requestSubmit()}
+            form="go-form"
+            value="submit&close"
+            onClick={(e) => formRef.current?.requestSubmit(e.currentTarget)}
           >
             Submit
           </Button>

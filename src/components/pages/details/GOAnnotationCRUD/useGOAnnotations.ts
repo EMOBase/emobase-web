@@ -13,8 +13,8 @@ type State = {
 
 type Action = {
   setData: (data: GOAnnotation[]) => void;
-  add: (input: GOAnnotationInput) => void;
-  remove: (id: string) => void;
+  add: (input: GOAnnotationInput) => Promise<void>;
+  remove: (id: string) => Promise<void>;
 };
 
 const useGOAnnotations = createStore<State & Action>((set) => ({

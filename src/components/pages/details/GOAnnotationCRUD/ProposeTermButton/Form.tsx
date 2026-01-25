@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { GENE_PRODUCTS, GO_ASPECTS } from "@/utils/constants/goannotation";
 
+import useGOAnnotations from "../useGOAnnotations";
 import TermInputField from "./TermInputField";
 
 const hints = {
@@ -70,29 +71,63 @@ const defaultValues: FormValues = {
   lab: "",
 };
 
+type FormMeta = {
+  close?: boolean;
+};
+
+const defaultMeta: FormMeta = {
+  close: false,
+};
+
 const ProposeTermForm = ({
+  id,
   ref,
   firstInputRef,
+  gene,
+  closeForm,
 }: {
+  id: string;
   ref: React.Ref<HTMLFormElement>;
   firstInputRef: React.Ref<HTMLInputElement>;
+  gene: string;
+  closeForm: () => void;
 }) => {
+  const addGOAnnotation = useGOAnnotations((state) => state.add);
+
   const form = useForm({
     defaultValues,
     validators: {
       onChange: formSchema,
     },
-    onSubmit: async ({ value }) => {
-      console.log("onSubmit", value);
+    onSubmitMeta: defaultMeta,
+    onSubmit: async ({ value, meta }) => {
+      addGOAnnotation({
+        gene,
+        ...value,
+      }).then(() => {
+        if (meta.close) closeForm();
+      });
     },
   });
 
   return (
     <form
       ref={ref}
+      id={id}
       onSubmit={(e) => {
         e.preventDefault();
-        form.handleSubmit();
+        let submitterValue = null;
+        if (e.nativeEvent instanceof SubmitEvent) {
+          const submitter = e.nativeEvent.submitter;
+          if (
+            submitter instanceof HTMLButtonElement ||
+            submitter instanceof HTMLInputElement
+          ) {
+            submitterValue = submitter.value;
+          }
+        }
+        console.log("submitter value", submitterValue);
+        form.handleSubmit({ close: submitterValue === "submit&close" });
       }}
       className="space-y-6"
     >
