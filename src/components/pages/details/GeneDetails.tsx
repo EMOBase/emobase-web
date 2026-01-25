@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import { type IBDsRNA } from "@/utils/constants/ibeetle";
 import type {
   TriboliumGene,

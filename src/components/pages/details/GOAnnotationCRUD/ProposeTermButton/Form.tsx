@@ -1,6 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import {
   InputGroup,
@@ -107,6 +108,7 @@ const ProposeTermForm = ({
         gene,
         ...value,
       }).then(() => {
+        toast.success("GO Annotation proposed");
         finishSubmit();
         if (meta.shouldClose) closeForm();
       });

@@ -4,6 +4,7 @@ import { ClientRouter } from "astro:transitions";
 import LoadingIndicator from "astro-loading-indicator/component";
 
 import "@/styles/global.css";
+import { Toaster } from "@/components/ui/sonner";
 import Sidebar from "@/components/layouts/Sidebar";
 
 const url = Astro.url.pathname;
@@ -30,6 +31,7 @@ const url = Astro.url.pathname;
     <LoadingIndicator color="var(--primary)" />
   </head>
   <body class="h-screen w-full overflow-hidden flex">
+    <Toaster client:load transition:persist />
     <Sidebar url={url} client:load transition:persist />
     <main
       class="flex-1 overflow-y-auto scroll-smooth p-6 md:p-10 scroll-p-6 md:scroll-p-10"
