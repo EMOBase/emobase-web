@@ -72,25 +72,15 @@ const ProposeTermButton = ({ gene }: { gene: string }) => {
             firstInputRef={firstInputRef}
             gene={gene}
             closeForm={closeForm}
-            finishSubmit={() => setSubmittingType(null)}
+            setSubmittingType={setSubmittingType}
           />
         </div>
         <DialogFooter>
-          <Button
-            variant="outline"
-            form="go-form"
-            value="submit"
-            onClick={() => setSubmittingType("keep")}
-          >
+          <Button variant="outline" form="go-form" value="submit">
             {submittingType === "keep" && <Spinner />}
             Submit & Propose another
           </Button>
-          <Button
-            variant="primary"
-            form="go-form"
-            value="submit&close"
-            onClick={() => setSubmittingType("close")}
-          >
+          <Button variant="primary" form="go-form" value="submit&close">
             {submittingType === "close" && <Spinner />}
             Submit
           </Button>

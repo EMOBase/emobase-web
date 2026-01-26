@@ -86,14 +86,14 @@ const ProposeTermForm = ({
   firstInputRef,
   gene,
   closeForm,
-  finishSubmit,
+  setSubmittingType,
 }: {
   id: string;
   ref: React.Ref<HTMLFormElement>;
   firstInputRef: React.Ref<HTMLInputElement>;
   gene: string;
   closeForm: () => void;
-  finishSubmit: () => void;
+  setSubmittingType: (value: "keep" | "close" | null) => void;
 }) => {
   const addGOAnnotation = useGOAnnotations((state) => state.add);
 
@@ -104,12 +104,13 @@ const ProposeTermForm = ({
     },
     onSubmitMeta: defaultMeta,
     onSubmit: async ({ value, meta }) => {
+      setSubmittingType(meta.shouldClose ? "close" : "keep");
       addGOAnnotation({
         gene,
         ...value,
       }).then(() => {
         toast.success("GO Annotation proposed");
-        finishSubmit();
+        setSubmittingType(null);
         if (meta.shouldClose) closeForm();
       });
     },
