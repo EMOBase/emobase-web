@@ -147,6 +147,8 @@ const ProposeTermForm = ({
               errors={field.state.meta.errors}
               id={field.name}
               name={field.name}
+              label="GO ID"
+              hint={hints.goId}
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={field.handleChange}
@@ -163,7 +165,7 @@ const ProposeTermForm = ({
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>*Gene product</FieldLabel>
+                <FieldLabel htmlFor={field.name}>Gene product</FieldLabel>
                 <Select
                   name={field.name}
                   value={field.state.value}
@@ -202,7 +204,7 @@ const ProposeTermForm = ({
                   hint={hints.evidence}
                   link="http://geneontology.org/docs/guide-go-evidence-codes/"
                 >
-                  *Evidence code:
+                  Evidence code
                 </FieldLabel>
                 <Input
                   id={field.name}
@@ -230,7 +232,7 @@ const ProposeTermForm = ({
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name} hint={hints.pmid}>
-                  *PubMed ID:
+                  PubMed ID
                 </FieldLabel>
                 <InputGroup>
                   <InputGroupInput
@@ -262,8 +264,12 @@ const ProposeTermForm = ({
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name} hint={hints.quotation}>
-                  Quotation:
+                <FieldLabel
+                  htmlFor={field.name}
+                  optional
+                  hint={hints.quotation}
+                >
+                  Quotation
                 </FieldLabel>
                 <Textarea
                   id={field.name}
@@ -290,7 +296,7 @@ const ProposeTermForm = ({
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>*Lab name:</FieldLabel>
+                <FieldLabel htmlFor={field.name}>Lab name</FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}

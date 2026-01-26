@@ -114,10 +114,12 @@ function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
 function FieldLabel({
   className,
   children,
+  optional,
   hint,
   link,
   ...props
 }: React.ComponentProps<typeof Label> & {
+  optional?: boolean;
   hint?: string;
   link?: string;
 }) {
@@ -125,7 +127,7 @@ function FieldLabel({
     <Label
       data-slot="field-label"
       className={cn(
-        "group/field-label peer/field-label flex w-fit gap-1 leading-snug group-data-[disabled=true]/field:opacity-50 font-bold text-sm",
+        "group/field-label peer/field-label flex w-fit gap-1.5 leading-snug group-data-[disabled=true]/field:opacity-50 font-bold text-sm",
         "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>*]:data-[slot=field]:p-4",
         "has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10",
         className,
@@ -133,22 +135,29 @@ function FieldLabel({
       {...props}
     >
       {children}
-      {hint && (
-        <Tooltip>
-          <TooltipTrigger className="flex">
-            <Icon
-              name="help"
-              className="text-lg text-neutral-400 cursor-help"
-            />
-          </TooltipTrigger>
-          <TooltipContent>{hint}</TooltipContent>
-        </Tooltip>
+      {optional && (
+        <span className="font-normal text-xs italic text-neutral-400 -ml-0.5">
+          (optional)
+        </span>
       )}
-      {link && (
-        <a href={link} target="_blank" className="flex">
-          <Icon name="open_in_new" className="text-lg text-neutral-400" />
-        </a>
-      )}
+      <span className="flex gap-1">
+        {hint && (
+          <Tooltip>
+            <TooltipTrigger className="flex">
+              <Icon
+                name="help"
+                className="text-lg text-neutral-400 cursor-help"
+              />
+            </TooltipTrigger>
+            <TooltipContent>{hint}</TooltipContent>
+          </Tooltip>
+        )}
+        {link && (
+          <a href={link} target="_blank" className="flex">
+            <Icon name="open_in_new" className="text-lg text-neutral-400" />
+          </a>
+        )}
+      </span>
     </Label>
   );
 }

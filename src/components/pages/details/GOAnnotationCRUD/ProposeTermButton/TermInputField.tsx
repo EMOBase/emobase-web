@@ -23,6 +23,7 @@ type TermInputFieldProps = {
   value: Term;
   onChange: (v: Term) => void;
   label?: string;
+  hint?: string;
   isInvalid?: boolean;
   errors?: React.ComponentProps<typeof FieldError>["errors"];
 } & Omit<React.ComponentProps<typeof InputGroupInput>, "value" | "onChange">;
@@ -32,6 +33,7 @@ const TermInputField: React.FC<TermInputFieldProps> = ({
   value,
   onChange,
   label,
+  hint,
   name,
   isInvalid,
   errors,
@@ -68,7 +70,11 @@ const TermInputField: React.FC<TermInputFieldProps> = ({
   return (
     <FieldGroup>
       <Field data-invalid={isInvalid}>
-        {label && <FieldLabel htmlFor={name}>*Lab name:</FieldLabel>}
+        {label && (
+          <FieldLabel htmlFor={name} hint={hint}>
+            {label}
+          </FieldLabel>
+        )}
         <InputGroup>
           <InputGroupInput
             ref={ref}
