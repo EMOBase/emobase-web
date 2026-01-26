@@ -22,7 +22,6 @@ const ProposeTermButton = ({ gene }: { gene: string }) => {
     null,
   );
 
-  const formRef = useRef<HTMLFormElement>(null);
   const firstInputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -68,7 +67,6 @@ const ProposeTermButton = ({ gene }: { gene: string }) => {
 
           <ProposeTermForm
             id="go-form"
-            ref={formRef}
             firstInputRef={firstInputRef}
             gene={gene}
             closeForm={closeForm}

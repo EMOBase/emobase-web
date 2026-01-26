@@ -89,7 +89,7 @@ const ProposeTermForm = ({
   setSubmittingType,
 }: {
   id: string;
-  ref: React.Ref<HTMLFormElement>;
+  ref?: React.Ref<HTMLFormElement>;
   firstInputRef: React.Ref<HTMLInputElement>;
   gene: string;
   closeForm: () => void;
