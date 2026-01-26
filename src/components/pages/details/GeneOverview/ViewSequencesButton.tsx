@@ -51,7 +51,7 @@ const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
         <Icon name={icon} className="text-base" />
         {text}
       </DialogTrigger>
-      <DialogContent className="max-w-xl max-h-9/10 flex flex-col">
+      <DialogContent className="max-h-9/10 flex flex-col">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

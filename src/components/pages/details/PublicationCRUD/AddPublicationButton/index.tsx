@@ -11,6 +11,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import AddPublicationForm from "./Form";
+
 const AddPublicationButton = () => {
   const [open, setOpen] = useState(false);
 
@@ -22,15 +24,17 @@ const AddPublicationButton = () => {
           Add a Publication
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-xl max-h-9/10 flex flex-col">
+      <DialogContent className="max-h-9/10 flex flex-col">
         <DialogHeader>
           <DialogTitle>Add a Publication</DialogTitle>
         </DialogHeader>
-        <div className="flex-1 overflow-y-auto px-6 pt-2 pb-4 space-y-6 scrollbar-thin">
-          <div className="h-[500px]">Add publication form</div>
+        <div className="flex-1 overflow-y-auto p-8 bg-white">
+          <AddPublicationForm id="publication-form" />
         </div>
         <DialogFooter>
-          <Button variant="primary">Submit</Button>
+          <Button variant="primary" form="publication-form">
+            Submit
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

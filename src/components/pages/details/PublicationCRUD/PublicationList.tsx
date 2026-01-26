@@ -105,7 +105,7 @@ const PublicationItem: React.FC<PublicationItemProps> = ({
           <DialogTrigger className="px-3 py-1 rounded bg-neutral-100 text-neutral-600 text-[10px] font-bold hover:bg-neutral-200 transition-colors uppercase tracking-wider">
             Cite
           </DialogTrigger>
-          <DialogContent className="max-w-xl max-h-9/10 flex flex-col">
+          <DialogContent className="max-h-9/10 flex flex-col">
             <DialogHeader>
               <DialogTitle>Cite</DialogTitle>
             </DialogHeader>

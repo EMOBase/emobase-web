@@ -136,7 +136,7 @@ function FieldLabel({
     >
       {children}
       {optional && (
-        <span className="font-normal text-xs italic text-neutral-400 -ml-0.5">
+        <span className="font-normal text-xs italic text-neutral-400">
           (optional)
         </span>
       )}
