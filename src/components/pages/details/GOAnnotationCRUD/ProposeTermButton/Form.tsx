@@ -105,14 +105,13 @@ const ProposeTermForm = ({
     onSubmitMeta: defaultMeta,
     onSubmit: async ({ value, meta }) => {
       setSubmittingType(meta.shouldClose ? "close" : "keep");
-      addGOAnnotation({
+      await addGOAnnotation({
         gene,
         ...value,
-      }).then(() => {
-        toast.success("GO Annotation proposed");
-        setSubmittingType(null);
-        if (meta.shouldClose) closeForm();
       });
+      toast.success("GO Annotation proposed");
+      setSubmittingType(null);
+      if (meta.shouldClose) closeForm();
     },
   });
 
