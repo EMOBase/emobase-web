@@ -1,5 +1,4 @@
 import { useState, Fragment } from "react";
-import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 
 import { Icon } from "@/components/ui/icon";
@@ -11,12 +10,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
+import { useAppForm } from "@/hooks/form/useAppForm";
 
 const hints = {
   reference:
@@ -62,7 +57,7 @@ const defaultValues: FormValues = {
 const AddPublicationForm = ({ id }: { id: string }) => {
   const [isManual, setIsManual] = useState(false);
 
-  const form = useForm({
+  const form = useAppForm({
     defaultValues,
     validators: {
       onChange: formSchema,
@@ -106,38 +101,16 @@ const AddPublicationForm = ({ id }: { id: string }) => {
               fields manually.
             </p>
           </div>
-          <FieldGroup>
-            <form.Field
-              name="pmid"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>PubMed ID</FieldLabel>
-                    <InputGroup>
-                      <InputGroupInput
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        aria-invalid={isInvalid}
-                        placeholder="e.g. 18586236"
-                        autoComplete="off"
-                      />
-                      <InputGroupAddon align="inline-start">
-                        <span className="text-muted-foreground">PMID:</span>
-                      </InputGroupAddon>
-                    </InputGroup>
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                );
-              }}
-            />
-          </FieldGroup>
+          <form.AppField
+            name="pmid"
+            children={(field) => (
+              <field.InputGroupField
+                label="PubMed ID"
+                placeholder="e.g. 18586236"
+                leftAddon="PMID:"
+              />
+            )}
+          />
         </>
       ) : (
         <>
@@ -217,166 +190,37 @@ const AddPublicationForm = ({ id }: { id: string }) => {
             />
           </FieldGroup>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FieldGroup>
-              <form.Field
-                name="doi"
-                children={(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel htmlFor={field.name}>DOI</FieldLabel>
-                      <Input
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        aria-invalid={isInvalid}
-                        autoComplete="off"
-                      />
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  );
-                }}
-              />
-            </FieldGroup>
-            <FieldGroup>
-              <form.Field
-                name="year"
-                children={(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel htmlFor={field.name}>Year</FieldLabel>
-                      <Input
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        aria-invalid={isInvalid}
-                        autoComplete="off"
-                      />
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  );
-                }}
-              />
-            </FieldGroup>
+            <form.AppField
+              name="doi"
+              children={(field) => <field.InputField label="DOI" />}
+            />
+            <form.AppField
+              name="year"
+              children={(field) => <field.InputField label="Year" />}
+            />
           </div>
-          <FieldGroup>
-            <form.Field
-              name="title"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Title</FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      autoComplete="off"
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                );
-              }}
-            />
-          </FieldGroup>
-          <FieldGroup>
-            <form.Field
-              name="journal"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Journal</FieldLabel>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      autoComplete="off"
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                );
-              }}
-            />
-          </FieldGroup>
-          <FieldGroup>
-            <form.Field
-              name="abstract"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Abstract</FieldLabel>
-                    <Textarea
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      autoComplete="off"
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                );
-              }}
-            />
-          </FieldGroup>
-          <FieldGroup>
-            <form.Field
-              name="reference"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name} hint={hints.reference}>
-                      Complete reference
-                    </FieldLabel>
-                    <Textarea
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      autoComplete="off"
-                      className="min-h-25"
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                );
-              }}
-            />
-          </FieldGroup>
+          <form.AppField
+            name="title"
+            children={(field) => <field.InputField label="Title" />}
+          />
+          <form.AppField
+            name="journal"
+            children={(field) => <field.InputField label="Journal" />}
+          />
+          <form.AppField
+            name="abstract"
+            children={(field) => <field.TextareaField label="Abstract" />}
+          />
+          <form.AppField
+            name="reference"
+            children={(field) => (
+              <field.TextareaField
+                label="Complete reference"
+                hint={hints.reference}
+                className="min-h-25"
+              />
+            )}
+          />
         </>
       )}
     </form>
