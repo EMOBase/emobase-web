@@ -1,7 +1,6 @@
-import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
-
 import { toast } from "sonner";
+
 import { Input } from "@/components/ui/input";
 import {
   InputGroup,
@@ -22,6 +21,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { useAppForm } from "@/hooks/form/useAppForm";
 import { GENE_PRODUCTS, GO_ASPECTS } from "@/utils/constants/goannotation";
 
 import useGOAnnotations from "../useGOAnnotations";
@@ -97,7 +97,7 @@ const ProposeTermForm = ({
 }) => {
   const addGOAnnotation = useGOAnnotations((state) => state.add);
 
-  const form = useForm({
+  const form = useAppForm({
     defaultValues,
     validators: {
       onChange: formSchema,
@@ -135,7 +135,7 @@ const ProposeTermForm = ({
       }}
       className="space-y-6"
     >
-      <form.Field
+      <form.AppField
         name="term"
         children={(field) => {
           const isInvalid =
@@ -157,161 +157,79 @@ const ProposeTermForm = ({
         }}
       />
 
-      <FieldGroup>
-        <form.Field
-          name="geneProduct"
-          children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid;
-            return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Gene product</FieldLabel>
-                <Select
-                  name={field.name}
-                  value={field.state.value}
-                  onValueChange={(v) =>
-                    field.handleChange(v as (typeof GENE_PRODUCTS)[number])
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {GENE_PRODUCTS.map((item) => (
-                      <SelectItem key={item} value={item}>
-                        {item}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
-        />
-      </FieldGroup>
+      <form.AppField
+        name="geneProduct"
+        children={(field) => {
+          const isInvalid =
+            field.state.meta.isTouched && !field.state.meta.isValid;
+          return (
+            <Field data-invalid={isInvalid}>
+              <FieldLabel htmlFor={field.name}>Gene product</FieldLabel>
+              <Select
+                name={field.name}
+                value={field.state.value}
+                onValueChange={(v) =>
+                  field.handleChange(v as (typeof GENE_PRODUCTS)[number])
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {GENE_PRODUCTS.map((item) => (
+                    <SelectItem key={item} value={item}>
+                      {item}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {isInvalid && <FieldError errors={field.state.meta.errors} />}
+            </Field>
+          );
+        }}
+      />
 
       <FieldGroup>
-        <form.Field
+        <form.AppField
           name="evidence"
-          children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid;
-            return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel
-                  htmlFor={field.name}
-                  hint={hints.evidence}
-                  link="http://geneontology.org/docs/guide-go-evidence-codes/"
-                >
-                  Evidence code
-                </FieldLabel>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  aria-invalid={isInvalid}
-                  placeholder="e.g. IMP"
-                  autoComplete="off"
-                />
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
+          children={(field) => (
+            <field.InputField
+              label="Evidence code"
+              hint={hints.evidence}
+              link="http://geneontology.org/docs/guide-go-evidence-codes/"
+              placeholder="e.g. IMP"
+            />
+          )}
         />
       </FieldGroup>
 
-      <FieldGroup>
-        <form.Field
-          name="pmid"
-          children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid;
-            return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name} hint={hints.pmid}>
-                  PubMed ID
-                </FieldLabel>
-                <InputGroup>
-                  <InputGroupInput
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    aria-invalid={isInvalid}
-                    placeholder="e.g. 18586236"
-                    autoComplete="off"
-                  />
-                  <InputGroupAddon align="inline-start">
-                    <span className="text-muted-foreground">PMID:</span>
-                  </InputGroupAddon>
-                </InputGroup>
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
-        />
-      </FieldGroup>
+      <form.AppField
+        name="pmid"
+        children={(field) => (
+          <field.InputGroupField
+            label="PubMed ID"
+            hint={hints.pmid}
+            placeholder="e.g. 18586236"
+            leftAddon="PMID:"
+          />
+        )}
+      />
 
-      <FieldGroup>
-        <form.Field
-          name="quotation"
-          children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid;
-            return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel
-                  htmlFor={field.name}
-                  optional
-                  hint={hints.quotation}
-                >
-                  Quotation
-                </FieldLabel>
-                <Textarea
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  aria-invalid={isInvalid}
-                  placeholder="Relevant section from the publication"
-                  autoComplete="off"
-                />
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
-        />
-      </FieldGroup>
+      <form.AppField
+        name="quotation"
+        children={(field) => (
+          <field.TextareaField
+            label="Quotation"
+            hint={hints.quotation}
+            placeholder="Relevant section from the publication"
+          />
+        )}
+      />
 
-      <FieldGroup>
-        <form.Field
-          name="lab"
-          children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid;
-            return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Lab name</FieldLabel>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  aria-invalid={isInvalid}
-                  autoComplete="off"
-                />
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
-        />
-      </FieldGroup>
+      <form.AppField
+        name="quotation"
+        children={(field) => <field.InputField label="Lab name" />}
+      />
     </form>
   );
 };
