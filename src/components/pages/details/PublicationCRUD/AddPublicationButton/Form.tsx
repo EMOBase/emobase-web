@@ -20,9 +20,52 @@ const AddPublicationForm = ({ id }: { id: string }) => {
   });
 
   const onPubmed = useStore(form.store, (state) => state.values.onPubmed);
+  const pmidNotEmpty = useStore(
+    form.store,
+    (state) => state.values.pmid.length > 0,
+  );
+
   useEffect(() => {
     form.reset({ ...formOptions.defaultValues, onPubmed });
   }, [onPubmed]);
+
+  const fields = (
+    <>
+      <AuthorsField form={form} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form.AppField
+          name="doi"
+          children={(field) => <field.InputField label="DOI" />}
+        />
+        <form.AppField
+          name="year"
+          children={(field) => <field.InputField label="Year" />}
+        />
+      </div>
+      <form.AppField
+        name="title"
+        children={(field) => <field.InputField label="Title" />}
+      />
+      <form.AppField
+        name="journal"
+        children={(field) => <field.InputField label="Journal" />}
+      />
+      <form.AppField
+        name="abstract"
+        children={(field) => <field.TextareaField label="Abstract" />}
+      />
+      <form.AppField
+        name="reference"
+        children={(field) => (
+          <field.TextareaField
+            label="Complete reference"
+            hint={hints.reference}
+            className="min-h-25"
+          />
+        )}
+      />
+    </>
+  );
 
   return (
     <form
@@ -37,10 +80,7 @@ const AddPublicationForm = ({ id }: { id: string }) => {
         <form.AppField
           name="onPubmed"
           children={(field) => (
-            <field.CheckboxField
-              reverseValue
-              label="My publication is not on PubMed"
-            />
+            <field.CheckboxField label="My publication is on PubMed" />
           )}
         />
       </div>
@@ -59,48 +99,17 @@ const AddPublicationForm = ({ id }: { id: string }) => {
             children={(field) => (
               <field.InputGroupField
                 label="PubMed ID"
+                type="number"
                 placeholder="e.g. 18586236"
                 leftAddon="PMID:"
+                className="[appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
               />
             )}
           />
+          {pmidNotEmpty && fields}
         </>
       ) : (
-        <>
-          <AuthorsField form={form} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <form.AppField
-              name="doi"
-              children={(field) => <field.InputField label="DOI" />}
-            />
-            <form.AppField
-              name="year"
-              children={(field) => <field.InputField label="Year" />}
-            />
-          </div>
-          <form.AppField
-            name="title"
-            children={(field) => <field.InputField label="Title" />}
-          />
-          <form.AppField
-            name="journal"
-            children={(field) => <field.InputField label="Journal" />}
-          />
-          <form.AppField
-            name="abstract"
-            children={(field) => <field.TextareaField label="Abstract" />}
-          />
-          <form.AppField
-            name="reference"
-            children={(field) => (
-              <field.TextareaField
-                label="Complete reference"
-                hint={hints.reference}
-                className="min-h-25"
-              />
-            )}
-          />
-        </>
+        fields
       )}
     </form>
   );

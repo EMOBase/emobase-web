@@ -19,7 +19,7 @@ const formSchema = z
     reference: z.string().min(1, "Reference is required"),
   })
   .refine((data) => !data.onPubmed || !!data.pmid, {
-    message: `PubMed ID is required. If your publication isn't on PubMed, pls check the box "My publication is not on PubMed"`,
+    message: `PubMed ID is required. If your publication isn't on PubMed, pls uncheck the box "My publication is on PubMed"`,
     path: ["pmid"],
   });
 
