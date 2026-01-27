@@ -54,7 +54,6 @@ export async function fetchPubMedArticle(
     : pubmedArticle?.MedlineCitation;
 
   if (!article) return null;
-  if (!article) return null;
 
   const articleInfo = article.Article;
 
@@ -90,4 +89,25 @@ export async function fetchPubMedArticle(
     authors,
     doi: doiEntry?.["#text"] ?? "",
   };
+}
+
+type PubMedCitationStyle = {
+  orig: string;
+  format: string;
+};
+
+export type PubMedCitations = {
+  id: string;
+  ama?: PubMedCitationStyle;
+  apa?: PubMedCitationStyle;
+  mla?: PubMedCitationStyle;
+  nlm?: PubMedCitationStyle;
+};
+
+export async function fetchPubMedCitation(
+  pmid: string,
+): Promise<PubMedCitations | null> {
+  const res = await fetch(`/api/pubmed/${pmid}`);
+  if (!res.ok) return null;
+  return res.json();
 }

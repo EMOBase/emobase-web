@@ -5,7 +5,11 @@ import { useDebounceValue } from "usehooks-ts";
 import { withForm } from "@/hooks/form/useAppForm";
 import { Spinner } from "@/components/ui/spinner";
 
-import { fetchPubMedArticle, type PubMedArticle } from "./pubmed";
+import {
+  fetchPubMedArticle,
+  fetchPubMedCitation,
+  type PubMedArticle,
+} from "./pubmed";
 import formOptions from "./formOptions";
 
 function isValidPMID(input: string) {
@@ -22,14 +26,19 @@ const PubMedIdField = withForm({
     const [debouncedPMID] = useDebounceValue(pmid, 500);
 
     useEffect(() => {
-      if (!isValidPMID(pmid)) return;
+      if (!isValidPMID(debouncedPMID)) return;
       setLoading(true);
-      fetchPubMedArticle(debouncedPMID)?.then((result) => {
-        if (result) {
-          const fields = Object.keys(result) as (keyof PubMedArticle)[];
+      Promise.all([
+        fetchPubMedArticle(debouncedPMID),
+        fetchPubMedCitation(debouncedPMID),
+      ]).then((result) => {
+        const [article, citation] = result;
+        if (article) {
+          const fields = Object.keys(article) as (keyof PubMedArticle)[];
           fields.forEach((field) => {
-            form.setFieldValue(field, result[field]);
+            form.setFieldValue(field, article[field]);
           });
+          form.setFieldValue("reference", citation?.nlm?.format ?? "");
           setLoading(false);
         }
       });
