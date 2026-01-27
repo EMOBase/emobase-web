@@ -27,7 +27,8 @@ const AddPublicationForm = ({ id }: { id: string }) => {
   );
 
   useEffect(() => {
-    form.reset({ ...formOptions.defaultValues, onPubmed });
+    form.reset();
+    form.setFieldValue("onPubmed", onPubmed);
   }, [onPubmed]);
 
   const fields = (
