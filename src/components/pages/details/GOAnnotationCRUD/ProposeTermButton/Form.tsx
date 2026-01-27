@@ -1,26 +1,6 @@
 import * as z from "zod";
 import { toast } from "sonner";
 
-import { Input } from "@/components/ui/input";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { useAppForm } from "@/hooks/form/useAppForm";
 import { GENE_PRODUCTS, GO_ASPECTS } from "@/utils/constants/goannotation";
 
@@ -159,49 +139,22 @@ const ProposeTermForm = ({
 
       <form.AppField
         name="geneProduct"
-        children={(field) => {
-          const isInvalid =
-            field.state.meta.isTouched && !field.state.meta.isValid;
-          return (
-            <Field data-invalid={isInvalid}>
-              <FieldLabel htmlFor={field.name}>Gene product</FieldLabel>
-              <Select
-                name={field.name}
-                value={field.state.value}
-                onValueChange={(v) =>
-                  field.handleChange(v as (typeof GENE_PRODUCTS)[number])
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {GENE_PRODUCTS.map((item) => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {isInvalid && <FieldError errors={field.state.meta.errors} />}
-            </Field>
-          );
-        }}
+        children={(field) => (
+          <field.SelectField items={GENE_PRODUCTS} label="Gene product" />
+        )}
       />
 
-      <FieldGroup>
-        <form.AppField
-          name="evidence"
-          children={(field) => (
-            <field.InputField
-              label="Evidence code"
-              hint={hints.evidence}
-              link="http://geneontology.org/docs/guide-go-evidence-codes/"
-              placeholder="e.g. IMP"
-            />
-          )}
-        />
-      </FieldGroup>
+      <form.AppField
+        name="evidence"
+        children={(field) => (
+          <field.InputField
+            label="Evidence code"
+            hint={hints.evidence}
+            link="http://geneontology.org/docs/guide-go-evidence-codes/"
+            placeholder="e.g. IMP"
+          />
+        )}
+      />
 
       <form.AppField
         name="pmid"
