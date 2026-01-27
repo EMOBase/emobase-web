@@ -4,6 +4,7 @@ import { useStore } from "@tanstack/react-form";
 import { useAppForm } from "@/hooks/form/useAppForm";
 
 import formOptions from "./formOptions";
+import PubMedIdField from "./PubMedIdField";
 import AuthorsField from "./AuthorsField";
 
 const hints = {
@@ -94,18 +95,7 @@ const AddPublicationForm = ({ id }: { id: string }) => {
               fields manually.
             </p>
           </div>
-          <form.AppField
-            name="pmid"
-            children={(field) => (
-              <field.InputGroupField
-                label="PubMed ID"
-                type="number"
-                placeholder="e.g. 18586236"
-                leftAddon="PMID:"
-                className="[appearance:textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
-              />
-            )}
-          />
+          <PubMedIdField form={form} />
           {pmidNotEmpty && fields}
         </>
       ) : (

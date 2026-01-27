@@ -1,0 +1,93 @@
+import { XMLParser } from "fast-xml-parser";
+
+export type PubMedArticle = {
+  title: string;
+  abstract: string;
+  journal: string;
+  year: string;
+  authors: {
+    firstName: string;
+    lastName: string;
+  }[];
+  doi: string;
+};
+
+const parser = new XMLParser({
+  ignoreAttributes: false,
+  attributeNamePrefix: "@_",
+});
+
+/**
+ * Fetch and parse a PubMed article by PMID
+ */
+export async function fetchPubMedArticle(
+  pmid: string,
+  apiKey?: string,
+): Promise<PubMedArticle | null> {
+  const params = new URLSearchParams({
+    db: "pubmed",
+    id: pmid,
+    retmode: "xml",
+  });
+
+  if (apiKey) {
+    params.set("api_key", apiKey);
+  }
+
+  const url =
+    "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?" +
+    params.toString();
+
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    throw new Error(`PubMed fetch failed: ${res.status}`);
+  }
+
+  const xmlText = await res.text();
+  const json = parser.parse(xmlText);
+
+  const pubmedArticle = json?.PubmedArticleSet?.PubmedArticle;
+
+  const article = Array.isArray(pubmedArticle)
+    ? pubmedArticle[0]?.MedlineCitation
+    : pubmedArticle?.MedlineCitation;
+
+  if (!article) return null;
+  if (!article) return null;
+
+  const articleInfo = article.Article;
+
+  // Abstract may be string | array | undefined
+  const abstractText = articleInfo.Abstract?.AbstractText;
+  const abstract =
+    typeof abstractText === "string"
+      ? abstractText
+      : Array.isArray(abstractText)
+        ? abstractText.join("\n")
+        : "";
+
+  const authors =
+    articleInfo.AuthorList?.Author?.map((a: any) => ({
+      firstName: a.ForeName ?? "",
+      lastName: a.LastName ?? "",
+    })) ?? [];
+
+  const articleIds =
+    articleInfo.ELocationID ?? articleInfo?.ArticleIdList?.ArticleId ?? [];
+
+  const doiEntry = Array.isArray(articleIds)
+    ? articleIds.find((id) => id["@_EIdType"] === "doi")
+    : articleIds["@_EIdType"] === "doi"
+      ? articleIds
+      : null;
+
+  return {
+    title: articleInfo.ArticleTitle ?? "",
+    abstract,
+    journal: articleInfo.Journal?.Title ?? "",
+    year: articleInfo.Journal?.JournalIssue?.PubDate?.Year.toString() ?? "",
+    authors,
+    doi: doiEntry?.["#text"] ?? "",
+  };
+}
