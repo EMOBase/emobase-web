@@ -28,7 +28,7 @@ const AddPublicationButton = () => {
         <DialogHeader>
           <DialogTitle>Add a Publication</DialogTitle>
         </DialogHeader>
-        <div className="flex-1 overflow-y-auto p-8 bg-white">
+        <div className="flex-1 overflow-y-auto px-6 py-4">
           <AddPublicationForm id="publication-form" />
         </div>
         <DialogFooter>
