@@ -1,67 +1,20 @@
-import { useState, Fragment } from "react";
-import * as z from "zod";
+import { useState } from "react";
 
-import { Icon } from "@/components/ui/icon";
-import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useAppForm } from "@/hooks/form/useAppForm";
+
+import formOptions from "./formOptions";
+import AuthorsField from "./AuthorsField";
 
 const hints = {
   reference:
     "Complete reference in ANSI/NISO Z39.29-2005 (R2010) Bibliographic References standard (PubMed citation format)",
 };
 
-const formSchema = z
-  .object({
-    onPubmed: z.boolean(),
-    pmid: z.string(),
-    authors: z.array(
-      z.object({
-        firstName: z.string().min(1, "First name is required"),
-        lastName: z.string().min(1, "Last name is required"),
-      }),
-    ),
-    title: z.string().min(1, "Title is required"),
-    journal: z.string().min(1, "Journal is required"),
-    year: z.string().min(1, "Year is required"),
-    doi: z.string().min(1, "DOI is required"),
-    abstract: z.string().min(1, "Abstract is required"),
-    reference: z.string().min(1, "Reference is required"),
-  })
-  .refine((data) => !data.onPubmed || !!data.pmid, {
-    message: `PubMed ID is required. If your publication isn't on PubMed, pls check the box "My publication is not on PubMed"`,
-    path: ["pmid"],
-  });
-
-type FormValues = z.infer<typeof formSchema>;
-
-const defaultValues: FormValues = {
-  onPubmed: true,
-  authors: [{ firstName: "", lastName: "" }],
-  pmid: "",
-  title: "",
-  journal: "",
-  year: "",
-  doi: "",
-  abstract: "",
-  reference: "",
-};
-
 const AddPublicationForm = ({ id }: { id: string }) => {
   const [isManual, setIsManual] = useState(false);
 
   const form = useAppForm({
-    defaultValues,
-    validators: {
-      onChange: formSchema,
-    },
+    ...formOptions,
     onSubmit: async ({ value }) => {
       console.log("handle submit", { value });
     },
@@ -114,81 +67,7 @@ const AddPublicationForm = ({ id }: { id: string }) => {
         </>
       ) : (
         <>
-          <FieldGroup>
-            <form.Field
-              name="authors"
-              mode="array"
-              children={(field) => {
-                return (
-                  <Field>
-                    <div className="flex justify-between">
-                      <FieldLabel htmlFor={field.name}>Authors</FieldLabel>
-                      <Button
-                        onClick={() =>
-                          field.pushValue({ firstName: "", lastName: "" })
-                        }
-                      >
-                        Add
-                      </Button>
-                    </div>
-                    <div className="grid grid-cols-[1fr_1fr_auto] gap-3">
-                      {field.state.value.map((_, i) => (
-                        <Fragment key={i}>
-                          <form.Field name={`authors[${i}].firstName`}>
-                            {(subField) => {
-                              const isInvalid =
-                                subField.state.meta.isTouched &&
-                                !subField.state.meta.isValid;
-
-                              return (
-                                <Input
-                                  id={subField.name}
-                                  name={subField.name}
-                                  value={subField.state.value}
-                                  onBlur={subField.handleBlur}
-                                  onChange={(e) =>
-                                    subField.handleChange(e.target.value)
-                                  }
-                                  placeholder="First name"
-                                  aria-invalid={isInvalid}
-                                  autoComplete="off"
-                                />
-                              );
-                            }}
-                          </form.Field>
-                          <form.Field key={i} name={`authors[${i}].lastName`}>
-                            {(subField) => {
-                              const isInvalid =
-                                subField.state.meta.isTouched &&
-                                !subField.state.meta.isValid;
-
-                              return (
-                                <Input
-                                  id={subField.name}
-                                  name={subField.name}
-                                  value={subField.state.value}
-                                  onBlur={subField.handleBlur}
-                                  onChange={(e) =>
-                                    subField.handleChange(e.target.value)
-                                  }
-                                  placeholder="Last name"
-                                  aria-invalid={isInvalid}
-                                  autoComplete="off"
-                                />
-                              );
-                            }}
-                          </form.Field>
-                          <Button onClick={() => field.removeValue(i)}>
-                            <Icon name="remove" />
-                          </Button>
-                        </Fragment>
-                      ))}
-                    </div>
-                  </Field>
-                );
-              }}
-            />
-          </FieldGroup>
+          <AuthorsField form={form} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <form.AppField
               name="doi"
