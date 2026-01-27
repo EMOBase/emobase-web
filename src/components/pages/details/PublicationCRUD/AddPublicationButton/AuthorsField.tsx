@@ -19,8 +19,13 @@ const AuthorsField = withForm({
             return (
               <Field>
                 <div className="flex justify-between">
-                  <FieldLabel htmlFor={field.name}>Authors</FieldLabel>
+                  <FieldLabel htmlFor={`${field.name}[0].firstName`}>
+                    Authors
+                  </FieldLabel>
                   <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() =>
                       field.pushValue({ firstName: "", lastName: "" })
                     }
@@ -32,19 +37,22 @@ const AuthorsField = withForm({
                   {field.state.value.map((_, i) => (
                     <Fragment key={i}>
                       <form.AppField
-                        name={`authors[${i}].firstName`}
+                        name={`${field.name}[${i}].firstName`}
                         children={(field) => (
-                          <field.InputField placeholder="Last name" />
+                          <field.InputField placeholder="First name" />
                         )}
                       />
 
                       <form.AppField
-                        name={`authors[${i}].lastName`}
+                        name={`${field.name}[${i}].lastName`}
                         children={(field) => (
                           <field.InputField placeholder="Last name" />
                         )}
                       />
-                      <Button onClick={() => field.removeValue(i)}>
+                      <Button
+                        type="button"
+                        onClick={() => field.removeValue(i)}
+                      >
                         <Icon name="remove" />
                       </Button>
                     </Fragment>

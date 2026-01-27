@@ -1,3 +1,4 @@
+import { formOptions } from "@tanstack/react-form";
 import * as z from "zod";
 
 const formSchema = z
@@ -36,11 +37,11 @@ const defaultValues: FormValues = {
   reference: "",
 };
 
-const formOptions = {
+const publicationFormOptions = formOptions({
   defaultValues,
   validators: {
     onChange: formSchema,
   },
-};
+});
 
-export default formOptions;
+export default publicationFormOptions;
