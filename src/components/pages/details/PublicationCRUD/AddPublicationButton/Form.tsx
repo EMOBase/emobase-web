@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { useStore } from "@tanstack/react-form";
 
 import { useAppForm } from "@/hooks/form/useAppForm";
 
@@ -11,14 +12,17 @@ const hints = {
 };
 
 const AddPublicationForm = ({ id }: { id: string }) => {
-  const [isManual, setIsManual] = useState(false);
-
   const form = useAppForm({
     ...formOptions,
     onSubmit: async ({ value }) => {
       console.log("handle submit", { value });
     },
   });
+
+  const onPubmed = useStore(form.store, (state) => state.values.onPubmed);
+  useEffect(() => {
+    form.reset({ ...formOptions.defaultValues, onPubmed });
+  }, [onPubmed]);
 
   return (
     <form
@@ -29,23 +33,19 @@ const AddPublicationForm = ({ id }: { id: string }) => {
       }}
       className="space-y-6"
     >
-      <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg border border-neutral-200">
-        <input
-          checked={isManual}
-          onChange={(e) => setIsManual(e.target.checked)}
-          className="w-4 h-4 rounded border-neutral-300 text-[#ff6600] focus:ring-[#ff6600] cursor-pointer"
-          id="manual-entry-toggle"
-          type="checkbox"
+      <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200">
+        <form.AppField
+          name="onPubmed"
+          children={(field) => (
+            <field.CheckboxField
+              reverseValue
+              label="My publication is not on PubMed"
+            />
+          )}
         />
-        <label
-          className="text-sm font-medium text-neutral-700 cursor-pointer"
-          htmlFor="manual-entry-toggle"
-        >
-          My publication is not on PubMed
-        </label>
       </div>
 
-      {!isManual ? (
+      {onPubmed ? (
         <>
           <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg">
             <p className="text-sm text-blue-700 leading-relaxed">
