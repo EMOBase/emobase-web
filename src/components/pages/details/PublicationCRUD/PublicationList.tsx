@@ -49,7 +49,7 @@ const PublicationItem: React.FC<PublicationItemProps> = ({
   );
 
   return (
-    <div className={twMerge(`space-y-1.5`, className)}>
+    <div className={twMerge("space-y-1.5", className)}>
       <a
         href={`https://doi.org/${publication.doi}`}
         target="_blank"
@@ -65,7 +65,7 @@ const PublicationItem: React.FC<PublicationItemProps> = ({
         className={twMerge(
           "text-[13px] text-neutral-500",
           full
-            ? "flex flex-col gap-1 [&>div>span:first-child]:w-14 [&>div>span:first-child]:shrink-0"
+            ? "flex flex-col gap-1 [&>div>span:first-child]:w-14 [&>div>span:first-child]:shrink-0 mt-1"
             : "block [&>div]:contents",
         )}
       >
@@ -151,7 +151,7 @@ const PublicationList: React.FC<PublicationListProps> = ({
           </p>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-7">
           {publications.map((pub, idx) => (
             <PublicationItem
               publication={pub}

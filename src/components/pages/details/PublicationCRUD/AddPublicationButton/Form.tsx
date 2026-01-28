@@ -22,13 +22,16 @@ const AddPublicationForm = withForm({
     );
 
     useEffect(() => {
-      form.reset();
-      form.setFieldValue("onPubmed", onPubmed);
+      form.reset({
+        ...formOptions.defaultValues,
+        onPubmed,
+      });
     }, [onPubmed]);
 
     const fields = (
       <>
         <AuthorsField form={form} />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <form.AppField
             name="doi"
