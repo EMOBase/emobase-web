@@ -5,6 +5,7 @@ import InputGroupField from "@/components/form/InputGroupField";
 import TextareaField from "@/components/form/TextareaField";
 import SelectField from "@/components/form/SelectField";
 import CheckboxField from "@/components/form/CheckboxField";
+import SubmitButton from "@/components/form/SubmitButton";
 
 import { fieldContext, formContext } from "./useFormContext";
 
@@ -16,7 +17,7 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
     SelectField,
     CheckboxField,
   },
-  formComponents: {},
+  formComponents: { SubmitButton },
   fieldContext,
   formContext,
 });

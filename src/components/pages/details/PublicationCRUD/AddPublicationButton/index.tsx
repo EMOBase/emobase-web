@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -10,10 +11,58 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useAppForm } from "@/hooks/form/useAppForm";
 
+import formOptions from "./formOptions";
+import usePublications from "../usePublications";
 import AddPublicationForm from "./Form";
 
-const AddPublicationButton = () => {
+const ModalContent = ({
+  gene,
+  closeModal,
+}: {
+  gene: string;
+  closeModal: () => void;
+}) => {
+  const addPublication = usePublications((state) => state.add);
+
+  const form = useAppForm({
+    ...formOptions,
+    onSubmit: async ({ value }) => {
+      const { year, ...input } = value;
+      await addPublication({
+        gene,
+        year: year && Number(year),
+        ...input,
+      }).catch((err) => {
+        console.log("error", err);
+        toast.error("Something went wrong.");
+        throw new Error("Call api create publication failed");
+      });
+      toast.success("Publication added");
+      closeModal();
+    },
+  });
+
+  return (
+    <>
+      <div className="flex-1 overflow-y-auto px-6 py-4">
+        <AddPublicationForm form={form} />
+      </div>
+      <DialogFooter>
+        <form.AppForm>
+          <form.SubmitButton
+            variant="primary"
+            type="button"
+            onClick={() => form.handleSubmit()}
+          />
+        </form.AppForm>
+      </DialogFooter>
+    </>
+  );
+};
+
+const AddPublicationButton = ({ gene }: { gene: string }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -28,14 +77,7 @@ const AddPublicationButton = () => {
         <DialogHeader>
           <DialogTitle>Add a Publication</DialogTitle>
         </DialogHeader>
-        <div className="flex-1 overflow-y-auto px-6 py-4">
-          <AddPublicationForm id="publication-form" />
-        </div>
-        <DialogFooter>
-          <Button variant="primary" form="publication-form">
-            Submit
-          </Button>
-        </DialogFooter>
+        <ModalContent gene={gene} closeModal={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
   );

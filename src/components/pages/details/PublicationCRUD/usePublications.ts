@@ -12,8 +12,8 @@ type State = {
 
 type Action = {
   setData: (data: Publication[]) => void;
-  add: (input: PublicationInput) => void;
-  remove: (id: string) => void;
+  add: (input: PublicationInput) => Promise<void>;
+  remove: (id: string) => Promise<void>;
 };
 
 const usePublications = createStore<State & Action>((set) => ({

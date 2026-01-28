@@ -17,6 +17,27 @@ const parser = new XMLParser({
   attributeNamePrefix: "@_",
 });
 
+function normalizeAbstract(abstract: any): string {
+  if (!abstract?.AbstractText) return "";
+
+  const parts = Array.isArray(abstract.AbstractText)
+    ? abstract.AbstractText
+    : [abstract.AbstractText];
+
+  return parts
+    .map((p: any) => {
+      // fast-xml-parser outputs text under "#text"
+      if (typeof p === "string") return p;
+
+      const text = p["#text"] ?? "";
+      const label = p["@_Label"];
+
+      return label ? `${label}: ${text}` : text;
+    })
+    .filter(Boolean)
+    .join("\n\n");
+}
+
 /**
  * Fetch and parse a PubMed article by PMID
  */
@@ -57,14 +78,7 @@ export async function fetchPubMedArticle(
 
   const articleInfo = article.Article;
 
-  // Abstract may be string | array | undefined
-  const abstractText = articleInfo.Abstract?.AbstractText;
-  const abstract =
-    typeof abstractText === "string"
-      ? abstractText
-      : Array.isArray(abstractText)
-        ? abstractText.join("\n")
-        : "";
+  const abstract = normalizeAbstract(articleInfo.Abstract);
 
   const authors =
     articleInfo.AuthorList?.Author?.map((a: any) => ({

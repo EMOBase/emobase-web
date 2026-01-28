@@ -45,7 +45,7 @@ const PublicationItem: React.FC<PublicationItemProps> = ({
   const [full, setFull] = useState(false);
 
   const verticalRule = !full && (
-    <span className="h-3 w-px bg-neutral-300"></span>
+    <span className="inline-block h-3 w-px mx-2.5 bg-neutral-300"></span>
   );
 
   return (
@@ -63,34 +63,36 @@ const PublicationItem: React.FC<PublicationItemProps> = ({
       </a>
       <div
         className={twMerge(
-          "flex text-[13px] text-neutral-500 gap-x-3 gap-y-0.5",
+          "text-[13px] text-neutral-500",
           full
-            ? "flex-col [&>div>span:first-child]:w-[55px]"
-            : "flex-wrap items-center",
+            ? "flex flex-col gap-1 [&>div>span:first-child]:w-14 [&>div>span:first-child]:shrink-0"
+            : "block [&>div]:contents",
         )}
       >
-        <div className="flex items-center">
+        <div className="inline-flex">
           <span className="mr-1">
             {publication.authors.length > 1 ? "Authors" : "Author"}:
           </span>
           <span className="text-neutral-700 font-medium">
             {full ? getFullAuthors(publication) : getAuthorSummary(publication)}
           </span>
+          {verticalRule}
         </div>
-        {verticalRule}
-        <div className="flex items-center">
+        <div className="inline-flex">
           <span className="mr-1">Journal:</span>
           <span className="text-neutral-700 italic">{publication.journal}</span>
+          {verticalRule}
         </div>
-        {verticalRule}
-        <div className="flex items-center">
+        <div className="inline-flex">
           <span className="mr-1">Year:</span>
           <span className="text-neutral-700">{publication.year}</span>
         </div>
         {full && (
-          <div className="flex">
+          <div className="inline-flex">
             <span className="mr-1">Abstract:</span>
-            <span className="text-neutral-700">{publication.abstract}</span>
+            <span className="text-neutral-700 whitespace-pre-wrap">
+              {publication.abstract}
+            </span>
           </div>
         )}
       </div>

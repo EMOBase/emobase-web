@@ -35,7 +35,7 @@ const PublicationCRUD: React.FC<PublicationCRUDProps> = ({
           <Icon name="menu_book" weight={500} className="text-primary" />
           {title}
         </h2>
-        <AddPublicationButton />
+        <AddPublicationButton gene={gene} />
       </div>
 
       <PublicationList loading={loading} publications={publications} />
