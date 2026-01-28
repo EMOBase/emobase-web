@@ -13,11 +13,15 @@ const TextareField = ({
   label,
   hint,
   link,
+  wrapperClassName,
+  labelClassName,
   ...props
 }: {
   label?: string;
   hint?: string;
   link?: string;
+  wrapperClassName?: string;
+  labelClassName?: string;
 } & Omit<React.ComponentProps<typeof Textarea>, "value" | "onChange">) => {
   const field = useFieldContext<string>();
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
@@ -25,9 +29,14 @@ const TextareField = ({
   const errors = useStore(field.store, (state) => state.meta.errors);
   return (
     <FieldGroup>
-      <Field data-invalid={isInvalid}>
+      <Field data-invalid={isInvalid} className={wrapperClassName}>
         {label && (
-          <FieldLabel htmlFor={field.name} hint={hint} link={link}>
+          <FieldLabel
+            htmlFor={field.name}
+            hint={hint}
+            link={link}
+            className={labelClassName}
+          >
             {label}
           </FieldLabel>
         )}
