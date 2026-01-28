@@ -1,5 +1,6 @@
 import { Icon } from "@/components/ui/icon";
 import type { Phenotype } from "@/utils/constants/phenotype";
+import type { IBDsRNA } from "@/utils/constants/ibeetle";
 
 import AddPhenotypeButton from "./AddPhenotypeButton";
 
@@ -8,6 +9,7 @@ type PhenotypeCRUDProps = {
   title: string;
   gene: string;
   phenotypes: Phenotype[];
+  dsRNAs: IBDsRNA[];
 };
 
 const PhenotypeCRUD: React.FC<PhenotypeCRUDProps> = ({
@@ -15,6 +17,8 @@ const PhenotypeCRUD: React.FC<PhenotypeCRUDProps> = ({
   title,
   gene,
   phenotypes,
+
+  dsRNAs,
 }) => {
   return (
     <div id={id}>
@@ -23,7 +27,7 @@ const PhenotypeCRUD: React.FC<PhenotypeCRUDProps> = ({
           <Icon name="biotech" weight={500} className="text-primary" />
           {title}
         </h2>
-        <AddPhenotypeButton gene={gene} />
+        <AddPhenotypeButton gene={gene} dsRNAs={dsRNAs} />
       </div>
 
       <div>Phenotype list</div>

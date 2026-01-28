@@ -16,12 +16,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAppForm } from "@/hooks/form/useAppForm";
+import type { IBDsRNA } from "@/utils/constants/ibeetle";
 
 import formOptions from "./formOptions";
 import AddPhenotypeForm from "./Form";
 
-const DialogContentInner = (props: {
+const DialogContentInner = ({
+  gene,
+  dsRNAs,
+}: {
   gene: string;
+  dsRNAs: IBDsRNA[];
   closeModal: () => void;
 }) => {
   const form = useAppForm({
@@ -34,16 +39,29 @@ const DialogContentInner = (props: {
   return (
     <>
       <div className="flex-1 overflow-y-auto px-6 py-4">
-        <AddPhenotypeForm form={form} />
+        <AddPhenotypeForm form={form} gene={gene} dsRNAs={dsRNAs} />
       </div>
+
       <DialogFooter>
-        <Button>Submit</Button>
+        <form.AppForm>
+          <form.SubmitButton
+            variant="primary"
+            type="button"
+            onClick={() => form.handleSubmit()}
+          />
+        </form.AppForm>
       </DialogFooter>
     </>
   );
 };
 
-const AddPhenotypeButton = ({ gene }: { gene: string }) => {
+const AddPhenotypeButton = ({
+  gene,
+  dsRNAs,
+}: {
+  gene: string;
+  dsRNAs: IBDsRNA[];
+}) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -63,7 +81,11 @@ const AddPhenotypeButton = ({ gene }: { gene: string }) => {
         <DialogHeader>
           <DialogTitle>Add a RNAi Phenotype</DialogTitle>
         </DialogHeader>
-        <DialogContentInner gene={gene} closeModal={() => setOpen(false)} />
+        <DialogContentInner
+          gene={gene}
+          closeModal={() => setOpen(false)}
+          dsRNAs={dsRNAs}
+        />
       </DialogContent>
     </Dialog>
   );

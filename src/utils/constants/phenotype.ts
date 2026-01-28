@@ -20,7 +20,7 @@ export const PENETRANCES = [
   0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1,
 ] as const;
 
-export const REFERENCE_TYPES = ["DOI", "PMID", "LAB"];
+export const REFERENCE_TYPES = ["DOI", "PMID", "LAB"] as const;
 
 export type Stage = (typeof STAGES)[number];
 export type Penetrance = (typeof PENETRANCES)[number];

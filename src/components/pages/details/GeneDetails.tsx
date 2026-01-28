@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/sonner";
 import { type IBDsRNA } from "@/utils/constants/ibeetle";
 import type {
   TriboliumGene,
@@ -98,6 +97,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
       props: {
         gene,
         phenotypes: communityPhenotypes,
+        dsRNAs,
       },
     },
     ...(dsRNAs || []).map((dsrna) => ({
