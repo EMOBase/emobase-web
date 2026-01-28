@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useStore } from "@tanstack/react-form";
+import { twMerge } from "tailwind-merge";
 
 import { Icon } from "@/components/ui/icon";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -46,10 +47,10 @@ const DsRNAField = withForm({
       })),
     );
 
-    const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+    const [chosenFile, setChosenFile] = useState<File | null>(null);
 
     useEffect(() => {
-      if (uploadedFile) {
+      if (chosenFile) {
         const reader = new FileReader();
         reader.onload = (e) => {
           form.setFieldValue("dsRNA", {
@@ -57,14 +58,36 @@ const DsRNAField = withForm({
             sequence: e.target?.result?.toString() || "",
           });
         };
-        reader.readAsText(uploadedFile);
+        reader.readAsText(chosenFile);
       } else {
         form.setFieldValue("dsRNA", {
           name: OTHER_DSRNA,
           sequence: "",
         });
       }
-    }, [uploadedFile]);
+    }, [chosenFile]);
+
+    const [isDragOver, setIsDragOver] = useState(false);
+
+    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      setIsDragOver(true);
+    };
+
+    const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      setIsDragOver(false);
+    };
+
+    const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      setIsDragOver(false);
+
+      const droppedFiles = Array.from(event.dataTransfer.files);
+      if (droppedFiles && droppedFiles.length > 0) {
+        setChosenFile(droppedFiles[0]);
+      }
+    };
 
     return (
       <Field>
@@ -93,24 +116,29 @@ const DsRNAField = withForm({
                 ref={fileInputRef}
                 onChange={(e) => {
                   if (e.target.files && e.target.files.length > 0) {
-                    setUploadedFile(e.target.files[0]);
+                    setChosenFile(e.target.files[0]);
                   }
                 }}
                 className="hidden"
               />
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="group/fileinput relative group border border-neutral-200 dark:border-neutral-700 rounded-lg px-4 py-3 text-sm text-neutral-400 bg-white dark:bg-neutral-800 flex items-center justify-between cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800/80 transition-colors"
+                className={twMerge(
+                  "group/fileinput relative group border border-neutral-200 dark:border-neutral-700 rounded-lg px-4 py-3 text-sm text-neutral-400 bg-white dark:bg-neutral-800 flex items-center justify-between cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800/80 transition-colors",
+                  isDragOver && "outline-dashed outline-2 outline-primary",
+                )}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
               >
                 <div className="flex items-center gap-4">
-                  <span className="material-symbols-outlined text-neutral-400">
-                    attach_file
-                  </span>
-                  <span>
-                    {uploadedFile ? uploadedFile.name : "Upload fasta"}
-                  </span>
+                  <Icon
+                    name="attach_file"
+                    className="text-[22px] text-neutral-400"
+                  />
+                  <span>{chosenFile ? chosenFile.name : "Upload fasta"}</span>
                 </div>
-                {uploadedFile ? (
+                {chosenFile ? (
                   <button
                     className="cursor-pointer rounded-sm flex hover:bg-neutral-200 hover:text-neutral-600 p-1"
                     onClick={(e) => {
@@ -118,7 +146,7 @@ const DsRNAField = withForm({
                       if (fileInputRef.current) {
                         fileInputRef.current.value = "";
                       }
-                      setUploadedFile(null);
+                      setChosenFile(null);
                     }}
                   >
                     <Icon name="cancel" className="text-xl" />
