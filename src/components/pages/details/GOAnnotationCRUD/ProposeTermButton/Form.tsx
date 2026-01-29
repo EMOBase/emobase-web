@@ -180,7 +180,7 @@ const ProposeTermForm = ({
       />
 
       <form.AppField
-        name="quotation"
+        name="lab"
         children={(field) => <field.InputField label="Lab name" />}
       />
     </form>
