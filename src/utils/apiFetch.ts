@@ -21,7 +21,10 @@ export const apiFetch = async <T>(
 ) => {
   const { responseType = "json", body, query, ...restOpts } = opts ?? {};
   const baseURL = urls[service];
-  const url = baseURL + request + (query ? `?${qs.stringify(query)}` : "");
+  const url =
+    baseURL +
+    request +
+    (query ? `?${qs.stringify(query, { arrayFormat: "repeat" })}` : "");
 
   return await fetch(url, {
     headers: {

@@ -8,6 +8,7 @@ import { withForm } from "@/hooks/form/useAppForm";
 import formOptions from "./formOptions";
 import DsRNAField from "./DsRNAField";
 import ReferenceField from "./ReferenceField";
+import StructureField from "./StructureField";
 
 const AddPhenotypeForm = withForm({
   ...formOptions,
@@ -73,10 +74,7 @@ const AddPhenotypeForm = withForm({
             />
           )}
         />
-        <form.AppField
-          name="structure"
-          children={(field) => <field.InputField label="Affected structure" />}
-        />
+        <StructureField form={form} />
         <form.AppField
           name="process"
           children={(field) => (

@@ -22,9 +22,12 @@ const InputField = ({
   optional?: boolean;
 } & Omit<React.ComponentProps<typeof Input>, "value" | "onChange">) => {
   const field = useFieldContext<string>();
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
+  const isInvalid = useStore(
+    field.store,
+    (state) => state.meta.isTouched && !state.meta.isValid,
+  );
   const errors = useStore(field.store, (state) => state.meta.errors);
+
   return (
     <FieldGroup>
       <Field data-invalid={isInvalid}>

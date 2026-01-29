@@ -49,10 +49,12 @@ const formSchema = z.object({
     type: z.enum(REFERENCE_TYPES),
     value: z.string().min(1, "Reference is required"),
   }),
-  structure: z.object({
-    termId: z.string().optional(),
-    termName: z.string(),
-  }),
+  structure: z
+    .object({
+      termId: z.string().optional(),
+      termName: z.string(),
+    })
+    .refine((v) => !!v.termName, "Structure is required"),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
