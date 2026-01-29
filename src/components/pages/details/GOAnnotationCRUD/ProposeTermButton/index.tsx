@@ -26,17 +26,16 @@ const ProposeTermButton = ({ gene }: { gene: string }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="px-4 py-2">
-          <Icon name="add" weight={500} className="text-xl" />
-          Propose a GO Term
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button variant="outline" className="px-4 py-2">
+            <Icon name="add" weight={500} className="text-xl" />
+            Propose a GO Term
+          </Button>
+        }
+      />
       <DialogContent
-        onOpenAutoFocus={(e) => {
-          e.preventDefault();
-          firstInputRef.current?.focus();
-        }}
+        initialFocus={firstInputRef}
         className="max-w-xl max-h-9/10 flex flex-col"
       >
         <DialogHeader>

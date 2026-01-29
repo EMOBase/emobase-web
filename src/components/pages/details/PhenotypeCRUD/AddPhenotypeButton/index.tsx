@@ -67,14 +67,16 @@ const AddPhenotypeButton = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <Tooltip>
-        <DialogTrigger asChild>
-          <TooltipTrigger asChild>
-            <Button variant="outline" className="px-4 py-2">
-              <Icon name="add" weight={500} className="text-xl" />
-              Add
-            </Button>
-          </TooltipTrigger>
-        </DialogTrigger>
+        <TooltipTrigger asChild>
+          <DialogTrigger
+            render={
+              <Button variant="outline" className="px-4 py-2">
+                <Icon name="add" weight={500} className="text-xl" />
+                Add
+              </Button>
+            }
+          />
+        </TooltipTrigger>
         <TooltipContent>Add a RNAi Phenotype</TooltipContent>
       </Tooltip>
       <DialogContent className="max-h-9/10 flex flex-col">

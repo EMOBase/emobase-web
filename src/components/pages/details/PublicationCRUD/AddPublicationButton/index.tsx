@@ -67,12 +67,14 @@ const AddPublicationButton = ({ gene }: { gene: string }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="px-4 py-2">
-          <Icon name="add" weight={500} className="text-xl" />
-          Add a Publication
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button variant="outline" className="px-4 py-2">
+            <Icon name="add" weight={500} className="text-xl" />
+            Add a Publication
+          </Button>
+        }
+      />
       <DialogContent className="max-h-9/10 flex flex-col">
         <DialogHeader>
           <DialogTitle>Add a Publication</DialogTitle>
