@@ -20,19 +20,24 @@ const SelectField = ({
   label,
   hint,
   link,
+  wrapperClassName,
   ...props
 }: {
   items: ReadonlyArray<string> | string[];
   label?: string;
   hint?: string;
   link?: string;
-} & Omit<React.ComponentProps<typeof Select>, "value" | "onValueChange">) => {
+  wrapperClassName?: string;
+} & Omit<
+  React.ComponentProps<typeof SelectTrigger>,
+  "value" | "onValueChange"
+>) => {
   const field = useFieldContext<string>();
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   const errors = useStore(field.store, (state) => state.meta.errors);
   return (
-    <FieldGroup>
+    <FieldGroup className={wrapperClassName}>
       <Field data-invalid={isInvalid}>
         {label && (
           <FieldLabel htmlFor={field.name} hint={hint} link={link}>
@@ -43,9 +48,8 @@ const SelectField = ({
           name={field.name}
           value={field.state.value}
           onValueChange={(v) => field.handleChange(v)}
-          {...props}
         >
-          <SelectTrigger aria-invalid={isInvalid}>
+          <SelectTrigger aria-invalid={isInvalid} {...props}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

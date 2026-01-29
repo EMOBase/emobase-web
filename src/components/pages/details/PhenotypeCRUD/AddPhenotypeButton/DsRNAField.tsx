@@ -6,7 +6,6 @@ import { Icon } from "@/components/ui/icon";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { withForm } from "@/hooks/form/useAppForm";
 import { OTHER_DSRNA } from "@/utils/constants/phenotype";
-
 import type { IBDsRNA } from "@/utils/constants/ibeetle";
 
 import formOptions from "./formOptions";

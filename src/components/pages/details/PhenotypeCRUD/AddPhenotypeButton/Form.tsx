@@ -7,6 +7,7 @@ import { withForm } from "@/hooks/form/useAppForm";
 
 import formOptions from "./formOptions";
 import DsRNAField from "./DsRNAField";
+import ReferenceField from "./ReferenceField";
 
 const AddPhenotypeForm = withForm({
   ...formOptions,
@@ -61,6 +62,7 @@ const AddPhenotypeForm = withForm({
             )}
           />
         </div>
+        <ReferenceField form={form} />
       </form>
     );
   },

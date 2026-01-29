@@ -47,7 +47,7 @@ const formSchema = z.object({
   comment: z.string().optional(),
   reference: z.object({
     type: z.enum(REFERENCE_TYPES),
-    value: z.string(),
+    value: z.string().min(1, "Reference is required"),
   }),
   structure: z.object({
     termId: z.string().optional(),

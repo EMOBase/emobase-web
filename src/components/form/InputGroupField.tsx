@@ -19,6 +19,7 @@ const InputGroupField = ({
   link,
   leftAddon,
   rightAddon,
+  customAddons,
   singleError,
   ...props
 }: {
@@ -27,6 +28,7 @@ const InputGroupField = ({
   link?: string;
   leftAddon?: React.ReactNode;
   rightAddon?: React.ReactNode;
+  customAddons?: React.ReactNode;
   singleError?: boolean;
 } & Omit<
   React.ComponentProps<typeof InputGroupInput>,
@@ -56,15 +58,12 @@ const InputGroupField = ({
             {...props}
           />
           {leftAddon && (
-            <InputGroupAddon align="inline-start">
-              <span className="text-muted-foreground">{leftAddon}</span>
-            </InputGroupAddon>
+            <InputGroupAddon align="inline-start">{leftAddon}</InputGroupAddon>
           )}
           {rightAddon && (
-            <InputGroupAddon align="inline-end">
-              <span className="text-muted-foreground">{rightAddon}</span>
-            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">{rightAddon}</InputGroupAddon>
           )}
+          {customAddons}
         </InputGroup>
         {isInvalid && (
           <FieldError errors={singleError ? [errors[0]] : errors} />
