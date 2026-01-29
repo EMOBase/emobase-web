@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
 
 import type { IBDsRNA } from "@/utils/constants/ibeetle";
-import { STAGES } from "@/utils/constants/phenotype";
+import { STAGES, PENETRANCES } from "@/utils/constants/phenotype";
 import { withForm } from "@/hooks/form/useAppForm";
 
 import formOptions from "./formOptions";
@@ -82,6 +82,47 @@ const AddPhenotypeForm = withForm({
               label="Affected process"
               optional
               placeholder="e.g. head development, oogenesis..."
+            />
+          )}
+        />
+        <div className="grid grid-cols-[2fr_3fr] gap-y-6 gap-x-5">
+          <form.AppField
+            name="penetrance"
+            children={(field) => (
+              <field.SelectField
+                items={PENETRANCES.map((p) => ({
+                  value: p.toString(),
+                  label: `${p * 100}%`,
+                }))}
+                value={field.state.value.toString()}
+                onChange={(v) =>
+                  field.handleChange(Number(v) as typeof field.state.value)
+                }
+                label="Penetrance"
+                hint="What portion of analyzed specimen showed the phenotype"
+              />
+            )}
+          />
+          <form.AppField
+            name="numberOfAnimals"
+            children={(field) => (
+              <field.InputField
+                label="Number of animals analysed"
+                optional
+                type="number"
+                placeholder="e.g. 50"
+              />
+            )}
+          />
+        </div>
+        <form.AppField
+          name="comment"
+          children={(field) => (
+            <field.TextareaField
+              label="Comment"
+              optional
+              placeholder="Any additional observations..."
+              className="min-h-25"
             />
           )}
         />
