@@ -63,6 +63,30 @@ const AddPhenotypeForm = withForm({
           />
         </div>
         <ReferenceField form={form} />
+        <form.AppField
+          name="description"
+          children={(field) => (
+            <field.TextareaField
+              label="Phenotype description"
+              placeholder="e.g. head not present, limbs shortened..."
+              className="min-h-20"
+            />
+          )}
+        />
+        <form.AppField
+          name="structure"
+          children={(field) => <field.InputField label="Affected structure" />}
+        />
+        <form.AppField
+          name="process"
+          children={(field) => (
+            <field.InputField
+              label="Affected process"
+              optional
+              placeholder="e.g. head development, oogenesis..."
+            />
+          )}
+        />
       </form>
     );
   },

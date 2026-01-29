@@ -13,11 +13,13 @@ const InputField = ({
   label,
   hint,
   link,
+  optional,
   ...props
 }: {
   label?: string;
   hint?: string;
   link?: string;
+  optional?: boolean;
 } & Omit<React.ComponentProps<typeof Input>, "value" | "onChange">) => {
   const field = useFieldContext<string>();
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
@@ -27,7 +29,12 @@ const InputField = ({
     <FieldGroup>
       <Field data-invalid={isInvalid}>
         {label && (
-          <FieldLabel htmlFor={field.name} hint={hint} link={link}>
+          <FieldLabel
+            htmlFor={field.name}
+            hint={hint}
+            link={link}
+            optional={optional}
+          >
             {label}
           </FieldLabel>
         )}

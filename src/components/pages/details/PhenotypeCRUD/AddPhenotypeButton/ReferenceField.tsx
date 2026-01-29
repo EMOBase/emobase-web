@@ -25,7 +25,7 @@ const ReferenceField = withForm({
     }[referenceType];
 
     const referenceTypeAddon = (
-      <InputGroupAddon align="inline-start" className="text-inherit p-0">
+      <InputGroupAddon align="inline-start" className="text-neutral-600 p-0">
         <form.AppField
           name="reference.type"
           children={(field) => (

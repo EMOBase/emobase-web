@@ -174,6 +174,7 @@ const ProposeTermForm = ({
           <field.TextareaField
             label="Quotation"
             hint={hints.quotation}
+            optional
             placeholder="Relevant section from the publication"
           />
         )}

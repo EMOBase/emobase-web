@@ -13,6 +13,7 @@ const TextareField = ({
   label,
   hint,
   link,
+  optional,
   wrapperClassName,
   labelClassName,
   ...props
@@ -20,6 +21,7 @@ const TextareField = ({
   label?: string;
   hint?: string;
   link?: string;
+  optional?: boolean;
   wrapperClassName?: string;
   labelClassName?: string;
 } & Omit<React.ComponentProps<typeof Textarea>, "value" | "onChange">) => {
@@ -35,6 +37,7 @@ const TextareField = ({
             htmlFor={field.name}
             hint={hint}
             link={link}
+            optional={optional}
             className={labelClassName}
           >
             {label}
