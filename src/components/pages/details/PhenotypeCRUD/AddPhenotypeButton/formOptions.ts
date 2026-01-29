@@ -3,6 +3,7 @@ import * as z from "zod";
 import type { ZodType } from "zod";
 
 import {
+  STAGES,
   PENETRANCES,
   REFERENCE_TYPES,
   OTHER_DSRNA,
@@ -25,12 +26,23 @@ const formSchema = z.object({
     name: z.string().optional(),
     sequence: z.string().optional(),
   }),
-  concentration: z.number().gt(0, "Concentration is invalid"),
-  injectedStage: z.string().min(1, "Injected stage is required"),
+  concentration: z
+    .string()
+    .min(1, "Concentration is required")
+    .refine(
+      (v) => !Number.isNaN(v) && Number(v) > 0,
+      "Concentration is invalid",
+    ),
+  injectedStage: z
+    .enum(["", ...STAGES] as const)
+    .refine((v) => v.length > 0, "Injected stage is required"),
   injectedStrain: z.string().min(1, "Injected strain is required"),
   description: z.string().min(1, "Phenotype description is required"),
   numberOfAnimals: z.number().gt(0, "Number of animals is invalid").optional(),
-  penetrance: numericEnum(PENETRANCES),
+  penetrance: numericEnum([-1, ...PENETRANCES] as const).refine(
+    (v) => v > -1,
+    "Penetrance is required",
+  ),
   process: z.string().optional(),
   comment: z.string().optional(),
   reference: z.object({
@@ -49,11 +61,11 @@ const defaultValues: FormValues = {
   dsRNA: {
     name: OTHER_DSRNA,
   },
-  concentration: 0,
+  concentration: "",
   injectedStage: "",
   injectedStrain: "",
   description: "",
-  penetrance: 1.0,
+  penetrance: -1,
   reference: {
     type: "DOI",
     value: "",

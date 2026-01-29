@@ -45,7 +45,7 @@ const SelectField = ({
           onValueChange={(v) => field.handleChange(v)}
           {...props}
         >
-          <SelectTrigger>
+          <SelectTrigger aria-invalid={isInvalid}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

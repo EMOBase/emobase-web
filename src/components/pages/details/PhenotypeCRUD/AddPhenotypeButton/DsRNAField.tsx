@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { Icon } from "@/components/ui/icon";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { withForm } from "@/hooks/form/useAppForm";
-import { OTHER_DSRNA, type Phenotype } from "@/utils/constants/phenotype";
+import { OTHER_DSRNA } from "@/utils/constants/phenotype";
 
 import type { IBDsRNA } from "@/utils/constants/ibeetle";
 
@@ -140,7 +140,7 @@ const DsRNAField = withForm({
                 </div>
                 {chosenFile ? (
                   <button
-                    className="cursor-pointer rounded-sm flex hover:bg-neutral-200 hover:text-neutral-600 p-1"
+                    className="cursor-pointer rounded-sm flex hover:text-neutral-600"
                     onClick={(e) => {
                       e.stopPropagation();
                       if (fileInputRef.current) {
@@ -149,7 +149,7 @@ const DsRNAField = withForm({
                       setChosenFile(null);
                     }}
                   >
-                    <Icon name="cancel" className="text-xl" />
+                    <Icon name="cancel" className="text-[22px]" />
                   </button>
                 ) : (
                   <span className="text-[11px] bg-neutral-100 group-hover/fileinput:bg-neutral-200 dark:bg-neutral-700 px-2 py-1 rounded text-neutral-500 dark:text-neutral-400 font-semibold uppercase tracking-tight">

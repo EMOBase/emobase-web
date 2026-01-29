@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
 
 import type { IBDsRNA } from "@/utils/constants/ibeetle";
+import { STAGES } from "@/utils/constants/phenotype";
 import { withForm } from "@/hooks/form/useAppForm";
 
 import formOptions from "./formOptions";
@@ -32,6 +33,34 @@ const AddPhenotypeForm = withForm({
           />
         </Field>
         <DsRNAField form={form} iBeetleDsRNAs={dsRNAs} />
+        <form.AppField
+          name="concentration"
+          children={(field) => (
+            <field.InputGroupField
+              label="Concentration"
+              type="number"
+              rightAddon="ng/μl"
+              singleError
+            />
+          )}
+        />
+        <div className="grid grid-cols-2 gpa-y-6 gap-x-5">
+          <form.AppField
+            name="injectedStage"
+            children={(field) => (
+              <field.SelectField items={STAGES} label="Injected stage" />
+            )}
+          />
+          <form.AppField
+            name="injectedStrain"
+            children={(field) => (
+              <field.InputField
+                label="Injected strain"
+                placeholder="e.g. Ga-2, SB, vw, pearl, ..."
+              />
+            )}
+          />
+        </div>
       </form>
     );
   },

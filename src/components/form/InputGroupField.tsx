@@ -19,6 +19,7 @@ const InputGroupField = ({
   link,
   leftAddon,
   rightAddon,
+  singleError,
   ...props
 }: {
   label?: string;
@@ -26,6 +27,7 @@ const InputGroupField = ({
   link?: string;
   leftAddon?: React.ReactNode;
   rightAddon?: React.ReactNode;
+  singleError?: boolean;
 } & Omit<
   React.ComponentProps<typeof InputGroupInput>,
   "value" | "onChange"
@@ -64,7 +66,9 @@ const InputGroupField = ({
             </InputGroupAddon>
           )}
         </InputGroup>
-        {isInvalid && <FieldError errors={errors} />}
+        {isInvalid && (
+          <FieldError errors={singleError ? [errors[0]] : errors} />
+        )}
       </Field>
     </FieldGroup>
   );
