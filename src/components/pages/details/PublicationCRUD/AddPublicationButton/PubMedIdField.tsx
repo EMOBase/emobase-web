@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { useStore } from "@tanstack/react-form";
 import { useDebounceValue } from "usehooks-ts";
 
-import { withForm } from "@/hooks/form/useAppForm";
 import { Spinner } from "@/components/ui/spinner";
-
 import {
   fetchPubMedArticle,
   fetchPubMedCitation,
   type PubMedArticle,
-} from "./pubmed";
+} from "@/utils/pubmed";
+import { withForm } from "@/hooks/form/useAppForm";
+
 import formOptions from "./formOptions";
 
 function isValidPMID(input: string) {
