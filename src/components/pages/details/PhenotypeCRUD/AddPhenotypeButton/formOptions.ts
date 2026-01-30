@@ -55,6 +55,7 @@ const formSchema = z.object({
       termName: z.string(),
     })
     .refine((v) => !!v.termName, "Structure is required"),
+  imageFiles: z.array(z.instanceof(File)),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
@@ -75,6 +76,7 @@ const defaultValues: FormValues = {
   structure: {
     termName: "",
   },
+  imageFiles: [],
 };
 
 const publicationFormOptions = formOptions({

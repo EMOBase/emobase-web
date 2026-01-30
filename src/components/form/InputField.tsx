@@ -14,12 +14,16 @@ const InputField = ({
   hint,
   link,
   optional,
+  value: valueProp,
+  onChange,
   ...props
 }: {
   label?: string;
   hint?: string;
   link?: string;
   optional?: boolean;
+  value?: string;
+  onChange?: (v: string) => void;
 } & Omit<React.ComponentProps<typeof Input>, "value" | "onChange">) => {
   const field = useFieldContext<string>();
   const isInvalid = useStore(
@@ -27,6 +31,9 @@ const InputField = ({
     (state) => state.meta.isTouched && !state.meta.isValid,
   );
   const errors = useStore(field.store, (state) => state.meta.errors);
+
+  const value = valueProp ?? field.state.value;
+  const onValueChange = onChange ?? ((v: string) => field.handleChange(v));
 
   return (
     <FieldGroup>
@@ -44,9 +51,9 @@ const InputField = ({
         <Input
           id={field.name}
           name={field.name}
-          value={field.state.value}
+          value={value}
           onBlur={field.handleBlur}
-          onChange={(e) => field.handleChange(e.target.value)}
+          onChange={(e) => onValueChange(e.target.value)}
           aria-invalid={isInvalid}
           autoComplete="off"
           {...props}

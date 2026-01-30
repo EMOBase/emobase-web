@@ -9,6 +9,7 @@ import formOptions from "./formOptions";
 import DsRNAField from "./DsRNAField";
 import ReferenceField from "./ReferenceField";
 import StructureField from "./StructureField";
+import ImagesField from "./ImagesField";
 
 const AddPhenotypeForm = withForm({
   ...formOptions,
@@ -110,6 +111,8 @@ const AddPhenotypeForm = withForm({
                 label="Number of animals analysed"
                 optional
                 type="number"
+                value={field.state.value?.toString() ?? ""}
+                onChange={(v) => field.handleChange(Number(v))}
                 placeholder="e.g. 50"
               />
             )}
@@ -126,6 +129,7 @@ const AddPhenotypeForm = withForm({
             />
           )}
         />
+        <ImagesField form={form} />
       </form>
     );
   },
