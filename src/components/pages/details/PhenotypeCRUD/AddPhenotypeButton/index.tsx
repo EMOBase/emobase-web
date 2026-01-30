@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
@@ -18,21 +19,43 @@ import {
 import { useAppForm } from "@/hooks/form/useAppForm";
 import type { IBDsRNA } from "@/utils/constants/ibeetle";
 
-import formOptions from "./formOptions";
+import usePhenotypes from "../usePhenotypes";
+import formOptions, { formToApiSchema } from "./formOptions";
 import AddPhenotypeForm from "./Form";
 
 const DialogContentInner = ({
   gene,
   dsRNAs,
+  closeModal,
 }: {
   gene: string;
   dsRNAs: IBDsRNA[];
   closeModal: () => void;
 }) => {
+  const addPhenotype = usePhenotypes((state) => state.add);
+
   const form = useAppForm({
     ...formOptions,
     onSubmit: async ({ value }) => {
-      console.log("handle submit", { value });
+      const input = formToApiSchema.parse(value);
+
+      await addPhenotype({
+        gene,
+        ...input,
+      }).catch((err) => {
+        console.log("error", err);
+        toast.error("Something went wrong.");
+        throw new Error("Call api create phenotype failed");
+      });
+      toast.success("Phenotype added");
+      closeModal();
+    },
+    onSubmitInvalid() {
+      const invalidInput = document.querySelector(
+        '[aria-invalid="true"]',
+      ) as HTMLInputElement;
+
+      invalidInput?.focus();
     },
   });
 

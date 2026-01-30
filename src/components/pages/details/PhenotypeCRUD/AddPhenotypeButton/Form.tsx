@@ -111,8 +111,6 @@ const AddPhenotypeForm = withForm({
                 label="Number of animals analysed"
                 optional
                 type="number"
-                value={field.state.value?.toString() ?? ""}
-                onChange={(v) => field.handleChange(Number(v))}
                 placeholder="e.g. 50"
               />
             )}

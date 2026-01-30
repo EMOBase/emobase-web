@@ -19,18 +19,34 @@ export const apiFetch = async <T>(
     query?: Record<string, string | string[] | null | undefined>;
   },
 ) => {
-  const { responseType = "json", body, query, ...restOpts } = opts ?? {};
+  const {
+    responseType = "json",
+    body: bodyOpt,
+    query,
+    ...restOpts
+  } = opts ?? {};
   const baseURL = urls[service];
   const url =
     baseURL +
     request +
     (query ? `?${qs.stringify(query, { arrayFormat: "repeat" })}` : "");
 
+  const [headers, body] = !bodyOpt
+    ? [null, null]
+    : bodyOpt instanceof FormData
+      ? [null, bodyOpt]
+      : [
+          {
+            "Content-Type": "application/json",
+          },
+          JSON.stringify(bodyOpt),
+        ];
+
   return await fetch(url, {
     headers: {
-      "Content-Type": "application/json",
+      ...headers,
     },
-    body: !!body ? JSON.stringify(body) : undefined,
+    body,
     ...restOpts,
   }).then((response) => response[responseType]() as T);
 };

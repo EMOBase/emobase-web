@@ -1,10 +1,6 @@
 import { useStore } from "@tanstack/react-form";
 
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroupAddon } from "@/components/ui/input-group";
 import { REFERENCE_TYPES } from "@/utils/constants/phenotype";
 import { withForm } from "@/hooks/form/useAppForm";
 
@@ -31,7 +27,7 @@ const ReferenceField = withForm({
           children={(field) => (
             <field.SelectField
               items={REFERENCE_TYPES}
-              wrapperClassName="w-24"
+              wrapperClassName="w-24 mr-2"
               className="border-y-0 border-l-0 rounded-r-none"
             />
           )}

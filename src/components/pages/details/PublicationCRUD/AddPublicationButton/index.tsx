@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import { useAppForm } from "@/hooks/form/useAppForm";
 
-import formOptions from "./formOptions";
 import usePublications from "../usePublications";
+import formOptions from "./formOptions";
 import AddPublicationForm from "./Form";
 
 const ModalContent = ({

@@ -38,7 +38,10 @@ const formSchema = z.object({
     .refine((v) => v.length > 0, "Injected stage is required"),
   injectedStrain: z.string().min(1, "Injected strain is required"),
   description: z.string().min(1, "Phenotype description is required"),
-  numberOfAnimals: z.number().gt(0, "Number of animals is invalid").optional(),
+  numberOfAnimals: z
+    .string()
+    .refine((v) => !v || Number(v) > 0, "Number of animals is invalid")
+    .optional(),
   penetrance: numericEnum([-1, ...PENETRANCES] as const).refine(
     (v) => v > -1,
     "Penetrance is required",
@@ -56,6 +59,21 @@ const formSchema = z.object({
     })
     .refine((v) => !!v.termName, "Structure is required"),
   imageFiles: z.array(z.instanceof(File)),
+});
+
+export const formToApiSchema = formSchema.transform((v) => {
+  if (v.injectedStage === "") {
+    throw new Error("Injected stage is required");
+  }
+  if (v.penetrance === -1) {
+    throw new Error("Penetrance is required");
+  }
+
+  return {
+    ...v,
+    injectedStage: v.injectedStage,
+    penetrance: v.penetrance,
+  };
 });
 
 export type FormValues = z.infer<typeof formSchema>;
