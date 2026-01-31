@@ -56,7 +56,7 @@ const WorkflowPupalButton = () => {
     },
     {
       id: "5",
-      position: { x: 380, y: 220 },
+      position: { x: 380, y: 240 },
       data: { label: "Muscle", subLabel: "analysis", day: 14, color: "blue" },
       type: "custom",
     },
