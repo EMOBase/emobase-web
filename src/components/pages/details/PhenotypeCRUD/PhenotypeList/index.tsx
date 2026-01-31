@@ -3,9 +3,25 @@ import { twMerge } from "tailwind-merge";
 import { Icon } from "@/components/ui/icon";
 import type { Phenotype } from "@/utils/constants/phenotype";
 
+import ImageHolder from "./ImageHolder";
+
 type PhenotypeItemProps = {
   phenotype: Phenotype;
   className?: string;
+};
+
+const getReferenceUrl = (reference: Phenotype["reference"]) => {
+  const { type, value } = reference ?? {};
+
+  if (!value) {
+    return "";
+  } else if (type === "DOI") {
+    return `https://doi.org/${value}`;
+  } else if (type === "PMID") {
+    return `https://www.ncbi.nlm.nih.gov/pubmed/${value}`;
+  } else {
+    return "";
+  }
 };
 
 const PhenotypeItem: React.FC<PhenotypeItemProps> = ({
@@ -14,6 +30,7 @@ const PhenotypeItem: React.FC<PhenotypeItemProps> = ({
 }) => {
   const penetrancePercentage = (phenotype.penetrance ?? 0) * 100;
   const images = phenotype.images ?? [];
+  const referenceUrl = getReferenceUrl(phenotype.reference);
 
   return (
     <div
@@ -49,32 +66,34 @@ const PhenotypeItem: React.FC<PhenotypeItemProps> = ({
           <span className="font-medium text-neutral-400 mr-1">
             {phenotype.reference?.type}:
           </span>
-          <a
-            href="#"
-            className="group/link text-primary inline-flex items-center gap-0.5"
-          >
-            <span className="group-hover/link:underline underline-offset-2">
+          {referenceUrl ? (
+            <a
+              href={referenceUrl}
+              target="_blank"
+              className="group/link text-primary inline-flex items-center gap-0.5"
+            >
+              <span className="group-hover/link:underline underline-offset-2">
+                {phenotype.reference?.value}
+              </span>{" "}
+              <Icon name="open_in_new" className="text-base" />
+            </a>
+          ) : (
+            <span className="text-neutral-700">
               {phenotype.reference?.value}
-            </span>{" "}
-            <Icon name="open_in_new" className="text-base" />
-          </a>
+            </span>
+          )}
         </div>
       </div>
 
       {images.length > 0 && (
         <div className="flex gap-4 overflow-x-auto scrollbar-hide mt-5 mb-1">
-          {images.map((img) => (
-            <div
-              key={img.id}
-              className="w-48 aspect-[4/3] bg-neutral-50 rounded-lg flex flex-col items-center justify-center border border-neutral-100 group cursor-pointer hover:border-primary/30 transition-all shrink-0"
-            >
-              <span className="material-symbols-outlined text-neutral-300 group-hover:text-primary/50 text-3xl mb-1 transition-colors">
-                image
-              </span>
-              <span className="text-[10px] text-neutral-400 uppercase font-medium tracking-tight">
-                Phenotype Image {img.id}
-              </span>
-            </div>
+          {images.map((image) => (
+            <ImageHolder
+              key={image.id}
+              imageId={image.id}
+              status={image.status}
+              className="w-48"
+            />
           ))}
         </div>
       )}
