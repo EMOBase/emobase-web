@@ -112,12 +112,12 @@ type PhenotypeListProps = {
 const PhenotypeList: React.FC<PhenotypeListProps> = ({ phenotypes }) => {
   return (
     <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
-      <div className="flex flex-col gap-5 divide-y divide-neutral-100 p-6">
+      <div className="flex flex-col gap-6 divide-y divide-neutral-100 p-7">
         {phenotypes.map((phenotype, index) => (
           <PhenotypeItem
             key={phenotype.id}
             phenotype={phenotype}
-            className={index === phenotypes.length - 1 ? undefined : "pb-5"}
+            className={index === phenotypes.length - 1 ? undefined : "pb-6"}
           />
         ))}
       </div>
