@@ -5,7 +5,7 @@ export type WorkflowNodeData = {
   label: string;
   subLabel?: string;
   day: number | string;
-  color?: "orange" | "blue" | "green";
+  color?: "orange" | "blue" | "green" | "red";
 };
 
 // Define the Node type extending the React Flow Node
@@ -18,12 +18,14 @@ export default function WorkflowNode({ data }: NodeProps<WorkflowNodeType>) {
     orange: "bg-amber-400",
     blue: "bg-sky-500",
     green: "bg-emerald-400",
+    red: "bg-orange-600",
   };
 
   const dayColors = {
     orange: "bg-amber-500",
     blue: "bg-sky-600",
     green: "bg-emerald-500",
+    red: "bg-orange-700",
   };
 
   return (
@@ -39,7 +41,7 @@ export default function WorkflowNode({ data }: NodeProps<WorkflowNodeType>) {
         className="!bg-transparent !border-none"
       />
 
-      <div className="flex-1 p-3 flex flex-col justify-center">
+      <div className="flex-1 px-4 py-3 flex flex-col justify-center">
         <div className="text-xl leading-tight">{label}</div>
         {subLabel && (
           <div className="text-base font-normal leading-tight">{subLabel}</div>
@@ -48,7 +50,7 @@ export default function WorkflowNode({ data }: NodeProps<WorkflowNodeType>) {
 
       <div
         className={cn(
-          "flex flex-col justify-center items-center px-4 py-2 border-l border-white/20",
+          "flex flex-col justify-center items-center px-4 py-3 border-l border-white/20",
           dayColors[color] || dayColors.orange,
         )}
       >
@@ -59,6 +61,13 @@ export default function WorkflowNode({ data }: NodeProps<WorkflowNodeType>) {
       <Handle
         type="source"
         position={Position.Bottom}
+        className="!bg-transparent !border-none"
+      />
+
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="target-left"
         className="!bg-transparent !border-none"
       />
     </div>

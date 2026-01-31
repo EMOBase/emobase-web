@@ -3,6 +3,7 @@ import { type IBDsRNA } from "@/utils/constants/ibeetle";
 import { type Phenotype } from "@/utils/constants/phenotype";
 
 import WorkflowPupalButton from "./WorkflowPupalButton";
+import WorkflowLarvaButton from "./WorkflowLarvaButton";
 
 type IBScreenProps = {
   id: string;
@@ -23,8 +24,9 @@ const IBScreen: React.FC<IBScreenProps> = ({ id, title, phenotypes }) => {
         </h2>
       </div>
 
-      <div>
+      <div className="flex gap-4">
         <WorkflowPupalButton />
+        <WorkflowLarvaButton />
       </div>
     </div>
   );
