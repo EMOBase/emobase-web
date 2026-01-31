@@ -1,5 +1,4 @@
 import { Icon } from "@/components/ui/icon";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -115,8 +114,8 @@ const WorkflowLarvaButton = () => {
 
   return (
     <Dialog>
-      <DialogTrigger render={<Button />}>
-        <Icon name="science" className="text-base" />
+      <DialogTrigger className="inline-flex items-center gap-1.5 px-3 py-1.25 rounded-sm bg-neutral-100 text-neutral-600 text-[10px] font-bold hover:bg-neutral-200 transition-colors uppercase tracking-wider border border-neutral-200">
+        <Icon name="science" weight={600} className="text-xs" />
         Workflow Larval Screen
       </DialogTrigger>
       <DialogContent className="h-150 flex flex-col">
