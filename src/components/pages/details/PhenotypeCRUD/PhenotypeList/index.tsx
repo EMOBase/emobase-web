@@ -113,13 +113,25 @@ const PhenotypeList: React.FC<PhenotypeListProps> = ({ phenotypes }) => {
   return (
     <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
       <div className="flex flex-col gap-6 divide-y divide-neutral-100 p-7">
-        {phenotypes.map((phenotype, index) => (
-          <PhenotypeItem
-            key={phenotype.id}
-            phenotype={phenotype}
-            className={index === phenotypes.length - 1 ? undefined : "pb-6"}
-          />
-        ))}
+        {phenotypes.length === 0 ? (
+          <div className="flex flex-col items-center justify-center text-center h-40">
+            <Icon
+              name="search_off"
+              className="text-neutral-300 text-5xl mb-4"
+            />
+            <p className="text-neutral-400 text-sm">
+              No community phenotypes contributed for this gene.
+            </p>
+          </div>
+        ) : (
+          phenotypes.map((phenotype, index) => (
+            <PhenotypeItem
+              key={phenotype.id}
+              phenotype={phenotype}
+              className={index === phenotypes.length - 1 ? undefined : "pb-6"}
+            />
+          ))
+        )}
       </div>
     </div>
   );
