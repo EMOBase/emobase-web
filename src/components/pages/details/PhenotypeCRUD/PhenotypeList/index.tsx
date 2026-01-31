@@ -4,6 +4,7 @@ import { Icon } from "@/components/ui/icon";
 import type { Phenotype } from "@/utils/constants/phenotype";
 
 import ImageHolder from "./ImageHolder";
+import ViewDetailsButton from "./ViewDetailsButton";
 
 type PhenotypeItemProps = {
   phenotype: Phenotype;
@@ -36,19 +37,22 @@ const PhenotypeItem: React.FC<PhenotypeItemProps> = ({
     <div
       className={twMerge("transition-colors hover:bg-neutral-50/50", className)}
     >
-      <div className="flex items-center gap-2.5 mb-2">
-        <h3 className="text-base font-semibold text-neutral-900">
-          {phenotype.description}
-        </h3>
-        <span
-          className={`px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${
-            penetrancePercentage > 70
-              ? "bg-green-50 text-green-600 border-green-100"
-              : "bg-orange-50 text-orange-500 border-orange-100"
-          }`}
-        >
-          {penetrancePercentage}%
-        </span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5 mb-2">
+          <h3 className="text-base font-semibold text-neutral-900">
+            {phenotype.description}
+          </h3>
+          <span
+            className={`px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${
+              penetrancePercentage > 70
+                ? "bg-green-50 text-green-600 border-green-100"
+                : "bg-orange-50 text-orange-500 border-orange-100"
+            }`}
+          >
+            {penetrancePercentage}%
+          </span>
+        </div>
+        <ViewDetailsButton phenotype={phenotype} />
       </div>
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-neutral-500">
