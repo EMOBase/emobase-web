@@ -10,7 +10,6 @@ import {
 import {
   ReactFlow,
   Background,
-  Controls,
   type Node,
   type Edge,
   type NodeTypes,
@@ -132,7 +131,6 @@ const WorkflowLarvaButton = () => {
             proOptions={{ hideAttribution: true }}
           >
             <Background color="#aaa" gap={16} />
-            <Controls />
           </ReactFlow>
         </div>
       </DialogContent>
