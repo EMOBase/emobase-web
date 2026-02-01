@@ -10,6 +10,7 @@ import { fetchByGene as fetchPhenotypesByGene } from "@/utils/services/phenotype
 import { fetchByGenes as fetchGOByGenes } from "@/utils/services/goAnnotationService";
 import { fetchByIds as fetchTermsByIds } from "@/utils/services/ontologyService";
 import GeneDetails from "@/components/pages/details/GeneDetails";
+import GeneNotFound from "@/components/pages/details/GeneNotFound";
 
 export const prerender = false;
 
@@ -59,6 +60,11 @@ const homologs = (await fetchDrosophilaGenes(orthologousGenes)).map((gene) => ({
   source: orthologySources[gene.id],
   annotations: annsById[gene.id],
 }));
+
+if (!triboliumGene) {
+  Astro.response.status = 404;
+  Astro.response.statusText = "Not Found";
+}
 ---
 
 <style is:global>
@@ -70,12 +76,18 @@ const homologs = (await fetchDrosophilaGenes(orthologousGenes)).map((gene) => ({
   }
 </style>
 <Layout>
-  <GeneDetails
-    gene={gene}
-    triboliumGene={triboliumGene}
-    dsRNAs={dsRNAs}
-    phenotypes={phenotypes}
-    homologs={homologs}
-    client:load
-  />
+  {
+    triboliumGene ? (
+      <GeneDetails
+        gene={gene}
+        triboliumGene={triboliumGene}
+        dsRNAs={dsRNAs}
+        phenotypes={phenotypes}
+        homologs={homologs}
+        client:load
+      />
+    ) : (
+      <GeneNotFound />
+    )
+  }
 </Layout>
