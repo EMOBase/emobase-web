@@ -19,7 +19,7 @@ type NavItem = {
     | "DASHBOARD"
     | "MY_GENES"
     | "GENOME_BROWSER"
-    | "PHENOTYPE_SEARCH"
+    | "BLAST"
     | "ID_CONVERTER"
     | "ONTOLOGY_VIEWER";
   label: string;
@@ -44,18 +44,6 @@ const homeItems: NavItem[] = [
 
 const toolItems: NavItem[] = [
   {
-    id: "GENOME_BROWSER",
-    label: "Genome Browser",
-    icon: "travel_explore",
-    href: "#",
-  },
-  {
-    id: "PHENOTYPE_SEARCH",
-    label: "Phenotype Search",
-    icon: "search",
-    href: "/search/TC013553",
-  },
-  {
     id: "ID_CONVERTER",
     label: "Gene ID Converter",
     icon: "transform",
@@ -66,6 +54,18 @@ const toolItems: NavItem[] = [
     label: "Ontology Viewer",
     icon: "schema",
     href: "/ontology",
+  },
+  {
+    id: "GENOME_BROWSER",
+    label: "Genome Browser",
+    icon: "tab_search",
+    href: "/genomebrowser",
+  },
+  {
+    id: "BLAST",
+    label: "Blast",
+    icon: "genetics",
+    href: "/blast",
   },
 ];
 
