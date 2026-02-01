@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -74,8 +76,8 @@ const PhenotypeList: React.FC<PhenotypeListProps> = ({
                     (a.dayPostInjection || -1) - (b.dayPostInjection || -1),
                 )
                 .map((p) => (
-                  <>
-                    <li key={p.id} className="flex items-center gap-2">
+                  <Fragment key={p.id}>
+                    <li className="flex items-center gap-2">
                       <span className="size-1.5 rounded-full bg-neutral-600"></span>
                       {p.description}
                       <span className="inline-flex gap-1">
@@ -104,6 +106,7 @@ const PhenotypeList: React.FC<PhenotypeListProps> = ({
                         ({ termId }) =>
                           termId && (
                             <a
+                              key={termId}
                               href={`/ontology?id=${termId?.replace(":", "_")}`}
                               className="text-xs text-primary font-medium hover:underline ml-0.5"
                             >
@@ -127,7 +130,7 @@ const PhenotypeList: React.FC<PhenotypeListProps> = ({
                         <div className="size-1.5" />
                       </div>
                     )}
-                  </>
+                  </Fragment>
                 ))}
             </ul>
           </div>

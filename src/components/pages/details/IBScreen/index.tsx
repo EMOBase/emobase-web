@@ -56,6 +56,7 @@ const IBScreen: React.FC<IBScreenProps> = ({
           (exp) =>
             phenotypesMap[exp.id] && (
               <PhenotypeList
+                key={exp.id}
                 experiment={exp}
                 phenotypes={phenotypesMap[exp.id]}
               />

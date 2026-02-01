@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { Icon } from "@/components/ui/icon";
 import { type IBDsRNA } from "@/utils/constants/ibeetle";
 
@@ -47,10 +49,10 @@ const SequenceList: React.FC<SequenceListProps> = ({ dsrna }) => {
   return (
     <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-neutral-100 dark:border-neutral-800">
       {sequencesButtons.map((props, index) => (
-        <>
+        <Fragment key={props.text}>
           {index > 0 && <span className="text-neutral-300">|</span>}
-          <ViewSequencesButton key={props.text} {...props} />
-        </>
+          <ViewSequencesButton {...props} />
+        </Fragment>
       ))}
     </div>
   );
