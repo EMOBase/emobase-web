@@ -5,15 +5,19 @@ import { imageUrl } from "@/utils/services/imageService";
 type ImageHolderProps = {
   imageId: string;
   status: "PENDING" | "APPROVED";
+  height?: number;
   className?: string;
+  imgClassName?: string;
 };
 
 const ImageHolder: React.FC<ImageHolderProps> = ({
   imageId,
   status,
+  height = 250,
   className,
+  imgClassName,
 }) => {
-  const imgSrc = imageUrl(imageId);
+  const imgSrc = imageUrl(imageId, height);
 
   return (
     <div className={twMerge("w-full aspect-4/3", className)}>
@@ -30,11 +34,19 @@ const ImageHolder: React.FC<ImageHolderProps> = ({
             src={imgSrc}
             alt="Phenotype evidence"
             loading="lazy"
-            className="w-full h-full object-cover rounded-lg border border-slate-200"
+            className={twMerge(
+              "w-full h-full object-cover rounded-lg border border-slate-200",
+              imgClassName,
+            )}
           />
         </a>
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-center rounded-lg bg-neutral-100 text-sm text-neutral-500 p-6">
+        <div
+          className={twMerge(
+            "w-full h-full flex items-center justify-center text-center rounded-lg bg-neutral-100 text-sm text-neutral-500 p-6",
+            imgClassName,
+          )}
+        >
           Image not reviewed yet
         </div>
       )}

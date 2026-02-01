@@ -2,9 +2,9 @@ import { twMerge } from "tailwind-merge";
 
 import { Icon } from "@/components/ui/icon";
 import PenetranceBadge from "@/components/common/PenetranceBadge";
+import ImageHolder from "@/components/common/ImageHolder";
 import type { Phenotype } from "@/utils/constants/phenotype";
 
-import ImageHolder from "./ImageHolder";
 import ViewDetailsButton from "./ViewDetailsButton";
 
 type PhenotypeItemProps = {
