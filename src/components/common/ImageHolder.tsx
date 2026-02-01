@@ -24,7 +24,7 @@ const ImageHolder: React.FC<ImageHolderProps> = ({
       {status === "APPROVED" ? (
         <a
           key={imageId}
-          href={imgSrc}
+          href={imageUrl(imageId)}
           target="_blank"
           className={
             "shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-zoom-in"
