@@ -2,12 +2,19 @@
 import "material-symbols/outlined.css";
 import { ClientRouter } from "astro:transitions";
 import LoadingIndicator from "astro-loading-indicator/component";
+import { twMerge } from "tailwind-merge";
 
 import "@/styles/global.css";
 import { Toaster } from "@/components/ui/sonner";
 import Sidebar from "@/components/layouts/Sidebar";
 
 const url = Astro.url.pathname;
+
+interface Props {
+  className?: string;
+}
+
+const { className } = Astro.props;
 ---
 
 <!doctype html>
@@ -34,7 +41,10 @@ const url = Astro.url.pathname;
     <Toaster client:load transition:persist />
     <Sidebar url={url} client:load transition:persist />
     <main
-      class="flex-1 overflow-y-auto scroll-smooth p-6 md:p-10 scroll-p-6 md:scroll-p-10"
+      class={twMerge(
+        "flex-1 overflow-y-auto scroll-smooth p-6 md:p-10 scroll-p-6 md:scroll-p-10",
+        className,
+      )}
     >
       <slot />
     </main>

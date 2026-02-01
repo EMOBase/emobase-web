@@ -1,7 +1,24 @@
 ---
 import Layout from "@/layouts/default.astro";
+
+export const prerender = false;
+
+const ontologyTermId = Astro.url.searchParams.get("id");
+
+const ontoscopeUrl = import.meta.env.PUBLIC_UI_PAGE_ONTOSCOPE;
+
+const getUrl = () => {
+  const obaUrl = "https://ibeetle-base.uni-goettingen.de/oba/tribolium";
+  let url = `${ontoscopeUrl}/?url=${obaUrl}&plugin=./tribolium_plugin`;
+
+  if (ontologyTermId) {
+    url += `&defaultId=${ontologyTermId}`;
+  }
+
+  return url;
+};
 ---
 
-<Layout>
-  <p>Ontology</p>
+<Layout className="p-0 md:p-0">
+  <iframe src={getUrl()} width="100%" height="100%" allowfullscreen></iframe>
 </Layout>
