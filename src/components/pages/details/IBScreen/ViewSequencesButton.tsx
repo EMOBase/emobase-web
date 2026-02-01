@@ -1,0 +1,99 @@
+import { Fragment } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import CopyButton from "@/components/common/CopyButton";
+import DownloadButton from "@/components/common/DownloadButton";
+import { type Sequence } from "@/utils/services/geneService";
+
+type ViewSequencesButtonProps = {
+  text: string;
+  title: string;
+  sequences: Sequence[];
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+};
+
+const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
+  text,
+  title,
+  sequences,
+  leftIcon,
+  rightIcon,
+}) => {
+  const padEvery = (str: string, numChar: number) => {
+    if (!str) {
+      return "";
+    }
+    const regex = new RegExp(`.{1,${numChar}}`, "g");
+    return str.match(regex)?.join(" ");
+  };
+
+  const lineCount = sequences.reduce((sum, sequence) => {
+    return sum + 1 + Math.ceil(sequence.seq.length / 10 / 3);
+  }, 0);
+
+  const rawFasta = sequences
+    .map((sequence) => {
+      return `>${sequence.id}\n${sequence.seq}`;
+    })
+    .join("\n");
+
+  const filename = title.replace(" ", "_").toLowerCase() + ".fa";
+
+  return (
+    <Dialog>
+      <DialogTrigger className="cursor-pointer group/link text-sm text-primary flex items-center gap-1">
+        {leftIcon}
+        {text}
+        {rightIcon}
+      </DialogTrigger>
+      <DialogContent className="max-h-9/10 sm:max-w-lg flex flex-col">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <div className="flex-1 overflow-y-auto border-y border-slate-100 bg-slate-50">
+          <div className="relative flex overflow-hidden">
+            <div className="absolute left-0 top-0 bottom-0 w-12 bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col items-center py-4 text-xs text-slate-400 font-mono select-none leading-[22.75px]">
+              {Array(lineCount)
+                .fill(1)
+                .map((_, idx) => (
+                  <span key={idx}>{(idx + 1).toString().padStart(2, "0")}</span>
+                ))}
+              <div className="absolute left-0 bottom-0 w-full h-4 bg-slate-100" />
+            </div>
+
+            <div className="flex-1 ml-12 pl-4 pr-6 py-4">
+              <pre className="font-mono text-sm leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-line">
+                {sequences.map((sequence) => (
+                  <Fragment key={sequence.id}>
+                    <span className="text-primary font-bold">{`>${sequence.id}`}</span>
+                    {"\n"}
+                    {padEvery(sequence.seq, 10)}
+                    {"\n"}
+                  </Fragment>
+                ))}
+              </pre>
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <CopyButton variant="outline" size="sm" content={rawFasta} />
+          <DownloadButton
+            variant="primary"
+            size="sm"
+            content={rawFasta}
+            filename={filename}
+          />
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default ViewSequencesButton;

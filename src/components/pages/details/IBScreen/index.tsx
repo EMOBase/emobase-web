@@ -5,6 +5,7 @@ import { type Phenotype } from "@/utils/constants/phenotype";
 import WorkflowPupalButton from "./WorkflowPupalButton";
 import WorkflowLarvaButton from "./WorkflowLarvaButton";
 import Lethalities from "./Lethalities";
+import SequenceList from "./SequenceList";
 
 type IBScreenProps = {
   id: string;
@@ -37,37 +38,7 @@ const IBScreen: React.FC<IBScreenProps> = ({
       <div className="bg-white rounded-xl border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800 overflow-hidden mb-6 shadow-sm">
         <div className="p-6">
           <Lethalities dsrnaId={dsrna.id} />
-          <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-neutral-100 dark:border-neutral-800">
-            <a
-              className="group/link text-sm text-primary flex items-center gap-1"
-              href="#"
-            >
-              <Icon name="chevron_left" className="text-lg" />
-              <span className="group-hover/link:underline">
-                View left primer
-              </span>
-            </a>
-            <span className="text-neutral-300">|</span>
-            <a
-              className="group/link text-sm text-primary flex items-center gap-1"
-              href="#"
-            >
-              <Icon name="genetics" className="text-base" />
-              <span className="group-hover/link:underline">
-                View dsRNA sequence
-              </span>
-            </a>
-            <span className="text-neutral-300">|</span>
-            <a
-              className="group/link text-sm text-primary flex items-center gap-1"
-              href="#"
-            >
-              <span className="group-hover/link:underline">
-                View right primer
-              </span>
-              <Icon name="chevron_right" className="text-lg" />
-            </a>
-          </div>
+          <SequenceList dsrna={dsrna} />
         </div>
       </div>
     </div>
