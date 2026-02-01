@@ -1,6 +1,7 @@
 import { twMerge } from "tailwind-merge";
 
 import { Icon } from "@/components/ui/icon";
+import PenetranceBadge from "@/components/common/PenetranceBadge";
 import type { Phenotype } from "@/utils/constants/phenotype";
 
 import ImageHolder from "./ImageHolder";
@@ -29,7 +30,6 @@ const PhenotypeItem: React.FC<PhenotypeItemProps> = ({
   phenotype,
   className,
 }) => {
-  const penetrancePercentage = (phenotype.penetrance ?? 0) * 100;
   const images = phenotype.images ?? [];
   const referenceUrl = getReferenceUrl(phenotype.reference);
 
@@ -42,15 +42,10 @@ const PhenotypeItem: React.FC<PhenotypeItemProps> = ({
           <h3 className="text-base font-semibold text-neutral-900">
             {phenotype.description}
           </h3>
-          <span
-            className={`px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${
-              penetrancePercentage > 70
-                ? "bg-green-50 text-green-600 border-green-100"
-                : "bg-orange-50 text-orange-500 border-orange-100"
-            }`}
-          >
-            {penetrancePercentage}%
-          </span>
+          <PenetranceBadge
+            value={phenotype.penetrance}
+            className="font-semibold"
+          />
         </div>
         <ViewDetailsButton phenotype={phenotype} />
       </div>

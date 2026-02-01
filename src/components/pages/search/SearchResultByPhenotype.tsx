@@ -12,6 +12,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import PenetranceBadge from "@/components/common/PenetranceBadge";
 import BeetleLoading from "@/components/common/BeetleLoading";
 import IBBGeneId from "@/components/common/IBBGeneId";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
@@ -43,11 +44,7 @@ const ResultRow = ({ gene, phenotypes }: GenePhenotypesItem) => {
                 <span className="text-slate-700 font-medium">
                   {description}
                 </span>
-                {!!penetrance && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 border border-green-200">
-                    {penetrance * 100}%
-                  </span>
-                )}
+                <PenetranceBadge value={penetrance} className="font-semibold" />
               </div>
             </div>
             <div className="col-span-12 md:col-span-5">
