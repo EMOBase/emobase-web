@@ -2,8 +2,7 @@ import { Icon } from "@/components/ui/icon";
 import { type IBDsRNA } from "@/utils/constants/ibeetle";
 import { type Phenotype } from "@/utils/constants/phenotype";
 
-import WorkflowPupalButton from "./WorkflowPupalButton";
-import WorkflowLarvaButton from "./WorkflowLarvaButton";
+import WorkflowButtons from "./WorkflowButtons";
 import Lethalities from "./Lethalities";
 import SequenceList from "./SequenceList";
 
@@ -29,10 +28,7 @@ const IBScreen: React.FC<IBScreenProps> = ({
           <Icon name="biotech" weight={500} className="text-primary" />
           {title}
         </h2>
-        <div className="flex gap-2">
-          <WorkflowPupalButton />
-          <WorkflowLarvaButton />
-        </div>
+        <WorkflowButtons />
       </div>
 
       <div className="bg-white rounded-xl border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800 overflow-hidden mb-6 shadow-sm">
