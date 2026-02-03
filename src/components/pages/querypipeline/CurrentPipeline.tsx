@@ -7,14 +7,15 @@ import {
 import type { QueryPipelineStep } from "@/utils/constants/querypipeline";
 import {
   DndContext,
-  closestCenter,
+  pointerWithin,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  type DragEndEvent,
   DragOverlay,
   type DragStartEvent,
+  MeasuringStrategy,
+  type DragOverEvent,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -27,7 +28,7 @@ import { useState } from "react";
 
 type CurrentPipelineProps = {
   steps: QueryPipelineStep[];
-  onSwap: (one: string, two: string) => void;
+  onMove: (target: string, destination: string) => void;
   onRemove: (name: string) => void;
 };
 
@@ -49,7 +50,7 @@ const StepItem = ({
           isOverlay ? "cursor-grabbing border-slate-400 shadow-md" : ""
         }`}
       >
-        {step.name}
+        {step.name.replace("->", "\u2192")}
         <Icon
           name="close"
           className="text-sm text-slate-500 group-hover/item:text-slate-700 -mr-1"
@@ -95,8 +96,8 @@ const SortableStep = ({
 
 const CurrentPipeline: React.FC<CurrentPipelineProps> = ({
   steps,
+  onMove,
   onRemove,
-  onSwap,
 }) => {
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -115,11 +116,11 @@ const CurrentPipeline: React.FC<CurrentPipelineProps> = ({
     setActiveId(event.active.id as string);
   };
 
-  const handleDragOver = (event: DragEndEvent) => {
+  const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      onSwap(active.id as string, over.id as string);
+      onMove(active.id as string, over.id as string);
     }
   };
 
@@ -139,7 +140,12 @@ const CurrentPipeline: React.FC<CurrentPipelineProps> = ({
       </h3>
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={pointerWithin}
+        measuring={{
+          droppable: {
+            strategy: MeasuringStrategy.Always,
+          },
+        }}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { arrayMove } from "@dnd-kit/sortable";
 
 import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@/components/ui/icon";
@@ -77,12 +78,12 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
     );
   };
 
-  const swapStep = (one: string, two: string) => {
+  const moveStep = (target: string, destination: string) => {
     setPipeline((prev) => {
-      const index1 = prev.indexOf(one);
-      const index2 = prev.indexOf(two);
+      const oldIndex = prev.indexOf(target);
+      const newIndex = prev.indexOf(destination);
 
-      return prev.with(index1, prev[index2]).with(index2, prev[index1]);
+      return arrayMove(prev, oldIndex, newIndex);
     });
   };
 
@@ -142,9 +143,8 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
               {steps.map((step) => {
                 const isSelected = pipeline.includes(step.name);
                 return (
-                  <Tooltip disableHoverableContent>
+                  <Tooltip key={step.name} disableHoverableContent>
                     <TooltipTrigger
-                      key={step.name}
                       onClick={() => toggleStep(step.name)}
                       className={`group/step flex items-center justify-between px-3 py-2 text-xs font-medium border rounded-md transition-all ${
                         isSelected
@@ -152,7 +152,9 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
                           : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-primary/40"
                       }`}
                     >
-                      <span className="truncate">{step.name}</span>
+                      <span className="truncate">
+                        {step.name.replace("->", "\u2192")}
+                      </span>
                       {isSelected ? (
                         <>
                           <Icon
@@ -181,7 +183,7 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
               steps={pipeline
                 .map((stepName) => steps.find((s) => s.name === stepName))
                 .filter(isNotUndefined)}
-              onSwap={swapStep}
+              onMove={moveStep}
               onRemove={removeStep}
             />
 
