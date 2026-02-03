@@ -25,6 +25,7 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
   const [ids, setIds] = useState("");
   const [pipeline, setPipeline] = useState<string[]>([]);
   const [result, setResult] = useState<string>();
+  const [error, setError] = useState<string>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = () => {
@@ -35,7 +36,12 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
       ids,
     )
       .then((result) => {
+        console.log("submit then", { result });
         setResult(result);
+      })
+      .catch((error) => {
+        console.log("submit catch", { error });
+        setError(error.message);
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -197,7 +203,7 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
         </div>
 
         {/* Results Section */}
-        <ResultTable result={result} />
+        <ResultTable result={result} error={error} />
       </div>
     </div>
   );

@@ -42,13 +42,20 @@ export const apiFetch = async <T>(
           JSON.stringify(bodyOpt),
         ];
 
-  return await fetch(url, {
+  const response = await fetch(url, {
     headers: {
       ...headers,
     },
     body,
     ...restOpts,
-  }).then((response) => response[responseType]() as T);
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error);
+  }
+
+  return response[responseType]() as T;
 };
 
 export const getApiBaseUrl = (service: ApiService) => urls[service];

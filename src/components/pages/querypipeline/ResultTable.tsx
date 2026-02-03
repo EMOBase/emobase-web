@@ -19,13 +19,14 @@ import {
 
 interface ResultTableProps {
   result: string | undefined;
+  error: string | undefined;
 }
 
 const getPageData = (data: any[], itemsPerPage: number, page: number) => {
   return data.slice(itemsPerPage * (page - 1), itemsPerPage * page);
 };
 
-const ResultTable: React.FC<ResultTableProps> = ({ result }) => {
+const ResultTable: React.FC<ResultTableProps> = ({ result, error }) => {
   const [filter, setFilter] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
@@ -82,6 +83,7 @@ const ResultTable: React.FC<ResultTableProps> = ({ result }) => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800">
+                {headers.length === 0 && <th className="px-6 py-4"> </th>}
                 {headers.map((item, idx) => (
                   <th key={idx} className="px-6 py-4">
                     {item.replace("->", "\u2192")}
@@ -115,9 +117,11 @@ const ResultTable: React.FC<ResultTableProps> = ({ result }) => {
                     colSpan={6}
                     className="px-6 py-8 text-center text-slate-500 italic"
                   >
-                    {result === undefined
-                      ? "Submit your query to see result"
-                      : "No results found for your query or filter."}
+                    {error
+                      ? error
+                      : result === undefined
+                        ? "Submit your query pipeline to see result"
+                        : "No results found for your query or filter."}
                   </td>
                 </tr>
               )}
