@@ -3,8 +3,15 @@ import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import type { QueryPipelineStep } from "@/utils/constants/querypipeline";
 
 import ResultsTable from "./ResultsTable";
+import { EXAMPLE_INPUT, EXAMPLE_STEP_NAMES } from "./constants";
 
 interface GeneResult {
   fbgn: string;
@@ -15,43 +22,13 @@ interface GeneResult {
   pupal11?: string;
 }
 
-interface ConversionStep {
-  id: string;
-  label: string;
-}
+type GeneIDConverterProps = {
+  steps: QueryPipelineStep[];
+};
 
-const CONVERSION_STEPS: ConversionStep[] = [
-  { id: "fbgn_to_symbol", label: "FBgn → FB symbol" },
-  { id: "fbgn_to_name", label: "FBgn → FB name" },
-  { id: "fbgn_to_cg", label: "FBgn → CG" },
-  { id: "symbol_to_fbgn", label: "FB symbol → FBgn" },
-  { id: "cg_to_fbgn", label: "CG → FBgn" },
-  { id: "fbgn_to_tc", label: "FBgn → TC" },
-  { id: "tc_to_fbgn", label: "TC → FBgn" },
-  { id: "tc_to_ib", label: "TC → iB" },
-  { id: "ib_to_tc", label: "iB → TC" },
-  { id: "ib_to_lethal11", label: "iB → lethal 11" },
-  { id: "ib_to_lethal22", label: "iB → lethal 22" },
-  { id: "ib_to_pupal11", label: "iB → pupal 11" },
-];
-
-export const EXAMPLE_IDS = `FBgn0020412
-FBgn0262866
-FBgn0052528
-FBgn0003360
-FBgn0025111
-FBgn0011742
-FBgn0001217`;
-
-const GeneIDConverter = () => {
-  const [ids, setIds] = useState(EXAMPLE_IDS);
-  const [pipeline, setPipeline] = useState<string[]>([
-    "fbgn_to_symbol",
-    "fbgn_to_tc",
-    "tc_to_ib",
-    "ib_to_lethal11",
-    "ib_to_pupal11",
-  ]);
+const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
+  const [ids, setIds] = useState("");
+  const [pipeline, setPipeline] = useState<string[]>([]);
   const [results, setResults] = useState<GeneResult[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -86,7 +63,8 @@ const GeneIDConverter = () => {
   };
 
   const handleLoadExample = () => {
-    setIds(EXAMPLE_IDS);
+    setIds(EXAMPLE_INPUT);
+    setPipeline(EXAMPLE_STEP_NAMES);
   };
 
   const toggleStep = (stepId: string) => {
@@ -126,8 +104,8 @@ const GeneIDConverter = () => {
               <h2 className="text-xl font-bold dark:text-white">Paste IDs</h2>
             </div>
             <textarea
-              className="flex-1 w-full min-h-64 p-4 font-mono text-sm bg-white dark:bg-sidebar-dark border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm transition-colors focus:ring-0 resize-none dark:placeholder-slate-600 dark:text-slate-300"
-              placeholder="Paste your IDs here (one per line)..."
+              className="flex-1 w-full min-h-64 p-4 font-mono text-sm bg-white dark:bg-sidebar-dark border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm transition-colors focus:ring-0 resize-none dark:placeholder-slate-600 dark:text-slate-300"
+              placeholder={"Paste your IDs here\n(one per line)..."}
               value={ids}
               onChange={(e) => setIds(e.target.value)}
             />
@@ -150,24 +128,40 @@ const GeneIDConverter = () => {
               </h2>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {CONVERSION_STEPS.map((step) => {
-                const isSelected = pipeline.includes(step.id);
+              {steps.map((step) => {
+                const isSelected = pipeline.includes(step.name);
                 return (
-                  <button
-                    key={step.id}
-                    onClick={() => toggleStep(step.id)}
-                    className={`flex items-center justify-between px-3 py-2 text-xs font-medium border rounded-lg transition-all ${
-                      isSelected
-                        ? "border-primary bg-primary/5 text-primary shadow-sm"
-                        : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-primary/40"
-                    }`}
-                  >
-                    <span className="truncate">{step.label}</span>
-                    <Icon
-                      name={isSelected ? "check_circle" : "add"}
-                      className="text-sm shrink-0"
-                    />
-                  </button>
+                  <Tooltip disableHoverableContent>
+                    <TooltipTrigger
+                      key={step.name}
+                      onClick={() => toggleStep(step.name)}
+                      className={`group/step flex items-center justify-between px-3 py-2 text-xs font-medium border rounded-md transition-all ${
+                        isSelected
+                          ? "border-primary bg-primary/5 text-primary shadow-sm"
+                          : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-primary/40"
+                      }`}
+                    >
+                      <span className="truncate">{step.name}</span>
+                      {isSelected ? (
+                        <>
+                          <Icon
+                            name="check_circle"
+                            className="text-sm shrink-0 group-hover/step:hidden"
+                          />
+                          <Icon
+                            name="remove"
+                            className="text-sm text-slate-500 shrink-0 hidden group-hover/step:inline-flex"
+                          />
+                        </>
+                      ) : (
+                        <Icon
+                          name="add"
+                          className="text-sm shrink-0 group-hover/step:text-primary"
+                        />
+                      )}
+                    </TooltipTrigger>
+                    <TooltipContent>{step.description}</TooltipContent>
+                  </Tooltip>
                 );
               })}
             </div>
@@ -186,20 +180,25 @@ const GeneIDConverter = () => {
                     No steps selected
                   </span>
                 )}
-                {pipeline.map((stepId) => {
-                  const step = CONVERSION_STEPS.find((s) => s.id === stepId);
+                {pipeline.map((stepName) => {
+                  const step = steps.find((s) => s.name === stepName);
                   return step ? (
-                    <button
-                      key={stepId}
-                      onClick={() => removeStep(stepId)}
-                      className="group/item text-xs flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-md text-sm text-slate-700 border border-slate-200"
-                    >
-                      {step.label}
-                      <Icon
-                        name="close"
-                        className="text-sm text-slate-500 group-hover/item:text-slate-700"
-                      />
-                    </button>
+                    <Tooltip>
+                      <TooltipTrigger
+                        key={stepName}
+                        onClick={() => removeStep(stepName)}
+                        className="group/item text-xs flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-md text-sm text-slate-700 border border-slate-200"
+                      >
+                        {step.name}
+                        <Icon
+                          name="close"
+                          className="text-sm text-slate-500 group-hover/item:text-slate-700 -mr-1"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Click to remove or Drag to reorder
+                      </TooltipContent>
+                    </Tooltip>
                   ) : null;
                 })}
               </div>

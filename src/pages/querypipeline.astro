@@ -1,8 +1,11 @@
 ---
 import Layout from "@/layouts/default.astro";
 import GeneIDConverter from "@/components/pages/querypipeline/GeneIDConverter";
+import { fetchSteps } from "@/utils/services/queryPipelineService";
+
+const steps = await fetchSteps();
 ---
 
 <Layout>
-  <GeneIDConverter client:load />
+  <GeneIDConverter client:load steps={steps} />
 </Layout>
