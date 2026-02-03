@@ -77,6 +77,15 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
     );
   };
 
+  const swapStep = (one: string, two: string) => {
+    setPipeline((prev) => {
+      const index1 = prev.indexOf(one);
+      const index2 = prev.indexOf(two);
+
+      return prev.with(index1, prev[index2]).with(index2, prev[index1]);
+    });
+  };
+
   const removeStep = (stepName: string) => {
     setPipeline((prev) => prev.filter((s) => s !== stepName));
   };
@@ -172,6 +181,7 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
               steps={pipeline
                 .map((stepName) => steps.find((s) => s.name === stepName))
                 .filter(isNotUndefined)}
+              onSwap={swapStep}
               onRemove={removeStep}
             />
 
