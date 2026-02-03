@@ -3,7 +3,7 @@ import Papa from "papaparse";
 import { twMerge } from "tailwind-merge";
 
 import { Icon } from "@/components/ui/icon";
-import { Button } from "@/components/ui/button";
+import DownloadButton from "@/components/common/DownloadButton";
 import {
   Select,
   SelectTrigger,
@@ -183,10 +183,13 @@ const ResultTable: React.FC<ResultTableProps> = ({ result }) => {
       </div>
 
       <div className="flex justify-end pt-4 pb-12">
-        <Button variant="primary" disabled={result === undefined}>
-          <Icon name="download" className="text-lg" />
-          Download
-        </Button>
+        <DownloadButton
+          variant="primary"
+          disabled={result === undefined}
+          content={result ?? ""}
+          filename="result.xlsx"
+          filetype="xlsx"
+        />
       </div>
     </section>
   );
