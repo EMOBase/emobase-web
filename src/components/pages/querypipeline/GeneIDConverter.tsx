@@ -1,18 +1,13 @@
 import { useState } from "react";
-import { arrayMove } from "@dnd-kit/sortable";
 
 import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
 import { isNotUndefined } from "@/utils/filterFn";
 import type { QueryPipelineStep } from "@/utils/constants/querypipeline";
 import { submit } from "@/utils/services/queryPipelineService";
 
+import StepList from "./StepList";
 import CurrentPipeline from "./CurrentPipeline";
 import ResultTable from "./ResultTable";
 import { EXAMPLE_INPUT, EXAMPLE_STEP_NAMES } from "./constants";
@@ -27,6 +22,10 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
   const [result, setResult] = useState<string>();
   const [error, setError] = useState<string>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const selectedSteps = pipeline
+    .map((stepName) => steps.find((s) => s.name === stepName))
+    .filter(isNotUndefined);
 
   const handleSubmit = () => {
     setIsSubmitting(true);
@@ -59,21 +58,10 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
     setPipeline(EXAMPLE_STEP_NAMES);
   };
 
-  const toggleStep = (stepName: string) => {
+  const addStep = (stepName: string) => {
     setPipeline((prev) =>
-      prev.includes(stepName)
-        ? prev.filter((s) => s !== stepName)
-        : [...prev, stepName],
+      prev.includes(stepName) ? prev : [...prev, stepName],
     );
-  };
-
-  const moveStep = (target: string, destination: string) => {
-    setPipeline((prev) => {
-      const oldIndex = prev.indexOf(target);
-      const newIndex = prev.indexOf(destination);
-
-      return arrayMove(prev, oldIndex, newIndex);
-    });
   };
 
   const removeStep = (stepName: string) => {
@@ -128,53 +116,16 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
                 Add query steps to the pipeline
               </h2>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {steps.map((step) => {
-                const isSelected = pipeline.includes(step.name);
-                return (
-                  <Tooltip key={step.name} disableHoverableContent>
-                    <TooltipTrigger
-                      onClick={() => toggleStep(step.name)}
-                      className={`group/step flex items-center justify-between px-3 py-2 text-xs font-medium border rounded-md transition-all ${
-                        isSelected
-                          ? "border-primary bg-primary/5 text-primary shadow-sm"
-                          : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-primary/40"
-                      }`}
-                    >
-                      <span className="truncate">
-                        {step.name.replace("->", "\u2192")}
-                      </span>
-                      {isSelected ? (
-                        <>
-                          <Icon
-                            name="check_circle"
-                            className="text-sm shrink-0 group-hover/step:hidden"
-                          />
-                          <Icon
-                            name="remove"
-                            className="text-sm text-slate-500 shrink-0 hidden group-hover/step:inline-flex"
-                          />
-                        </>
-                      ) : (
-                        <Icon
-                          name="add"
-                          className="text-sm shrink-0 group-hover/step:text-primary"
-                        />
-                      )}
-                    </TooltipTrigger>
-                    <TooltipContent>{step.description}</TooltipContent>
-                  </Tooltip>
-                );
-              })}
-            </div>
 
-            <CurrentPipeline
-              steps={pipeline
-                .map((stepName) => steps.find((s) => s.name === stepName))
-                .filter(isNotUndefined)}
-              onMove={moveStep}
+            <StepList
+              steps={steps}
+              pipeline={pipeline}
+              selectedSteps={selectedSteps}
+              onAdd={addStep}
               onRemove={removeStep}
             />
+
+            <CurrentPipeline steps={selectedSteps} onRemove={removeStep} />
 
             {/* Actions */}
             <div className="flex justify-end gap-3">
