@@ -1,7 +1,9 @@
 ---
-import Layout from "@/layouts/default.astro";
+import BlankLayout from "@/layouts/blank.astro";
+
+const url = import.meta.env.PUBLIC_UI_PAGE_BLAST;
 ---
 
-<Layout>
-  <p>Blast</p>
-</Layout>
+<BlankLayout>
+  <iframe src={url} width="100%" height="100%" allowfullscreen></iframe>
+</BlankLayout>
