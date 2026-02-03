@@ -9,7 +9,9 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import type { QueryPipelineStep } from "@/utils/constants/querypipeline";
+import { isNotUndefined } from "@/utils/filterFn";
 
+import CurrentPipeline from "./CurrentPipeline";
 import ResultsTable from "./ResultsTable";
 import { EXAMPLE_INPUT, EXAMPLE_STEP_NAMES } from "./constants";
 
@@ -67,16 +69,16 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
     setPipeline(EXAMPLE_STEP_NAMES);
   };
 
-  const toggleStep = (stepId: string) => {
+  const toggleStep = (stepName: string) => {
     setPipeline((prev) =>
-      prev.includes(stepId)
-        ? prev.filter((s) => s !== stepId)
-        : [...prev, stepId],
+      prev.includes(stepName)
+        ? prev.filter((s) => s !== stepName)
+        : [...prev, stepName],
     );
   };
 
-  const removeStep = (stepId: string) => {
-    setPipeline((prev) => prev.filter((s) => s !== stepId));
+  const removeStep = (stepName: string) => {
+    setPipeline((prev) => prev.filter((s) => s !== stepName));
   };
 
   return (
@@ -166,43 +168,12 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
               })}
             </div>
 
-            {/* Current Pipeline Tags */}
-            <div className="mt-4 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                Current pipeline steps
-                <span className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded text-[10px]">
-                  {pipeline.length}
-                </span>
-              </h3>
-              <div className="flex flex-wrap gap-2 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 min-h-[60px]">
-                {pipeline.length === 0 && (
-                  <span className="text-slate-400 text-sm italic">
-                    No steps selected
-                  </span>
-                )}
-                {pipeline.map((stepName) => {
-                  const step = steps.find((s) => s.name === stepName);
-                  return step ? (
-                    <Tooltip>
-                      <TooltipTrigger
-                        key={stepName}
-                        onClick={() => removeStep(stepName)}
-                        className="group/item text-xs flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-md text-sm text-slate-700 border border-slate-200"
-                      >
-                        {step.name}
-                        <Icon
-                          name="close"
-                          className="text-sm text-slate-500 group-hover/item:text-slate-700 -mr-1"
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Click to remove or Drag to reorder
-                      </TooltipContent>
-                    </Tooltip>
-                  ) : null;
-                })}
-              </div>
-            </div>
+            <CurrentPipeline
+              steps={pipeline
+                .map((stepName) => steps.find((s) => s.name === stepName))
+                .filter(isNotUndefined)}
+              onRemove={removeStep}
+            />
 
             {/* Actions */}
             <div className="flex justify-end gap-3">
