@@ -2,6 +2,11 @@ import { useState } from "react";
 
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 
 interface GeneResult {
   fbgn: string;
@@ -29,18 +34,18 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results }) => {
     <section className="space-y-4 pt-4 dark:border-slate-800">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h2 className="text-2xl font-bold dark:text-white">Results</h2>
-        <div className="relative w-full sm:w-64">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
-            filter_list
-          </span>
-          <input
-            className="w-full pl-9 pr-4 py-1.5 text-xs bg-white dark:bg-sidebar-dark border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-primary/20 transition-all"
+        <InputGroup className="w-full sm:w-64">
+          <InputGroupInput
             placeholder="Filter results..."
             type="text"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
+            className="py-2"
           />
-        </div>
+          <InputGroupAddon align="inline-start">
+            <Icon name="filter_list" className="text-slate-400 text-base" />
+          </InputGroupAddon>
+        </InputGroup>
       </div>
 
       <div className="bg-white dark:bg-sidebar-dark border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
