@@ -9,21 +9,13 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
-import type { QueryPipelineStep } from "@/utils/constants/querypipeline";
 import { isNotUndefined } from "@/utils/filterFn";
+import type { QueryPipelineStep } from "@/utils/constants/querypipeline";
+import { submit } from "@/utils/services/queryPipelineService";
 
 import CurrentPipeline from "./CurrentPipeline";
-import ResultsTable from "./ResultsTable";
+import ResultTable from "./ResultTable";
 import { EXAMPLE_INPUT, EXAMPLE_STEP_NAMES } from "./constants";
-
-interface GeneResult {
-  fbgn: string;
-  symbol: string;
-  tcId?: string;
-  ibId?: string;
-  lethality11?: string;
-  pupal11?: string;
-}
 
 type GeneIDConverterProps = {
   steps: QueryPipelineStep[];
@@ -32,37 +24,28 @@ type GeneIDConverterProps = {
 const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
   const [ids, setIds] = useState("");
   const [pipeline, setPipeline] = useState<string[]>([]);
-  const [results, setResults] = useState<GeneResult[]>([]);
+  const [result, setResult] = useState<string>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleMockSubmit = () => {
+  const handleSubmit = () => {
     setIsSubmitting(true);
-    // Simulate API delay
-    setTimeout(() => {
-      const mockResults: GeneResult[] = ids
-        .split("\n")
-        .filter(Boolean)
-        .map((id, idx) => ({
-          fbgn: id.trim(),
-          symbol:
-            ["JIL-1", "S6kII", "parvin", "sesB", "Ant2", "Aats-met", "lola"][
-              idx % 7
-            ] || "Unknown",
-          tcId: idx % 3 === 0 ? undefined : `TC00${1074 + idx}`,
-          ibId: idx % 3 === 0 ? undefined : `iB_0${6763 + idx}`,
-          lethality11:
-            idx % 3 === 0 ? undefined : (Math.random() * 50).toFixed(1),
-          pupal11: idx % 3 === 0 ? undefined : (Math.random() * 50).toFixed(1),
-        }));
-      setResults(mockResults);
-      setIsSubmitting(false);
-    }, 600);
+
+    submit(
+      steps.filter((step) => pipeline.includes(step.name)),
+      ids,
+    )
+      .then((result) => {
+        setResult(result);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   const handleReset = () => {
     setIds("");
     setPipeline([]);
-    setResults([]);
+    setResult(undefined);
   };
 
   const handleLoadExample = () => {
@@ -189,11 +172,16 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
 
             {/* Actions */}
             <div className="flex justify-end gap-3">
-              <Button onClick={handleReset}>Reset</Button>
+              <Button
+                onClick={handleReset}
+                disabled={!ids.trim() && pipeline.length === 0}
+              >
+                Reset
+              </Button>
               <Button
                 variant="primary"
-                onClick={handleMockSubmit}
-                disabled={isSubmitting || !ids.trim()}
+                onClick={handleSubmit}
+                disabled={isSubmitting || !ids.trim() || pipeline.length == 0}
               >
                 {isSubmitting ? (
                   <>
@@ -209,7 +197,7 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
         </div>
 
         {/* Results Section */}
-        <ResultsTable results={results} />
+        <ResultTable result={result} />
       </div>
     </div>
   );

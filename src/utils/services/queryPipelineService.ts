@@ -16,6 +16,7 @@ const submit = async (steps: QueryPipelineStep[], input: string) => {
     (await apiFetch<string>("querypipelineservice", "/pipelines", {
       body: payload,
       method: "POST",
+      responseType: "text",
     })) || ""
   );
 };
