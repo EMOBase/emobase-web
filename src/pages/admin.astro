@@ -1,0 +1,175 @@
+---
+import { getSession } from "auth-astro/server";
+import { SignIn, SignOut } from "auth-astro/components";
+
+export const prerender = false;
+
+const session = await getSession(Astro.request);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Admin Dashboard - EMOBase</title>
+    <style>
+      :root {
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --bg: #0f172a;
+        --card-bg: #1e293b;
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 600px;
+        width: 90%;
+        background-color: var(--card-bg);
+        padding: 2.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(to right, #60a5fa, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      p {
+        color: var(--text-muted);
+        margin-bottom: 2rem;
+      }
+
+      .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      /* Base button styles since we use component imports */
+      button,
+      [data-auth-signin],
+      [data-auth-signout] {
+        background-color: var(--primary);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        display: inline-block;
+      }
+
+      button:hover,
+      [data-auth-signin]:hover,
+      [data-auth-signout]:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .user-info {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 0.5rem;
+        text-align: left;
+      }
+
+      .admin-feature {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .status-pill {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+      }
+
+      .authenticated {
+        background: rgba(34, 197, 94, 0.1);
+        color: #4ade80;
+      }
+      .unauthenticated {
+        background: rgba(239, 44, 44, 0.1);
+        color: #f87171;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      {
+        session ? (
+          <>
+            <span class="status-pill authenticated">Authenticated</span>
+            <h1>Admin Dashboard</h1>
+            <p>Welcome back, {session.user?.name || session.user?.email}</p>
+
+            <div class="user-info">
+              <strong>Session Data:</strong>
+              <pre style="font-size: 0.8rem; overflow-x: auto; margin-top: 0.5rem;">
+                {JSON.stringify(session.user, null, 2)}
+              </pre>
+            </div>
+
+            <div class="admin-feature">
+              <h2>Admin Functionality</h2>
+              <p>You now have access to administrative tools.</p>
+              <div class="btn-container">
+                <SignOut>Logout</SignOut>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <span class="status-pill unauthenticated">Not Authenticated</span>
+            <h1>Admin Portal</h1>
+            <p>
+              Please log in with your Keycloak account to access administrative
+              features.
+            </p>
+            <div class="btn-container">
+              <SignIn provider="keycloak">Login with Keycloak</SignIn>
+              <p style="font-size: 0.8rem; margin-top: 1rem;">
+                If the button doesn't respond,{" "}
+                <a
+                  href="/api/auth/signin/keycloak"
+                  style="color: var(--primary); text-decoration: underline;"
+                >
+                  click here to sign in directly
+                </a>
+                .
+              </p>
+            </div>
+          </>
+        )
+      }
+    </div>
+  </body>
+</html>
