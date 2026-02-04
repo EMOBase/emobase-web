@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
+import { useSession } from "@/hooks/session/useSession";
 
 type NavItem = {
   id:
@@ -83,6 +84,7 @@ type SidebarProps = {
 };
 
 const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
+  const { session, isLoggedIn } = useSession();
   const activeView = getActiveView(url);
 
   const renderNavs = (navItems: NavItem[]) =>
@@ -142,7 +144,28 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent>
-              <SidebarMenu>{renderNavs(homeItems)}</SidebarMenu>
+              <SidebarMenu>
+                {renderNavs(homeItems)}
+                {isLoggedIn && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      size="free"
+                      tooltip="Admin Portal"
+                      isActive={url === "/admin"}
+                    >
+                      <a href="/admin">
+                        <span className="material-symbols-outlined">
+                          admin_panel_settings
+                        </span>
+                        <span className="text-sm font-medium">
+                          Admin Portal
+                        </span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
+              </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
 
