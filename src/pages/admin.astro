@@ -1,10 +1,10 @@
 ---
 import { getSession } from "auth-astro/server";
-import { SignIn, SignOut } from "auth-astro/components";
 
 import Layout from "@/layouts/default.astro";
 import BlankLayout from "@/layouts/blank.astro";
 import AdminLogin from "@/components/pages/admin/AdminLogin";
+import Dashboard from "@/components/pages/admin/Dashboard";
 
 export const prerender = false;
 
@@ -15,24 +15,7 @@ const session = await getSession(Astro.request);
   {
     session ? (
       <Layout>
-        <span class="status-pill authenticated">Authenticated</span>
-        <h1>Admin Dashboard</h1>
-        <p>Welcome back, {session.user?.name || session.user?.email}</p>
-
-        <div class="user-info">
-          <strong>Session Data:</strong>
-          <pre style="font-size: 0.8rem; overflow-x: auto; margin-top: 0.5rem;">
-            {JSON.stringify(session.user, null, 2)}
-          </pre>
-        </div>
-
-        <div class="admin-feature">
-          <h2>Admin Functionality</h2>
-          <p>You now have access to administrative tools.</p>
-          <div class="btn-container">
-            <SignOut>Logout</SignOut>
-          </div>
-        </div>
+        <Dashboard client:load session={session} />
       </Layout>
     ) : (
       <BlankLayout>
