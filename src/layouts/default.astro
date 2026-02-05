@@ -7,6 +7,7 @@ import { twMerge } from "tailwind-merge";
 import "@/styles/global.css";
 import { Toaster } from "@/components/ui/sonner";
 import Sidebar from "@/components/layouts/Sidebar";
+import Topbar from "@/components/layouts/Topbar";
 
 const url = Astro.url.pathname;
 
@@ -40,13 +41,16 @@ const { className } = Astro.props;
   <body class="h-screen w-full overflow-hidden flex">
     <Toaster client:load transition:persist />
     <Sidebar url={url} client:load transition:persist />
-    <main
-      class={twMerge(
-        "flex-1 overflow-y-auto scroll-smooth p-6 md:p-10 scroll-p-6 md:scroll-p-10",
-        className,
-      )}
-    >
-      <slot />
-    </main>
+    <div class="flex-1 flex flex-col">
+      <Topbar client:load transition:persist />
+      <main
+        class={twMerge(
+          "flex-1 overflow-y-auto scroll-smooth p-6 md:p-10 scroll-p-6 md:scroll-p-10",
+          className,
+        )}
+      >
+        <slot />
+      </main>
+    </div>
   </body>
 </html>
