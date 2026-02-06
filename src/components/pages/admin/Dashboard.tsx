@@ -1,42 +1,67 @@
-import type { DefaultSession } from "@auth/core/types";
-import { signOut } from "auth-astro/client";
+import TableOfContents from "@/components/common/TableOfContents";
+import { stringToURLHash } from "@/utils/stringToURLHash";
 
-import { Button } from "@/components/ui/button";
-
-type DashboardProps = {
-  session: DefaultSession;
+const ImageReview = () => {
+  return <div>Image Review</div>;
 };
 
-const Dashboard: React.FC<DashboardProps> = ({ session }) => {
+const GOAnnotationReview = () => {
+  return <div>GO Annotation Review</div>;
+};
+
+type DashboardProps = {};
+
+const Dashboard: React.FC<DashboardProps> = () => {
+  const sections = [
+    {
+      header: "Image Review",
+      component: ImageReview,
+      props: {},
+    },
+    {
+      header: "GO Annotation Review",
+      component: GOAnnotationReview,
+      props: {},
+    },
+  ];
+
+  const getSectionId = ({
+    header,
+    shortHeader,
+  }: {
+    header: string;
+    shortHeader?: string;
+  }) => {
+    return stringToURLHash(shortHeader || header);
+  };
+
+  const toc = sections.map((panel) => ({
+    id: getSectionId(panel),
+    title: panel.header,
+  }));
+
   return (
-    <>
-      <span className="status-pill authenticated">Authenticated</span>
-      <h1>Admin Dashboard</h1>
-      <p>Welcome back, {session.user?.name || session.user?.email}</p>
+    <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
+      <div className="flex-1 flex flex-col gap-10 min-w-0">
+        {sections.map((section) => {
+          const sectionId = getSectionId(section);
+          const props = section.props;
+          const Component = section.component as React.FC<
+            typeof props & { id: string; title: string }
+          >;
 
-      <div className="user-info">
-        <strong>Session Data:</strong>
-        <pre
-          style={{ fontSize: "0.8rem", overflowX: "auto", marginTop: "0.5rem" }}
-        >
-          {JSON.stringify(session.user, null, 2)}
-        </pre>
+          return (
+            <Component
+              key={sectionId}
+              id={sectionId}
+              title={section.header}
+              {...props}
+            />
+          );
+        })}
       </div>
-
-      <div className="admin-feature">
-        <h2>Admin Functionality</h2>
-        <p>You now have access to administrative tools.</p>
-        <Button
-          onClick={() => {
-            signOut().then(() => {
-              window.location.href = "/";
-            });
-          }}
-        >
-          Logout
-        </Button>
-      </div>
-    </>
+      <TableOfContents items={toc} />
+    </div>
   );
 };
 

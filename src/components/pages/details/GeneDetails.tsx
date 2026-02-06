@@ -1,3 +1,4 @@
+import TableOfContents from "@/components/common/TableOfContents";
 import { type IBDsRNA } from "@/utils/constants/ibeetle";
 import type {
   TriboliumGene,
@@ -13,7 +14,6 @@ import GOAnnotationCRUD from "./GOAnnotationCRUD";
 import PublicationCRUD from "./PublicationCRUD";
 import PhenotypeCRUD from "./PhenotypeCRUD";
 import IBScreen from "./IBScreen";
-import TableOfContents from "./TableOfContents";
 
 type GeneDetailsProps = {
   gene: string;

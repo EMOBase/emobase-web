@@ -15,7 +15,7 @@ const session = await getSession(Astro.request);
   {
     session ? (
       <Layout>
-        <Dashboard client:load session={session} />
+        <Dashboard client:load />
       </Layout>
     ) : (
       <BlankLayout>
