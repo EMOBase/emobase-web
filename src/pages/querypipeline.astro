@@ -1,7 +1,9 @@
 ---
 import Layout from "@/layouts/default.astro";
 import GeneIDConverter from "@/components/pages/querypipeline/GeneIDConverter";
-import { fetchSteps } from "@/utils/services/queryPipelineService";
+import queryPipelineService from "@/utils/services/queryPipelineService";
+
+const { fetchSteps } = queryPipelineService();
 
 const steps = await fetchSteps();
 ---

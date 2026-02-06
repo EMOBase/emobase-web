@@ -14,7 +14,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import type { GOAnnotation } from "@/utils/constants/goannotation";
-import { fetchById, shortenGOAspect } from "@/utils/services/ontologyService";
+import ontologyService from "@/utils/services/ontologyService";
+
+const { fetchById, shortenGOAspect } = ontologyService("GO");
 
 type Term = GOAnnotation["term"];
 
@@ -48,7 +50,7 @@ const TermInputField: React.FC<TermInputFieldProps> = ({
         return;
       }
       setLoading(true);
-      const result = await fetchById("GO", id);
+      const result = await fetchById(id);
       if (!result) {
         onChange({ id, name: "", aspect: "" });
       } else {

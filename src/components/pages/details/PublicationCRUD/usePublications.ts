@@ -4,7 +4,9 @@ import type {
   Publication,
   PublicationInput,
 } from "@/utils/constants/publication";
-import { create, remove } from "@/utils/services/publicationService";
+import publicationService from "@/utils/services/publicationService";
+
+const { create, remove } = publicationService();
 
 type State = {
   data: Publication[];

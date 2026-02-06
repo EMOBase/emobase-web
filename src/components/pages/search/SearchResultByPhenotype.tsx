@@ -1,7 +1,6 @@
 import { useState, Fragment } from "react";
 
-import {
-  search as searchByPhenotypes,
+import phenotypeService, {
   type PhenotypeSearchResult,
 } from "@/utils/services/phenotypeService";
 import imageService from "@/utils/services/imageService";
@@ -19,6 +18,7 @@ import useUpdateEffect from "@/hooks/useUpdateEffect";
 
 import PercentageRangeInput from "./PercentageRangeInput";
 
+const { search: searchByPhenotypes } = phenotypeService();
 const { imageUrl } = imageService();
 
 type GenePhenotypesItem = PhenotypeSearchResult["data"][number];

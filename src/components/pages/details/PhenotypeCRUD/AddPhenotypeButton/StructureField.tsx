@@ -18,10 +18,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { withForm } from "@/hooks/form/useAppForm";
-import { search } from "@/utils/services/ontologyService";
+import ontologyService from "@/utils/services/ontologyService";
 import type { PhenotypeInput } from "@/utils/constants/phenotype";
 
 import formOptions from "./formOptions";
+
+const { search } = ontologyService("TrOn");
 
 type Term = PhenotypeInput["structure"];
 
@@ -51,10 +53,7 @@ const StructureField = withForm({
       abortControllerRef.current = controller;
 
       startTransition(async () => {
-        const result = await search("TrOn", debouncedTermName, [
-          "mixed",
-          "concrete",
-        ]);
+        const result = await search(debouncedTermName, ["mixed", "concrete"]);
 
         if (controller.signal.aborted) {
           return;

@@ -1,18 +1,19 @@
 ---
 import Layout from "@/layouts/default.astro";
-import {
-  fetchIBs,
-  fetchTriboliumGenes,
-  fetchOrthology,
-  fetchDrosophilaGenes,
-} from "@/utils/services/geneService";
-import { fetchByGene as fetchPhenotypesByGene } from "@/utils/services/phenotypeService";
-import { fetchByGenes as fetchGOByGenes } from "@/utils/services/goAnnotationService";
-import { fetchByIds as fetchTermsByIds } from "@/utils/services/ontologyService";
+import geneService from "@/utils/services/geneService";
+import phenotypeService from "@/utils/services/phenotypeService";
+import goAnnotationService from "@/utils/services/goAnnotationService";
+import ontologyService from "@/utils/services/ontologyService";
 import GeneDetails from "@/components/pages/details/GeneDetails";
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
 
 export const prerender = false;
+
+const { fetchIBs, fetchTriboliumGenes, fetchOrthology, fetchDrosophilaGenes } =
+  geneService();
+const { fetchByGene: fetchPhenotypesByGene } = phenotypeService();
+const { fetchByGenes: fetchGOByGenes } = goAnnotationService();
+const { fetchByIds: fetchTermsByIds } = ontologyService("GO");
 
 const { gene = "" } = Astro.params;
 
@@ -39,7 +40,7 @@ const missingNames = new Set(
   anns.filter((a) => !a.term.name).map((a) => a.term.id),
 );
 if (missingNames.size > 0) {
-  const terms = await fetchTermsByIds("GO", Array.from(missingNames));
+  const terms = await fetchTermsByIds(Array.from(missingNames));
   const termMap = new Map(terms.map((t) => [t.id, t.name]));
   anns.forEach((a) => {
     if (!a.term.name) {

@@ -2,11 +2,13 @@ import { useEffect } from "react";
 
 import { Icon } from "@/components/ui/icon";
 import useAsyncData from "@/hooks/useAsyncData";
-import { fetchByGenes } from "@/utils/services/goAnnotationService";
+import goAnnotationService from "@/utils/services/goAnnotationService";
 
 import AnnotationList from "./AnnotationList";
 import ProposeTermButton from "./ProposeTermButton";
 import useGOAnnotations from "./useGOAnnotations";
+
+const { fetchByGenes } = goAnnotationService();
 
 type GOAnnotationCRUDProps = {
   id: string;

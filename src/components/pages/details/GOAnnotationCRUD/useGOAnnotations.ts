@@ -4,8 +4,9 @@ import type {
   GOAnnotation,
   GOAnnotationInput,
 } from "@/utils/constants/goannotation";
+import goAnnotationService from "@/utils/services/goAnnotationService";
 
-import { create, update } from "@/utils/services/goAnnotationService";
+const { create, update } = goAnnotationService();
 
 type State = {
   data: GOAnnotation[];

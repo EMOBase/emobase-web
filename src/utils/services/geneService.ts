@@ -52,70 +52,74 @@ export interface Orthology {
   }[];
 }
 
-const search = async (query: string) => {
-  return await apiFetch<GeneSearchResult>(
-    "geneservice",
-    `/search?query=${encodeURIComponent(query)}`,
-  );
-};
-
-const suggest = async (query: string) => {
-  return await apiFetch<string[]>(
-    "geneservice",
-    `/search/_suggest?query=${encodeURIComponent(query)}`,
-  );
-};
-
-const fetchTriboliumGenes = async (genes: string[]) => {
-  if (genes.length === 0) return [];
-
-  const concatenatedGenes = genes.join(",");
-  return (
-    (await apiFetch<TriboliumGene[]>(
+const geneService = (fetch: typeof apiFetch = apiFetch) => {
+  const search = async (query: string) => {
+    return await fetch<GeneSearchResult>(
       "geneservice",
-      `/tribolium/genes?ids=${concatenatedGenes}`,
-    )) || []
-  );
-};
+      `/search?query=${encodeURIComponent(query)}`,
+    );
+  };
 
-const fetchDrosophilaGenes = async (genes: string[]) => {
-  if (genes.length === 0) return [];
-
-  const concatenatedGenes = genes.join(",");
-  return (
-    (await apiFetch<DrosophilaGene[]>(
+  const suggest = async (query: string) => {
+    return await fetch<string[]>(
       "geneservice",
-      `/drosophila/genes?ids=${concatenatedGenes}`,
-    )) || []
-  );
+      `/search/_suggest?query=${encodeURIComponent(query)}`,
+    );
+  };
+
+  const fetchTriboliumGenes = async (genes: string[]) => {
+    if (genes.length === 0) return [];
+
+    const concatenatedGenes = genes.join(",");
+    return (
+      (await fetch<TriboliumGene[]>(
+        "geneservice",
+        `/tribolium/genes?ids=${concatenatedGenes}`,
+      )) || []
+    );
+  };
+
+  const fetchDrosophilaGenes = async (genes: string[]) => {
+    if (genes.length === 0) return [];
+
+    const concatenatedGenes = genes.join(",");
+    return (
+      (await fetch<DrosophilaGene[]>(
+        "geneservice",
+        `/drosophila/genes?ids=${concatenatedGenes}`,
+      )) || []
+    );
+  };
+
+  const fetchIBs = async (gene: string) => {
+    return (
+      (await fetch<IBDsRNA[]>(
+        "geneservice",
+        `/silencingseqs?geneIds=${gene}`,
+      )) || []
+    );
+  };
+
+  const fetchOrthology = async (gene: string) => {
+    return (
+      ((await fetch<Orthology[]>(
+        "geneservice",
+        `/datasources/all/tribolium/genes?geneIds=${gene}`,
+      )) || [])[0] || {
+        gene,
+        orthologs: [],
+      }
+    );
+  };
+
+  return {
+    search,
+    suggest,
+    fetchTriboliumGenes,
+    fetchDrosophilaGenes,
+    fetchIBs,
+    fetchOrthology,
+  };
 };
 
-const fetchIBs = async (gene: string) => {
-  return (
-    (await apiFetch<IBDsRNA[]>(
-      "geneservice",
-      `/silencingseqs?geneIds=${gene}`,
-    )) || []
-  );
-};
-
-const fetchOrthology = async (gene: string) => {
-  return (
-    ((await apiFetch<Orthology[]>(
-      "geneservice",
-      `/datasources/all/tribolium/genes?geneIds=${gene}`,
-    )) || [])[0] || {
-      gene,
-      orthologs: [],
-    }
-  );
-};
-
-export {
-  search,
-  suggest,
-  fetchTriboliumGenes,
-  fetchDrosophilaGenes,
-  fetchIBs,
-  fetchOrthology,
-};
+export default geneService;

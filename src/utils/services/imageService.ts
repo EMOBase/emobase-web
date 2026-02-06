@@ -1,4 +1,4 @@
-import { apiFetch as utilApiFetch, getApiBaseUrl } from "@/utils/apiFetch";
+import { apiFetch, getApiBaseUrl } from "@/utils/apiFetch";
 
 export interface ImageMetadata {
   id: string;
@@ -6,7 +6,7 @@ export interface ImageMetadata {
   comment?: string;
 }
 
-const imageService = (apiFetch: typeof utilApiFetch = utilApiFetch) => {
+const imageService = (fetch: typeof apiFetch = apiFetch) => {
   const imageUrl = (id: string, height?: number) => {
     if (!height) {
       return `${getApiBaseUrl("imageservice")}/images/${id}`;
@@ -21,14 +21,14 @@ const imageService = (apiFetch: typeof utilApiFetch = utilApiFetch) => {
     } else {
       url = `/images/${id}?h=${height}`;
     }
-    return await apiFetch<Blob>("imageservice", url, {
+    return await fetch<Blob>("imageservice", url, {
       responseType: "blob",
     });
   };
 
   const fetchPendingImageMetadata = async () => {
     return (
-      (await apiFetch<ImageMetadata[]>(
+      (await fetch<ImageMetadata[]>(
         "imageservice",
         `/image-metadata/pending?size=10000`,
       )) || []
@@ -36,14 +36,14 @@ const imageService = (apiFetch: typeof utilApiFetch = utilApiFetch) => {
   };
 
   const approve = async (ids: string[]) => {
-    await apiFetch("imageservice", "/image-metadata/approve", {
+    await fetch("imageservice", "/image-metadata/approve", {
       method: "POST",
       body: ids,
     });
   };
 
   const reject = async (ids: string[]) => {
-    await apiFetch("imageservice", "/image-metadata/reject", {
+    await fetch("imageservice", "/image-metadata/reject", {
       method: "POST",
       body: ids,
     });

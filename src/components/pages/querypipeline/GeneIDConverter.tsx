@@ -5,12 +5,14 @@ import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { isNotUndefined } from "@/utils/filterFn";
 import type { QueryPipelineStep } from "@/utils/constants/querypipeline";
-import { submit } from "@/utils/services/queryPipelineService";
+import queryPipelineService from "@/utils/services/queryPipelineService";
 
 import StepList from "./StepList";
 import CurrentPipeline from "./CurrentPipeline";
 import ResultTable from "./ResultTable";
 import { EXAMPLE_INPUT, EXAMPLE_STEP_NAMES } from "./constants";
+
+const { submit } = queryPipelineService();
 
 type GeneIDConverterProps = {
   steps: QueryPipelineStep[];

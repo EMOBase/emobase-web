@@ -1,7 +1,9 @@
 import { create as createStore } from "zustand";
 
 import type { Phenotype, PhenotypeInput } from "@/utils/constants/phenotype";
-import { create, remove } from "@/utils/services/phenotypeService";
+import phenotypeService from "@/utils/services/phenotypeService";
+
+const { create, remove } = phenotypeService();
 
 type State = {
   data: Phenotype[];

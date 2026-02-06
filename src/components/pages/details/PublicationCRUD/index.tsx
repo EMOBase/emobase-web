@@ -2,11 +2,13 @@ import { useEffect } from "react";
 
 import { Icon } from "@/components/ui/icon";
 import useAsyncData from "@/hooks/useAsyncData";
-import { fetchByGene } from "@/utils/services/publicationService";
+import publicationService from "@/utils/services/publicationService";
 
 import AddPublicationButton from "./AddPublicationButton";
 import PublicationList from "./PublicationList";
 import usePublications from "./usePublications";
+
+const { fetchByGene } = publicationService();
 
 type PublicationCRUDProps = {
   id: string;

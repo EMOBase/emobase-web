@@ -2,7 +2,9 @@ import { Icon } from "@/components/ui/icon";
 
 import BeetleLoading from "@/components/common/BeetleLoading";
 import useAsyncData from "@/hooks/useAsyncData";
-import { fetchLethality } from "@/utils/services/phenotypeService";
+import phenotypeService from "@/utils/services/phenotypeService";
+
+const { fetchLethality } = phenotypeService();
 
 const LethalityRate = ({
   days,
