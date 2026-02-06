@@ -4,7 +4,7 @@ import {
   search as searchByPhenotypes,
   type PhenotypeSearchResult,
 } from "@/utils/services/phenotypeService";
-import { imageUrl } from "@/utils/services/imageService";
+import imageService from "@/utils/services/imageService";
 import {
   Select,
   SelectTrigger,
@@ -18,6 +18,8 @@ import IBBGeneId from "@/components/common/IBBGeneId";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 
 import PercentageRangeInput from "./PercentageRangeInput";
+
+const { imageUrl } = imageService();
 
 type GenePhenotypesItem = PhenotypeSearchResult["data"][number];
 

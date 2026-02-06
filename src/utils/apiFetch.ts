@@ -17,12 +17,14 @@ export const apiFetch = async <T>(
     responseType?: "json" | "text" | "blob" | "formData" | "arrayBuffer";
     body?: any;
     query?: Record<string, string | string[] | null | undefined>;
+    authorization?: string;
   },
 ) => {
   const {
     responseType = "json",
     body: bodyOpt,
     query,
+    authorization = "",
     ...restOpts
   } = opts ?? {};
   const baseURL = urls[service];
@@ -45,6 +47,7 @@ export const apiFetch = async <T>(
   const response = await fetch(url, {
     headers: {
       ...headers,
+      Authorization: authorization,
     },
     body,
     ...restOpts,

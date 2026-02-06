@@ -1,9 +1,7 @@
 import TableOfContents from "@/components/common/TableOfContents";
 import { stringToURLHash } from "@/utils/stringToURLHash";
 
-const ImageReview = () => {
-  return <div>Image Review</div>;
-};
+import ImageReview from "./ImageReview";
 
 const GOAnnotationReview = () => {
   return <div>GO Annotation Review</div>;

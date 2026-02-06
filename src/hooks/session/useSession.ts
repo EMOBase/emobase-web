@@ -1,38 +1,16 @@
-import { useState, useEffect } from "react";
-
-type Session = {
-  user: {
-    name: string;
-    email: string;
-    accessToken: string;
-  };
-  expires: string;
-};
+import { useEffect } from "react";
+import { useSessionStore } from "@/states/sessionStore";
 
 /**
  * A hook to access the current session from the client side.
- * Useful for conditionally rendering UI components (like sidebars)
- * in static pages that are not pre-rendered with session data.
+ * Uses a global Zustand store to cache the session and prevent redundant API calls.
  */
 export function useSession() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { session, loading, fetchSession } = useSessionStore();
 
   useEffect(() => {
-    const fetchSession = async () => {
-      try {
-        const res = await fetch("/api/auth/session");
-        const s = await res.json();
-        setSession(s);
-      } catch (error) {
-        console.error("Failed to fetch session:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSession();
-  }, []);
+  }, [fetchSession]);
 
   return {
     session,

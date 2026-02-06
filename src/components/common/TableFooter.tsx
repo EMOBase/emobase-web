@@ -14,7 +14,7 @@ type TableFooterProps = {
   setItemsPerPage: React.Dispatch<React.SetStateAction<number>>;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
-  totalPage: number;
+  totalPage?: number;
   totalRecord: number;
   className?: string;
 };
@@ -24,10 +24,12 @@ const TableFooter: React.FC<TableFooterProps> = ({
   setItemsPerPage,
   page,
   setPage,
-  totalPage,
+  totalPage: totalPageProp,
   totalRecord,
   className,
 }) => {
+  const totalPage = totalPageProp ?? Math.ceil(totalRecord / itemsPerPage);
+
   return (
     <div
       className={twMerge(
