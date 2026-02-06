@@ -1,4 +1,4 @@
-import FlyBaseGeneId from "@/components/common/FlyBaseGeneId";
+import FlybaseGeneId from "@/components/common/FlybaseGeneId";
 
 import type { Homolog } from "./types";
 
@@ -43,7 +43,7 @@ const HomologTable: React.FC<HomologTableProps> = ({ homologs, onViewGO }) => {
             {homologs.map((h) => (
               <tr key={h.id} className={`transition-colors hover:bg-gray-50`}>
                 <td className="px-6 py-4">
-                  <FlyBaseGeneId gene={h.id} className={`font-semibold`} />
+                  <FlybaseGeneId gene={h.id} className={`font-semibold`} />
                 </td>
 
                 <td className="px-6 py-4 text-gray-500 text-xs">

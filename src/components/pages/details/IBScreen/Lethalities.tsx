@@ -29,7 +29,7 @@ const LethalityRate = ({
 };
 
 type LethalitiesProps = {
-  dsrna: IBDsRNA;
+  dsrnaId: string;
 };
 
 const Lethalities: React.FC<LethalitiesProps> = ({ dsrnaId }) => {
