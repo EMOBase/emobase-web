@@ -5,17 +5,11 @@ import { twMerge } from "tailwind-merge";
 import { Icon } from "@/components/ui/icon";
 import DownloadButton from "@/components/common/DownloadButton";
 import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import TableFooter from "@/components/common/TableFooter";
 
 interface ResultTableProps {
   result: string | undefined;
@@ -129,61 +123,14 @@ const ResultTable: React.FC<ResultTableProps> = ({ result, error }) => {
           </table>
         </div>
 
-        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <span>Items per page:</span>
-            <Select
-              value={itemsPerPage.toString()}
-              onValueChange={(v) => setItemsPerPage(parseInt(v))}
-            >
-              <SelectTrigger size="sm" className="bg-white text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center gap-6">
-            <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-              {data.length == 0 ? 0 : itemsPerPage * (page - 1) + 1}-
-              {Math.min(itemsPerPage * page, data.length)} of {data.length}
-            </span>
-            <div className="flex items-center text-xs gap-1">
-              <button
-                className="flex p-1 rounded-sm text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
-                disabled={page === 1}
-                onClick={() => setPage(1)}
-              >
-                <Icon name="first_page" className="text-xl" />
-              </button>
-              <button
-                className="flex p-1 rounded-sm text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
-                disabled={page === 1}
-                onClick={() => setPage((p) => p - 1)}
-              >
-                <Icon name="chevron_left" className="text-xl" />
-              </button>
-              <button
-                className="flex p-1 rounded-sm text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
-                disabled={page === totalPage}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                <Icon name="chevron_right" className="text-xl" />
-              </button>
-              <button
-                className="flex p-1 rounded-md text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
-                disabled={page === totalPage}
-                onClick={() => setPage(totalPage)}
-              >
-                <Icon name="last_page" className="text-xl" />
-              </button>
-            </div>
-          </div>
-        </div>
+        <TableFooter
+          itemsPerPage={itemsPerPage}
+          setItemsPerPage={setItemsPerPage}
+          page={page}
+          setPage={setPage}
+          totalPage={totalPage}
+          totalRecord={data.length}
+        />
       </div>
 
       <div className="flex justify-end pt-4 pb-12">
