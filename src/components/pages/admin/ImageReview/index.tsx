@@ -1,16 +1,22 @@
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { Icon } from "@/components/ui/icon";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import BeetleLoading from "@/components/common/BeetleLoading";
 import ImageHolder from "@/components/common/ImageHolder";
 import TableFooter from "@/components/common/TableFooter";
-import useAsyncData from "@/hooks/useAsyncData";
-import imageService from "@/utils/services/imageService";
 
-const { fetchPendingImageMetadata, reject, approve } = imageService();
+import usePendingImages from "./usePendingImages";
 
 type ImageReviewProps = {
   id: string;
   title: string;
+};
+
+const getPageData = (data: any[], itemsPerPage: number, page: number) => {
+  return data.slice(itemsPerPage * (page - 1), itemsPerPage * page);
 };
 
 const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
@@ -18,16 +24,14 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
 
-  const { data = [], loading } = useAsyncData(
-    () => fetchPendingImageMetadata(),
-    [],
-  );
+  const { data, loading, accept, discard } = usePendingImages();
+  const pageData = getPageData(data, itemsPerPage, page);
 
   const toggleSelectAll = () => {
     if (selectedIds.length === data.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(data.map((item) => item.id));
+      setSelectedIds(pageData.map((item) => item.id));
     }
   };
 
@@ -39,7 +43,20 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
     );
   };
 
-  const handleBulk = (action: "accept" | "discard") => {};
+  const handleBulk = (action: "accept" | "discard") => {
+    if (action === "accept") {
+      accept(selectedIds).then(() => {
+        toast.success("Images accepted");
+        setSelectedIds([]);
+      });
+    }
+    if (action === "discard") {
+      accept(selectedIds).then(() => {
+        toast.success("Images rejected");
+        setSelectedIds([]);
+      });
+    }
+  };
 
   return (
     <section
@@ -49,7 +66,7 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
       <div className="p-6 flex items-center justify-between border-b border-slate-100">
         <div className="flex items-center gap-3">
           <Icon name="image" weight={500} className="text-primary text-2xl" />
-          <h3 className="text-base font-bold text-text-primary font-display">
+          <h3 className="text-lg font-bold text-text-primary font-display">
             {title}
           </h3>
         </div>
@@ -65,23 +82,27 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
           <span className="text-xs font-semibold text-primary">
             {selectedIds.length} items selected
           </span>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleBulk("accept")}
-              className="btn-outline-primary"
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                handleBulk("accept");
+              }}
+              className="py-2"
             >
-              <span className="material-symbols-outlined text-sm">
-                done_all
-              </span>
+              <Icon name="done_all" weight={500} className="text-lg" />
               Accept Selected
-            </button>
-            <button
-              onClick={() => handleBulk("discard")}
-              className="btn-subtle-grey"
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                handleBulk("discard");
+              }}
+              className="bg-slate-100 text-slate-500 py-2 hover:bg-slate-200/90 hover:text-slate-600"
             >
-              <span className="material-symbols-outlined text-sm">delete</span>
+              <Icon name="delete" weight={500} className="text-lg" />
               Discard Selected
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -91,34 +112,38 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
           <thead className="bg-slate-50 text-slate-500">
             <tr>
               <th className="text-xs w-12 text-center px-6 py-4">
-                <input
-                  type="checkbox"
-                  className="rounded border-slate-300 text-primary focus:ring-primary/20"
+                <Checkbox
                   checked={
-                    data.length > 0 && selectedIds.length === data.length
+                    pageData.length === 0 || selectedIds.length === 0
+                      ? false
+                      : selectedIds.length === pageData.length
+                        ? true
+                        : "indeterminate"
                   }
-                  onChange={toggleSelectAll}
+                  onCheckedChange={toggleSelectAll}
                 />
               </th>
               <th className="text-xs px-6 py-4">Image</th>
-              <th className="text-xs px-6 py-4">Gene</th>
-              <th className="text-xs px-6 py-4">Date</th>
               <th className="text-xs text-right px-6 py-4">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {data.length > 0 ? (
-              data.map((item) => (
+            {loading ? (
+              <tr>
+                <td colSpan={3} className="relative h-40">
+                  <BeetleLoading title="Getting Data" />
+                </td>
+              </tr>
+            ) : data.length > 0 ? (
+              pageData.map((item) => (
                 <tr
                   key={item.id}
                   className={`${selectedIds.includes(item.id) ? "bg-orange-50/20" : "hover:bg-slate-50/30"} transition-colors`}
                 >
                   <td className="px-6 py-5 text-center align-top pt-6">
-                    <input
-                      type="checkbox"
-                      className="rounded border-slate-300 text-primary focus:ring-primary/20"
+                    <Checkbox
                       checked={selectedIds.includes(item.id)}
-                      onChange={() => toggleSelectItem(item.id)}
+                      onCheckedChange={() => toggleSelectItem(item.id)}
                     />
                   </td>
 
@@ -129,33 +154,32 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
                       height={150}
                     />
                   </td>
-                  <td className="px-6 py-5 font-medium text-slate-900">
-                    {item.geneId}
-                  </td>
-                  <td className="px-6 py-5">{item.submissionDate}</td>
-
                   <td className="px-6 py-5 text-right align-top pt-6">
                     <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => {}}
-                        className="btn-outline-primary"
-                        title="Accept"
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          accept([item.id]).then(() =>
+                            toast.success("Image accepted"),
+                          );
+                        }}
+                        className="py-2"
                       >
-                        <span className="material-symbols-outlined text-[16px]">
-                          check
-                        </span>{" "}
+                        <Icon name="check" weight={500} className="text-lg" />
                         Accept
-                      </button>
-                      <button
-                        onClick={() => {}}
-                        className="btn-subtle-grey"
-                        title="Discard"
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        onClick={() => {
+                          discard([item.id]).then(() =>
+                            toast.success("Image rejected"),
+                          );
+                        }}
+                        className="bg-slate-100 text-slate-500 py-2 hover:bg-slate-200/90 hover:text-slate-600"
                       >
-                        <span className="material-symbols-outlined text-[16px]">
-                          close
-                        </span>
+                        <Icon name="close" weight={500} className="text-lg" />
                         Discard
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
