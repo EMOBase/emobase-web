@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import type { DefaultSession } from "@auth/core/types";
+
+type Session = {
+  user: {
+    name: string;
+    email: string;
+    accessToken: string;
+  };
+  expires: string;
+};
 
 /**
  * A hook to access the current session from the client side.
@@ -7,7 +15,7 @@ import type { DefaultSession } from "@auth/core/types";
  * in static pages that are not pre-rendered with session data.
  */
 export function useSession() {
-  const [session, setSession] = useState<DefaultSession | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
