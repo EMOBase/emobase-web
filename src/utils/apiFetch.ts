@@ -21,7 +21,7 @@ export const apiFetch = async <T>(
   },
 ) => {
   const {
-    responseType = "json",
+    responseType,
     body: bodyOpt,
     query,
     authorization = "",
@@ -58,7 +58,16 @@ export const apiFetch = async <T>(
     throw new Error(error);
   }
 
-  return response[responseType]() as T;
+  if (responseType) return response[responseType]() as T;
+
+  const contentType = response.headers.get("Content-Type") ?? "";
+  if (contentType.includes("application/json")) {
+    return response.json() as T;
+  } else if (contentType.includes("image/")) {
+    return response.blob() as T;
+  } else {
+    return response.text() as T;
+  }
 };
 
 export const getApiBaseUrl = (service: ApiService) => urls[service];
