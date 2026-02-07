@@ -2,10 +2,7 @@ import TableOfContents from "@/components/common/TableOfContents";
 import { stringToURLHash } from "@/utils/stringToURLHash";
 
 import ImageReview from "./ImageReview";
-
-const GOAnnotationReview = () => {
-  return <div>GO Annotation Review</div>;
-};
+import GOAnnotationReview from "./GOAnnotationReview";
 
 type DashboardProps = {};
 
