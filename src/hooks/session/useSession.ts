@@ -21,6 +21,11 @@ export function useSession() {
   }, [fetchSession]);
 
   useEffect(() => {
+    if (session?.error) {
+      signOut();
+      return;
+    }
+
     const handleFocus = () => {
       // Logout user if token has expired
       if (session && isBefore(parseISO(session.expires), Date.now())) {

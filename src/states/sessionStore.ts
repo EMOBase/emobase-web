@@ -7,6 +7,7 @@ export type Session = {
     accessToken: string;
   };
   expires: string;
+  error?: string;
 };
 
 interface SessionState {
@@ -43,7 +44,6 @@ export const useSessionStore = create<SessionState>((set, get) => ({
         set({ session: null, isFetched: true });
       }
     } catch (error) {
-      console.error("Failed to fetch session:", error);
       set({ session: null, isFetched: true });
     } finally {
       set({ loading: false });
