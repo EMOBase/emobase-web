@@ -39,7 +39,7 @@ const Topbar = () => {
     <header className="h-16 border-b border-border-light bg-white/80 backdrop-blur-md px-10 flex items-center justify-between z-30 flex-shrink-0">
       <div></div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-5">
         <InputGroup>
           <InputGroupInput
             className="rounded-md w-90 py-2"
