@@ -15,7 +15,7 @@ interface SessionState {
   isFetched: boolean;
   setSession: (session: Session | null) => void;
   setLoading: (loading: boolean) => void;
-  fetchSession: () => Promise<void>;
+  fetchSession: (force?: boolean) => Promise<void>;
 }
 
 export const useSessionStore = create<SessionState>((set, get) => ({
@@ -24,9 +24,9 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   isFetched: false,
   setSession: (session) => set({ session, isFetched: true }),
   setLoading: (loading) => set({ loading }),
-  fetchSession: async () => {
-    // If already fetched or loading, don't fetch again
-    if (get().isFetched && !get().loading) return;
+  fetchSession: async (force = false) => {
+    // If already fetched or loading, don't fetch again unless forced
+    if (get().isFetched && !get().loading && !force) return;
 
     set({ loading: true });
     try {
