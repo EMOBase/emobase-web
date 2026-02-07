@@ -1,19 +1,35 @@
 import { useState } from "react";
+import { toast } from "sonner";
+import { parseISO, format } from "date-fns";
 
 import { Icon } from "@/components/ui/icon";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import BeetleLoading from "@/components/common/BeetleLoading";
-import ImageHolder from "@/components/common/ImageHolder";
 import TableFooter from "@/components/common/TableFooter";
+import type { GOAnnotation } from "@/utils/constants/goannotation";
+
+import useGOAnnotations from "./useGOAnnotations";
+import ViewDetailsButton from "./ViewDetailsButton";
+
+const getLinkGeneOntologyTerm = (annotation: GOAnnotation) => {
+  if (annotation.term.id) {
+    return `http://amigo.geneontology.org/amigo/term/${annotation.term.id}`;
+  }
+};
+
+const getPageData = <T,>(data: T[], itemsPerPage: number, page: number) => {
+  return data.slice(itemsPerPage * (page - 1), itemsPerPage * page);
+};
 
 type GOAnnotationReviewProps = {
   id: string;
   title: string;
-};
-
-const getPageData = (data: any[], itemsPerPage: number, page: number) => {
-  return data.slice(itemsPerPage * (page - 1), itemsPerPage * page);
 };
 
 const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
@@ -24,8 +40,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
 
-  const data: any[] = [];
-  const loading = false;
+  const { data, loading, accept, discard } = useGOAnnotations();
   const pageData = getPageData(data, itemsPerPage, page);
 
   const toggleSelectAll = () => {
@@ -46,8 +61,16 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
 
   const handleBulk = (action: "accept" | "discard") => {
     if (action === "accept") {
+      accept(selectedIds).then(() => {
+        toast.success("GO Annotations accepted");
+        setSelectedIds([]);
+      });
     }
     if (action === "discard") {
+      accept(selectedIds).then(() => {
+        toast.success("GO Annotations rejected");
+        setSelectedIds([]);
+      });
     }
   };
 
@@ -116,7 +139,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
                   onCheckedChange={toggleSelectAll}
                 />
               </th>
-              <th className="text-xs px-6 py-4">Term ID & Description</th>
+              <th className="text-xs text-left px-6 py-4">Term ID & Name</th>
               <th className="text-xs px-6 py-4">Gene ID</th>
               <th className="text-xs px-6 py-4">Date</th>
               <th className="text-xs text-right px-6 py-4">Actions</th>
@@ -133,7 +156,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
               pageData.map((item) => (
                 <tr
                   key={item.id}
-                  className={`${selectedIds.includes(item.id) ? "bg-orange-50/20" : "hover:bg-slate-50/30"} transition-colors`}
+                  className={`${selectedIds.includes(item.id) ? "bg-orange-50/25" : "hover:bg-slate-50/35"} transition-colors`}
                 >
                   <td className="px-6 py-5 text-center align-top pt-6">
                     <Checkbox
@@ -143,32 +166,89 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
                   </td>
 
                   <td className="px-6 py-5">
-                    <ImageHolder
-                      imageId={item.id}
-                      status={item.status}
-                      height={150}
-                    />
+                    <div className="max-w-xs">
+                      <a
+                        href={getLinkGeneOntologyTerm(item)}
+                        target="_blank"
+                        className="group/link flex items-center gap-1.5 hover:text-primary transition-colors"
+                      >
+                        <span className="font-semibold text-sm text-slate-900">
+                          {item.term.id}
+                        </span>
+                        <Icon
+                          name="open_in_new"
+                          className="text-base text-neutral-400"
+                        />
+                      </a>
+                      <p className="text-xs leading-relaxed text-slate-500 mt-1">
+                        {item.term.name}
+                      </p>
+                    </div>
                   </td>
-                  <td className="px-6 py-5"></td>
-                  <td className="px-6 py-5"></td>
-                  <td className="px-6 py-5 text-right align-top pt-6">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => {}}
-                        className="py-2"
+                  <td className="px-6 py-5 text-sm text-slate-700 font-medium">
+                    <a
+                      href={`/details/${item.gene}`}
+                      className="text-primary hover:text-primary-bold font-bold hover:underline decoration-primary decoration-2 underline-offset-2 cursor-pointer"
+                    >
+                      {item.gene}
+                    </a>
+                  </td>
+                  <td className="px-6 py-5 text-sm text-slate-600">
+                    {item.date && format(parseISO(item.date), "P")}
+                  </td>
+                  <td className="px-6 py-5 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <ViewDetailsButton
+                        annotation={item}
+                        variant="ghost"
+                        className="text-slate-600 hover:text-slate-800 p-1.5"
                       >
-                        <Icon name="check" weight={500} className="text-lg" />
-                        Accept
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        onClick={() => {}}
-                        className="bg-slate-100 text-slate-500 py-2 hover:bg-slate-200/90 hover:text-slate-600"
-                      >
-                        <Icon name="close" weight={500} className="text-lg" />
-                        Discard
-                      </Button>
+                        <Icon
+                          name="visibility"
+                          weight={500}
+                          className="text-lg"
+                        />
+                      </ViewDetailsButton>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              accept([item.id]).then(() =>
+                                toast.success("GO Annotation accepted"),
+                              );
+                            }}
+                            className="p-1.5"
+                          >
+                            <Icon
+                              name="check"
+                              weight={500}
+                              className="text-lg"
+                            />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Accept</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="secondary"
+                            onClick={() => {
+                              discard([item.id]).then(() =>
+                                toast.success("GO Annotation rejected"),
+                              );
+                            }}
+                            className="bg-slate-100 text-slate-500 hover:bg-slate-200/90 hover:text-slate-600 px-1.5 py-1.5"
+                          >
+                            <Icon
+                              name="close"
+                              weight={500}
+                              className="text-lg"
+                            />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Discard</TooltipContent>
+                      </Tooltip>
                     </div>
                   </td>
                 </tr>

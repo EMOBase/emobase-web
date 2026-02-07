@@ -15,7 +15,7 @@ type ImageReviewProps = {
   title: string;
 };
 
-const getPageData = (data: any[], itemsPerPage: number, page: number) => {
+const getPageData = <T,>(data: T[], itemsPerPage: number, page: number) => {
   return data.slice(itemsPerPage * (page - 1), itemsPerPage * page);
 };
 
@@ -138,7 +138,7 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
               pageData.map((item) => (
                 <tr
                   key={item.id}
-                  className={`${selectedIds.includes(item.id) ? "bg-orange-50/20" : "hover:bg-slate-50/30"} transition-colors`}
+                  className={`${selectedIds.includes(item.id) ? "bg-orange-50/30" : "hover:bg-slate-50/40"} transition-colors`}
                 >
                   <td className="px-6 py-5 text-center align-top pt-6">
                     <Checkbox
