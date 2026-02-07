@@ -31,7 +31,12 @@ const usePendingImages = () => {
     return reject(ids).then(() => removePendingImages(ids));
   };
 
-  return { data: pendingImages, loading, accept: approveImages, rejectImages };
+  return {
+    data: pendingImages,
+    loading,
+    accept: approveImages,
+    discard: rejectImages,
+  };
 };
 
 export default usePendingImages;
