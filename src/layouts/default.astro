@@ -8,6 +8,7 @@ import "@/styles/global.css";
 import { Toaster } from "@/components/ui/sonner";
 import Sidebar from "@/components/layouts/Sidebar";
 import Topbar from "@/components/layouts/Topbar";
+import SessionManager from "@/components/layouts/SessionManager";
 
 const url = Astro.url.pathname;
 
@@ -39,6 +40,7 @@ const { className } = Astro.props;
     <LoadingIndicator color="var(--primary)" />
   </head>
   <body class="h-screen w-full overflow-hidden flex">
+    <SessionManager client:load transition:persist />
     <Toaster client:load transition:persist />
     <Sidebar url={url} client:load transition:persist />
     <div class="flex-1 flex flex-col">

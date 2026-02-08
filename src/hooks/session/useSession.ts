@@ -1,7 +1,4 @@
-import { useEffect } from "react";
 import { signIn, signOut } from "auth-astro/client";
-
-import { parseISO, isBefore, addMinutes } from "date-fns";
 
 import { useSessionStore } from "@/states/sessionStore";
 
@@ -15,41 +12,6 @@ export function useSession() {
   const refresh = () => {
     fetchSession(true);
   };
-
-  useEffect(() => {
-    fetchSession();
-  }, [fetchSession]);
-
-  useEffect(() => {
-    if (session?.error) {
-      logout();
-      return;
-    }
-
-    const handleFocus = () => {
-      // Logout user if token has expired
-      if (session && isBefore(parseISO(session.expires), Date.now())) {
-        logout();
-      }
-    };
-
-    window.addEventListener("focus", handleFocus);
-
-    const intervalId = setInterval(() => {
-      // Refresh token if it will expire in 1 min
-      if (
-        session &&
-        isBefore(parseISO(session.expires), addMinutes(Date.now(), 1))
-      ) {
-        refresh();
-      }
-    }, 1000 * 30);
-
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-      clearInterval(intervalId);
-    };
-  }, [session, fetchSession]);
 
   const login = () => signIn("keycloak");
 
