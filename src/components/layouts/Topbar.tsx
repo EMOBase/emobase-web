@@ -64,14 +64,14 @@ const Topbar = () => {
               }
             />
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuGroup className="p-5 bg-slate-50/50 rounded-t-xl -m-1">
+              <DropdownMenuGroup className="px-6 py-5 bg-slate-50/50 rounded-t-xl -m-1">
                 <p className="text-sm font-bold text-slate-900">
                   {session.user?.name}
                 </p>
                 <p className="text-xs text-slate-500">{session.user?.email}</p>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuGroup>
+              <DropdownMenuGroup className="space-y-1 p-1">
                 <DropdownMenuItem
                   render={<a href="/admin" />}
                   className="text-slate-600 gap-2 px-3 py-2"
@@ -91,13 +91,15 @@ const Topbar = () => {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={logout}
-                className="text-slate-600 gap-2 px-3 py-2"
-              >
-                <Icon name="logout" className="text-lg" />
-                Logout
-              </DropdownMenuItem>
+              <DropdownMenuGroup className="p-1">
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="text-slate-600 gap-2 px-3 py-2"
+                >
+                  <Icon name="logout" className="text-lg" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
