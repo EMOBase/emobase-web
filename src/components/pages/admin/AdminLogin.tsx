@@ -1,8 +1,9 @@
-import { signIn } from "auth-astro/client";
-
 import { Icon } from "@/components/ui/icon";
+import { useSession } from "@/hooks/session/useSession";
 
 const AdminLogin = () => {
+  const { login } = useSession();
+
   return (
     <div className="bg-background-subtle text-text-main font-body antialiased min-h-screen flex items-center justify-center security-bg p-6">
       <div className="w-full max-w-[480px]">
@@ -44,7 +45,7 @@ const AdminLogin = () => {
             </div>
 
             <button
-              onClick={() => signIn("keycloak")}
+              onClick={login}
               className="flex items-center justify-center gap-3 w-full mustard-gradient hover:brightness-110 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg shadow-orange-500/25 group cursor-pointer mb-2"
             >
               <span className="text-sm tracking-wider uppercase">

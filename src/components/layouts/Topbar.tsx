@@ -1,5 +1,3 @@
-import { signOut } from "auth-astro/client";
-
 import { Icon } from "@/components/ui/icon";
 import {
   InputGroup,
@@ -33,7 +31,7 @@ function getAvatarChars(name: string) {
 }
 
 const Topbar = () => {
-  const { session } = useSession();
+  const { session, logout } = useSession();
 
   return (
     <header className="h-16 border-b border-border-light bg-white/80 backdrop-blur-md px-10 flex items-center justify-between z-30 flex-shrink-0">
@@ -94,11 +92,7 @@ const Topbar = () => {
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => {
-                  signOut().then(() => {
-                    window.location.href = "/";
-                  });
-                }}
+                onClick={logout}
                 className="text-slate-600 gap-2 px-3 py-2"
               >
                 <Icon name="logout" className="text-lg" />

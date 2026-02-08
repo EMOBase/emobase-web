@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { signOut } from "auth-astro/client";
+import { signIn, signOut } from "auth-astro/client";
 
 import { parseISO, isBefore, addMinutes } from "date-fns";
 
@@ -22,14 +22,14 @@ export function useSession() {
 
   useEffect(() => {
     if (session?.error) {
-      signOut();
+      logout();
       return;
     }
 
     const handleFocus = () => {
       // Logout user if token has expired
       if (session && isBefore(parseISO(session.expires), Date.now())) {
-        signOut();
+        logout();
       }
     };
 
@@ -51,11 +51,22 @@ export function useSession() {
     };
   }, [session, fetchSession]);
 
+  const login = () => signIn("keycloak");
+
+  const logout = () =>
+    signOut().then(() => {
+      if (window.location.pathname.startsWith("/admin")) {
+        window.location.href = "/";
+      }
+    });
+
   return {
     session,
     loading,
     isLoggedIn: !!session,
     user: session?.user,
     refresh,
+    login,
+    logout,
   };
 }
