@@ -33,7 +33,7 @@ const Row: React.FC<{
     </td>
     <td
       className={twMerge(
-        "py-4 px-8 text-neutral-800 align-middle",
+        "py-4 px-8 text-neutral-800 align-middle whitespace-pre-line",
         valueClassName,
       )}
     >
@@ -144,7 +144,11 @@ const ViewDetailsButton: React.FC<ViewDetailsButtonProps> = ({
                 </a>
               }
             />
-            <Row label="Quotation:" value={annotation.quotation} />
+            <Row
+              label="Quotation:"
+              value={annotation.quotation}
+              labelClassName="align-top"
+            />
             <Row label="Lab:" value={annotation.lab} />
           </tbody>
         </table>
