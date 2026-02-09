@@ -3,31 +3,56 @@ import { defineConfig } from "auth-astro";
 
 const getEnv = (key) => import.meta.env[key] || process.env[key];
 
+/**
+ * Resolves Keycloak URLs based on the environment.
+ * In production, it uses internal container names (like http://keycloak:8080)
+ * to ensure faster and more reliable server-to-server communication.
+ */
+const resolveKeycloakUrls = () => {
+  const isServer = typeof window === "undefined";
+  const isProd = import.meta.env.PROD || process.env.NODE_ENV === "production";
+  const clientUrl = getEnv("KEYCLOAK_CLIENT_URL") || getEnv("KEYCLOAK_ISSUER");
+
+  if (!isServer) return { server: clientUrl, client: clientUrl };
+
+  // Server-side logic
+  if (isProd) {
+    return {
+      server: "http://keycloak:8080/ibb/keycloak/realms/ibb",
+      client: clientUrl,
+    };
+  }
+
+  // Local development fallback
+  return { server: clientUrl, client: clientUrl };
+};
+
 // In-memory cache to prevent parallel refresh requests for the same token
 const refreshCache = new Map();
 
 export default defineConfig({
   secret: getEnv("AUTH_SECRET"),
-  trustHost: getEnv("AUTH_TRUST_HOST"),
+  // trustHost MUST be a boolean (not a string) for Auth.js to handle redirects correctly
+  trustHost: getEnv("AUTH_TRUST_HOST") === "true",
   providers: [
     Keycloak({
       clientId: getEnv("KEYCLOAK_CLIENT_ID"),
       clientSecret: getEnv("KEYCLOAK_CLIENT_SECRET"),
-      issuer: getEnv("KEYCLOAK_ISSUER"),
+      issuer: getEnv("KEYCLOAK_VALID_ISSUER") || getEnv("KEYCLOAK_ISSUER"),
+
+      // Explicitly define endpoints to handle Docker networking
       authorization: {
+        url: `${resolveKeycloakUrls().client}/protocol/openid-connect/auth`,
         params: { scope: "openid email profile offline_access" },
       },
-      // Override internal endpoints because Keycloak is returning 'keycloak:8080'
-      // which is not resolvable from the host.
-      token: `${getEnv("KEYCLOAK_ISSUER")}/protocol/openid-connect/token`,
-      userinfo: `${getEnv("KEYCLOAK_ISSUER")}/protocol/openid-connect/userinfo`,
-      jwks_endpoint: `${getEnv("KEYCLOAK_ISSUER")}/protocol/openid-connect/certs`,
+      token: `${resolveKeycloakUrls().server}/protocol/openid-connect/token`,
+      userinfo: `${resolveKeycloakUrls().server}/protocol/openid-connect/userinfo`,
+      jwks_endpoint: `${resolveKeycloakUrls().server}/protocol/openid-connect/certs`,
     }),
   ],
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, account }) {
-      // First login
       if (account) {
         return {
           ...token,
@@ -37,26 +62,19 @@ export default defineConfig({
         };
       }
 
-      // If token is still valid, return it
       if (Date.now() < token.expiresAt - 60000) {
         return token;
       }
 
       const refreshToken = token.refreshToken;
-      if (!refreshToken) {
-        return { ...token, error: "MissingRefreshToken" };
-      }
+      if (!refreshToken) return { ...token, error: "MissingRefreshToken" };
+      if (refreshCache.has(refreshToken)) return refreshCache.get(refreshToken);
 
-      // If a refresh is already in progress for this token, wait for it
-      if (refreshCache.has(refreshToken)) {
-        return refreshCache.get(refreshToken);
-      }
-
-      // Create a new refresh promise
       const refreshPromise = (async () => {
         try {
+          const { server: issuer } = resolveKeycloakUrls();
           const response = await fetch(
-            `${getEnv("KEYCLOAK_ISSUER")}/protocol/openid-connect/token`,
+            `${issuer}/protocol/openid-connect/token`,
             {
               method: "POST",
               headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -70,10 +88,7 @@ export default defineConfig({
           );
 
           const tokens = await response.json();
-
-          if (!response.ok) {
-            throw tokens;
-          }
+          if (!response.ok) throw tokens;
 
           return {
             ...token,
@@ -85,7 +100,6 @@ export default defineConfig({
         } catch (error) {
           return { ...token, error: "RefreshAccessTokenError" };
         } finally {
-          // Cleanup cache after some time to avoid memory leaks
           setTimeout(() => refreshCache.delete(refreshToken), 10000);
         }
       })();
@@ -96,7 +110,6 @@ export default defineConfig({
     async session({ session, token }) {
       if (session.user) {
         session.user.accessToken = token.accessToken;
-        // Map the real Keycloak expiration to session.expires so the client hook uses the correct time
         if (token.expiresAt) {
           session.expires = new Date(token.expiresAt).toISOString();
         }

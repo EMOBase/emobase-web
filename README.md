@@ -33,3 +33,30 @@ All commands are run from the root of the project, from a terminal:
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 | `npm run check`           | Check typescript                                 |
+
+## 🐳 Docker Deployment
+
+### 1. Environment Configuration
+Ensure you have a `.env` file in the root directory. You can use `.env.example` as a template:
+```bash
+cp .env.example .env
+# Edit .env with your actual values
+```
+
+### 2. Usage with Docker Compose
+To deploy this service alongside other components, include it in your production Docker Compose stack. It will automatically talk to other services (like `geneservice` and `keycloak`) using their service names.
+
+```yaml
+services:
+  emobase-web:
+    build:
+      context: .
+    env_file:
+      - .env
+    restart: always
+```
+
+## 🏗️ Technical Details
+- **Adapter**: `@astrojs/node` in `standalone` mode.
+- **Node Version**: 20 (Build) / 20-slim (Runtime).
+- **Port**: 8080.

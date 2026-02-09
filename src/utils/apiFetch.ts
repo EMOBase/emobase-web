@@ -1,14 +1,32 @@
 import qs from "qs";
 
-import { API_SERVICES, type ApiService } from "./constants/api";
+import { type ApiService } from "./constants/api";
 
-const apiBaseUrl = import.meta.env.PUBLIC_APIS_BASE_URL;
+/**
+ * Resolves the base URL for a given service.
+ * In production, this uses internal container names to allow the Astro server
+ * to talk directly to backend services within the same Docker network.
+ * - Production: http://service:8080/...
+ * - Development/Client: Uses the public base URL
+ */
+export const resolveApiBaseUrl = (service: ApiService) => {
+  const isServer = typeof window === "undefined";
+  const env = import.meta.env;
 
-const urls = Object.fromEntries(
-  API_SERVICES.map(
-    (service) => [service, `${apiBaseUrl}/${service}/v1`] as const,
-  ),
-);
+  // Client side always uses the public URL
+  if (!isServer) {
+    return `${env.PUBLIC_APIS_BASE_URL}/${service}/v1`;
+  }
+
+  // Server-side logic
+  // Automatic service discovery only in production
+  if (env.PROD) {
+    return `http://${service}:8080/${service}/v1`;
+  }
+
+  // Local development fallback
+  return `${env.PUBLIC_APIS_BASE_URL}/${service}/v1`;
+};
 
 export const apiFetch = async <T>(
   service: ApiService,
@@ -27,7 +45,8 @@ export const apiFetch = async <T>(
     authorization = "",
     ...restOpts
   } = opts ?? {};
-  const baseURL = urls[service];
+
+  const baseURL = resolveApiBaseUrl(service);
   const url =
     baseURL +
     request +
@@ -70,4 +89,5 @@ export const apiFetch = async <T>(
   }
 };
 
-export const getApiBaseUrl = (service: ApiService) => urls[service];
+export const getApiBaseUrl = (service: ApiService) =>
+  resolveApiBaseUrl(service);
