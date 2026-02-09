@@ -5,34 +5,46 @@
 
 ```text
 /
-├── public/
-│   This is where public assets placed
-├── src
-│   ├── components
-│   ├── layouts
-│   └── pages
-│       ├── index
-│       │   Home page
-│       └── search
-│           Search result page
-└── package.json
+├── public/          # Static assets
+├── src/
+│   ├── components/  # React components
+│   │   ├── common/  # Shared components
+│   │   ├── form/    # Form components (Tanstack Form compatible)
+│   │   ├── layouts/ # Components for layouts
+│   │   ├── pages/   # Page-specific components
+│   │   └── ui/      # Core UI primitives
+│   ├── hooks/       # Custom React hooks
+│   ├── layouts/     # Project layouts
+│   ├── pages/       # Route handlers
+│   ├── states/      # State management
+│   ├── styles/      # Global CSS
+│   └── utils/       # Helper functions
+├── astro.config.mjs # Astro configuration
+├── auth.config.mjs  # Auth.js/Keycloak configuration
+├── Dockerfile       # Production build definition
+└── package.json     # Dependencies & Scripts
 ```
 
 To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
 
-## 🧞 Commands
+## 🛠️ Getting Started
 
-All commands are run from the root of the project, from a terminal:
+Follow these steps to set up your local development environment:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-| `npm run check`           | Check typescript                                 |
+1. **Prerequisites**: Ensure you have [Node.js 20+](https://nodejs.org/) installed.
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+3. **Environment Setup**: Copy the example environment file and update it with your local settings.
+   ```bash
+   cp .env.example .env
+   ```
+4. **Start Developing**:
+   ```bash
+   npm run dev
+   ```
+   The site will be available at `http://localhost:4321`.
 
 ## 🐳 Docker Deployment
 
@@ -56,7 +68,7 @@ services:
     restart: always
 ```
 
-## 🏗️ Technical Details
+### 3. Technical Details
 - **Adapter**: `@astrojs/node` in `standalone` mode.
 - **Node Version**: 20 (Build) / 20-slim (Runtime).
 - **Port**: 8080.
