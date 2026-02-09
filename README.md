@@ -1,4 +1,4 @@
-# EMOBase
+# EMOBase Web Frontend
 
 ## 🚀 Project Structure
 
