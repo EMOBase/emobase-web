@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 const LOCAL_STORAGE_KEY = "favorite-genes";
@@ -5,6 +6,7 @@ const LOCAL_STORAGE_KEY = "favorite-genes";
 type FavoriteGeneRecord = Record<string, boolean>;
 
 export const useFavoriteGenes = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [favoriteGeneRecord, setFavoriteGeneRecord] =
     useLocalStorage<FavoriteGeneRecord>(
       LOCAL_STORAGE_KEY,
@@ -13,6 +15,11 @@ export const useFavoriteGenes = () => {
         initializeWithValue: false,
       },
     );
+
+  // Track when localStorage has been hydrated
+  useEffect(() => {
+    setIsLoading(false);
+  }, [favoriteGeneRecord]);
 
   const getFavoriteGenes = () => {
     return Object.keys(favoriteGeneRecord).filter(
@@ -46,6 +53,7 @@ export const useFavoriteGenes = () => {
   };
 
   return {
+    isLoading,
     getFavoriteGenes,
     checkIsFavorite,
     markFavorite,

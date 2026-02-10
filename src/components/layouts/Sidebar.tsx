@@ -106,7 +106,7 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
   const { isLoggedIn } = useSession();
   const activeView = getActiveView(url);
 
-  const { getFavoriteGenes } = useFavoriteGenes();
+  const { isLoading, getFavoriteGenes } = useFavoriteGenes();
   const favoriteGenes = getFavoriteGenes();
 
   const homeItemsWithFavorites = homeItems
@@ -134,7 +134,7 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
 
       return (
         <Collapsible
-          key={`${item.id ?? item.label} ${hasActiveChild}`}
+          key={`${item.id ?? item.label} ${isLoading}`}
           asChild
           defaultOpen={hasActiveChild}
         >
