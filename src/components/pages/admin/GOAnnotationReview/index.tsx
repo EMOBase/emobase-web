@@ -83,7 +83,11 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
       >
         <div className="p-6 flex items-center justify-between border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <Icon name="image" weight={500} className="text-primary text-2xl" />
+            <Icon
+              name="account_tree"
+              weight={500}
+              className="text-primary text-2xl"
+            />
             <h3 className="text-lg font-bold text-text-primary font-display">
               {title}
             </h3>
