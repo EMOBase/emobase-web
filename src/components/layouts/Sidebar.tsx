@@ -12,17 +12,21 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
 import { useSession } from "@/hooks/session/useSession";
+import { useFavoriteGenes } from "@/states/favoriteGenes";
 
 type NavItem = {
   id:
-    | "DASHBOARD"
-    | "MY_GENES"
-    | "GENOME_BROWSER"
-    | "BLAST"
-    | "ID_CONVERTER"
-    | "ONTOLOGY_VIEWER";
+  | "DASHBOARD"
+  | "MY_GENES"
+  | "GENOME_BROWSER"
+  | "BLAST"
+  | "ID_CONVERTER"
+  | "ONTOLOGY_VIEWER";
   label: string;
   icon: string;
   href: string;
@@ -84,8 +88,11 @@ type SidebarProps = {
 };
 
 const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
-  const { session, isLoggedIn } = useSession();
+  const { isLoggedIn } = useSession();
   const activeView = getActiveView(url);
+
+  const { getFavoriteGenes } = useFavoriteGenes();
+  const favoriteGenes = getFavoriteGenes();
 
   const renderNavs = (navItems: NavItem[]) =>
     navItems.map((item) => (
@@ -102,8 +109,8 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
               style={
                 activeView === item.id
                   ? {
-                      fontVariationSettings: "'FILL' 1, 'wght' 500",
-                    }
+                    fontVariationSettings: "'FILL' 1, 'wght' 500",
+                  }
                   : {}
               }
             >
@@ -112,6 +119,19 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
             <span className="text-sm font-medium">{item.label}</span>
           </a>
         </SidebarMenuButton>
+        {item.id === "MY_GENES" && favoriteGenes.length > 0 && (
+          <SidebarMenuSub>
+            {favoriteGenes.map((gene) => (
+              <SidebarMenuSubItem key={gene}>
+                <SidebarMenuSubButton asChild isActive={url === `/details/${gene}`}>
+                  <a href={`/details/${gene}`}>
+                    <span>{gene}</span>
+                  </a>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        )}
       </SidebarMenuItem>
     ));
 

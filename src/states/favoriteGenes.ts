@@ -14,8 +14,8 @@ export const useFavoriteGenes = () => {
       },
     );
 
-  const getFevoriteGenes = () => {
-    return Object.keys(favoriteGeneRecord).map(
+  const getFavoriteGenes = () => {
+    return Object.keys(favoriteGeneRecord).filter(
       (gene) => favoriteGeneRecord[gene],
     );
   };
@@ -46,7 +46,7 @@ export const useFavoriteGenes = () => {
   };
 
   return {
-    getFevoriteGenes,
+    getFavoriteGenes,
     checkIsFavorite,
     markFavorite,
     unmarkFavorite,
