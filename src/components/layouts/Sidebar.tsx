@@ -1,5 +1,6 @@
 import React from "react";
 
+import { Icon } from "@/components/ui/icon";
 import {
   SidebarProvider,
   Sidebar,
@@ -16,21 +17,26 @@ import {
   SidebarMenuSubItem,
   SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { useSession } from "@/hooks/session/useSession";
 import { useFavoriteGenes } from "@/states/favoriteGenes";
 
 type NavItem = {
-  id:
-  | "DASHBOARD"
-  | "MY_GENES"
-  | "ADMIN"
-  | "GENOME_BROWSER"
-  | "BLAST"
-  | "ID_CONVERTER"
-  | "ONTOLOGY_VIEWER";
+  id?:
+    | "DASHBOARD"
+    | "MY_GENES"
+    | "ADMIN"
+    | "GENOME_BROWSER"
+    | "BLAST"
+    | "ID_CONVERTER"
+    | "ONTOLOGY_VIEWER";
   label: string;
   icon: string;
-  href: string;
+  href?: string;
   requiresAuth?: boolean;
   children?: { label: string; href: string }[];
 };
@@ -46,7 +52,6 @@ const homeItems: NavItem[] = [
     id: "MY_GENES",
     label: "My Genes",
     icon: "star",
-    href: "/",
   },
   {
     id: "ADMIN",
@@ -88,7 +93,7 @@ export const getActiveView = (url: string): NavItem["id"] | undefined => {
   return homeItems.concat(toolItems).find((item) => item.href === url)?.id;
 };
 
-const resourceItems = [
+const resourceItems: NavItem[] = [
   { label: "Documentation", icon: "description" },
   { label: "Downloads", icon: "download" },
 ];
@@ -120,45 +125,63 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
     });
 
   const renderNavs = (navItems: NavItem[]) =>
-    navItems.map((item) => (
-      <SidebarMenuItem key={item.id}>
-        <SidebarMenuButton
+    navItems.map((item) => {
+      const hasChildren = item.children && item.children.length > 0;
+      const isActive = item.id && activeView === item.id;
+
+      return (
+        <Collapsible
+          key={item.id ?? item.label}
           asChild
-          size="free"
-          tooltip={item.label}
-          isActive={activeView === item.id}
+          defaultOpen={hasChildren}
         >
-          <a href={item.href}>
-            <span
-              className="material-symbols-outlined"
-              style={
-                activeView === item.id
-                  ? {
-                    fontVariationSettings: "'FILL' 1, 'wght' 500",
-                  }
-                  : {}
-              }
-            >
-              {item.icon}
-            </span>
-            <span className="text-sm font-medium">{item.label}</span>
-          </a>
-        </SidebarMenuButton>
-        {item.children && item.children.length > 0 && (
-          <SidebarMenuSub>
-            {item.children.map((child) => (
-              <SidebarMenuSubItem key={child.href}>
-                <SidebarMenuSubButton asChild isActive={url === child.href}>
-                  <a href={child.href}>
-                    <span>{child.label}</span>
-                  </a>
-                </SidebarMenuSubButton>
-              </SidebarMenuSubItem>
-            ))}
-          </SidebarMenuSub>
-        )}
-      </SidebarMenuItem>
-    ));
+          <SidebarMenuItem className="group/collapsible">
+            <CollapsibleTrigger asChild>
+              <SidebarMenuButton
+                asChild
+                size="free"
+                tooltip={item.label}
+                isActive={isActive}
+              >
+                <a href={item.href} className="cursor-pointer">
+                  <Icon
+                    name={item.icon}
+                    fill={isActive}
+                    weight={isActive ? 500 : 400}
+                    className="text-xl"
+                  />
+                  <span className="text-sm font-medium">{item.label}</span>
+                  {hasChildren && (
+                    <Icon
+                      name="expand_more"
+                      className="text-lg text-neutral-500 ml-auto transition-transform group-data-[state=closed]/collapsible:-rotate-90"
+                    />
+                  )}
+                </a>
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+            {hasChildren && (
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  {item.children!.map((child) => (
+                    <SidebarMenuSubItem key={child.href}>
+                      <SidebarMenuSubButton
+                        asChild
+                        isActive={url === child.href}
+                      >
+                        <a href={child.href}>
+                          <span>{child.label}</span>
+                        </a>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            )}
+          </SidebarMenuItem>
+        </Collapsible>
+      );
+    });
 
   return (
     <SidebarProvider>
@@ -189,9 +212,7 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent>
-              <SidebarMenu>
-                {renderNavs(homeItemsWithFavorites)}
-              </SidebarMenu>
+              <SidebarMenu>{renderNavs(homeItemsWithFavorites)}</SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
 
@@ -209,22 +230,7 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
               Resources
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
-                {resourceItems.map((item) => (
-                  <SidebarMenuItem key={item.label}>
-                    <SidebarMenuButton asChild size="free" tooltip={item.label}>
-                      <a href="#">
-                        <span className="material-symbols-outlined">
-                          {item.icon}
-                        </span>
-                        <span className="text-sm font-medium">
-                          {item.label}
-                        </span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
+              <SidebarMenu>{renderNavs(resourceItems)}</SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
