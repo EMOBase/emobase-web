@@ -153,13 +153,13 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
                     weight={isActive ? 500 : 400}
                     className="text-xl"
                   />
-                  <span className="text-sm font-medium">{item.label}</span>
                   {hasChildren && (
                     <Icon
                       name="expand_more"
-                      className="text-lg text-neutral-500 ml-auto transition-transform group-data-[state=closed]/collapsible:-rotate-90"
+                      className="order-last text-lg text-neutral-500 ml-auto transition-transform group-data-[state=closed]/collapsible:-rotate-90"
                     />
                   )}
+                  <span className="text-sm font-medium">{item.label}</span>
                 </a>
               </SidebarMenuButton>
             </CollapsibleTrigger>
