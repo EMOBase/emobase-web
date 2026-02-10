@@ -27,9 +27,9 @@
 
 To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
 
-## 🛠️ Getting Started
+## 💻 Local Development
 
-Follow these steps to set up your local development environment:
+Instructions for setting up and running the project locally on your machine:
 
 1. **Prerequisites**: Ensure you have [Node.js 20+](https://nodejs.org/) installed.
 2. **Install Dependencies**:
