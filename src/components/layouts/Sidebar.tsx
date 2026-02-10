@@ -23,6 +23,7 @@ type NavItem = {
   id:
   | "DASHBOARD"
   | "MY_GENES"
+  | "ADMIN"
   | "GENOME_BROWSER"
   | "BLAST"
   | "ID_CONVERTER"
@@ -30,6 +31,8 @@ type NavItem = {
   label: string;
   icon: string;
   href: string;
+  requiresAuth?: boolean;
+  children?: { label: string; href: string }[];
 };
 
 const homeItems: NavItem[] = [
@@ -44,6 +47,13 @@ const homeItems: NavItem[] = [
     label: "My Genes",
     icon: "star",
     href: "/",
+  },
+  {
+    id: "ADMIN",
+    label: "Admin Portal",
+    icon: "admin_panel_settings",
+    href: "/admin",
+    requiresAuth: true,
   },
 ];
 
@@ -94,6 +104,21 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
   const { getFavoriteGenes } = useFavoriteGenes();
   const favoriteGenes = getFavoriteGenes();
 
+  const homeItemsWithFavorites = homeItems
+    .filter((item) => !item.requiresAuth || isLoggedIn)
+    .map((item) => {
+      if (item.id === "MY_GENES" && favoriteGenes.length > 0) {
+        return {
+          ...item,
+          children: favoriteGenes.map((gene) => ({
+            label: gene,
+            href: `/details/${gene}`,
+          })),
+        };
+      }
+      return item;
+    });
+
   const renderNavs = (navItems: NavItem[]) =>
     navItems.map((item) => (
       <SidebarMenuItem key={item.id}>
@@ -119,13 +144,13 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
             <span className="text-sm font-medium">{item.label}</span>
           </a>
         </SidebarMenuButton>
-        {item.id === "MY_GENES" && favoriteGenes.length > 0 && (
+        {item.children && item.children.length > 0 && (
           <SidebarMenuSub>
-            {favoriteGenes.map((gene) => (
-              <SidebarMenuSubItem key={gene}>
-                <SidebarMenuSubButton asChild isActive={url === `/details/${gene}`}>
-                  <a href={`/details/${gene}`}>
-                    <span>{gene}</span>
+            {item.children.map((child) => (
+              <SidebarMenuSubItem key={child.href}>
+                <SidebarMenuSubButton asChild isActive={url === child.href}>
+                  <a href={child.href}>
+                    <span>{child.label}</span>
                   </a>
                 </SidebarMenuSubButton>
               </SidebarMenuSubItem>
@@ -165,26 +190,7 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                {renderNavs(homeItems)}
-                {isLoggedIn && (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      asChild
-                      size="free"
-                      tooltip="Admin Portal"
-                      isActive={url === "/admin"}
-                    >
-                      <a href="/admin">
-                        <span className="material-symbols-outlined">
-                          admin_panel_settings
-                        </span>
-                        <span className="text-sm font-medium">
-                          Admin Portal
-                        </span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
+                {renderNavs(homeItemsWithFavorites)}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
