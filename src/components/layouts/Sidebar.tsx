@@ -128,12 +128,15 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
     navItems.map((item) => {
       const hasChildren = item.children && item.children.length > 0;
       const isActive = item.id && activeView === item.id;
+      const hasActiveChild = (item?.children ?? []).some(
+        (child) => url === child.href,
+      );
 
       return (
         <Collapsible
-          key={item.id ?? item.label}
+          key={`${item.id ?? item.label} ${hasActiveChild}`}
           asChild
-          defaultOpen={hasChildren}
+          defaultOpen={hasActiveChild}
         >
           <SidebarMenuItem className="group/collapsible">
             <CollapsibleTrigger asChild>
