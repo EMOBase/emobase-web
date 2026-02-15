@@ -25,6 +25,7 @@ COPY --from=build /app/package.json ./package.json
 # Environment variables
 ENV HOST=0.0.0.0
 ENV PORT=8080
+ENV INTERNAL_API_NETWORKING=true
 EXPOSE 8080
 
 # Start the application
