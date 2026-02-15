@@ -15,7 +15,7 @@ const BeetleLoading = ({ title }: { title: string }) => {
             {title}
           </p>
           <p className="text-[11px] text-slate-500 font-medium">
-            Querying iBeetle Hub database...
+            Querying iBeetle Base database...
           </p>
         </div>
       </div>
