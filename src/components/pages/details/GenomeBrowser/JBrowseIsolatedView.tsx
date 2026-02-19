@@ -70,7 +70,11 @@ const JBrowseIsolatedView: React.FC<JBrowseIsolatedViewProps> = ({
   const { JBrowseLinearGenomeView } = jbrowse;
 
   return (
-    <div ref={contentRef} className="overflow-hidden inline-block w-full">
+    <div
+      id="jbrowse-container"
+      ref={contentRef}
+      className="overflow-hidden inline-block w-full"
+    >
       <JBrowseLinearGenomeView viewState={state} />
     </div>
   );
