@@ -6,7 +6,7 @@ import goAnnotationService from "@/utils/services/goAnnotationService";
 import ontologyService from "@/utils/services/ontologyService";
 import GeneDetails from "@/components/pages/details/GeneDetails";
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
-import GenomeBrowser from "@/components/pages/details/GenomeBrowser";
+import JBrowseGenomeView from "@/components/pages/details/GenomeBrowser/JBrowseGenomeView";
 
 export const prerender = false;
 
@@ -80,9 +80,8 @@ if (!triboliumGene) {
         homologs={homologs}
         client:load
       >
-        <GenomeBrowser
-          slot="genomeBrowser"
-          id="genome-browser"
+        <JBrowseGenomeView
+          slot="jbrowse-genome-view"
           triboliumGene={triboliumGene}
           client:only="react"
         />

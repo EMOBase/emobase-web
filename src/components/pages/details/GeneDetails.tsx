@@ -22,7 +22,7 @@ type GeneDetailsProps = {
   dsRNAs: IBDsRNA[];
   phenotypes: Phenotype[];
   homologs: (DrosophilaGene & { source: string[] })[];
-  genomeBrowser?: ReactNode;
+  jbrowseGenomeView?: ReactNode;
 };
 
 const GeneDetails: React.FC<GeneDetailsProps> = ({
@@ -31,7 +31,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
   dsRNAs,
   phenotypes,
   homologs,
-  genomeBrowser,
+  jbrowseGenomeView,
 }) => {
   const communityPhenotypes =
     phenotypes === undefined
@@ -41,19 +41,19 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
     phenotypes === undefined
       ? undefined
       : phenotypes
-        .filter((p) => p.iBeetleExperiment)
-        .reduce(
-          (acc, p) => {
-            const dsRNAName = p.dsRNA.name || "Unknown";
-            if (acc[dsRNAName]) {
-              acc[dsRNAName].push(p);
-            } else {
-              acc[dsRNAName] = [p];
-            }
-            return acc;
-          },
-          {} as Record<string, typeof phenotypes>,
-        );
+          .filter((p) => p.iBeetleExperiment)
+          .reduce(
+            (acc, p) => {
+              const dsRNAName = p.dsRNA.name || "Unknown";
+              if (acc[dsRNAName]) {
+                acc[dsRNAName].push(p);
+              } else {
+                acc[dsRNAName] = [p];
+              }
+              return acc;
+            },
+            {} as Record<string, typeof phenotypes>,
+          );
 
   const sections = [
     {
@@ -66,7 +66,10 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
     },
     {
       header: "Genome Browser",
-      content: genomeBrowser,
+      component: GenomeBrowser,
+      props: {
+        children: jbrowseGenomeView,
+      },
     },
     {
       header: "Closest Fly Homologs",
@@ -131,14 +134,6 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
       <div className="flex-1 flex flex-col gap-10 min-w-0">
         {sections.map((section) => {
           const sectionId = getSectionId(section);
-
-          if ("content" in section) {
-            return (
-              <div key={sectionId}>
-                {section.content}
-              </div>
-            );
-          }
 
           const props = section.props;
           const Component = section.component as React.FC<
