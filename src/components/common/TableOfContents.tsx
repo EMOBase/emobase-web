@@ -16,21 +16,22 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ items }) => {
   const dbSetActiveId = useDebounceCallback(setActiveId, 50);
 
   useEffect(() => {
-    const intersectionRatios = Object.fromEntries(
-      items.map(({ id }) => [id, 0]),
-    );
+    const intersectionHeights: Record<string, number> = {};
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          intersectionRatios[entry.target.id] = entry.intersectionRatio;
+          intersectionHeights[entry.target.id] = entry.intersectionRect.height;
         });
 
         const mostVisibleSection = items.reduce(
           (best, current) => {
             if (!best) return current;
 
-            if (intersectionRatios[current.id] > intersectionRatios[best.id])
+            if (
+              (intersectionHeights[current.id] || 0) >
+              (intersectionHeights[best.id] || 0)
+            )
               return current;
 
             return best;
@@ -44,7 +45,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ items }) => {
       },
       {
         rootMargin: "0px 0px -50% 0px",
-        threshold: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
       },
     );
 
@@ -52,7 +53,9 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ items }) => {
       const element = document.getElementById(id);
       if (element) observer.observe(element);
     });
-  }, []);
+
+    return () => observer.disconnect();
+  }, [items, dbSetActiveId]);
 
   return (
     <aside className="w-full lg:w-64 flex-shrink-0 hidden lg:block">
