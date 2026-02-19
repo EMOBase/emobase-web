@@ -6,6 +6,7 @@ import goAnnotationService from "@/utils/services/goAnnotationService";
 import ontologyService from "@/utils/services/ontologyService";
 import GeneDetails from "@/components/pages/details/GeneDetails";
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
+import GenomeBrowser from "@/components/pages/details/GenomeBrowser";
 
 export const prerender = false;
 
@@ -76,6 +77,7 @@ if (!triboliumGene) {
     box-shadow: none;
   }
 </style>
+
 <Layout>
   {
     triboliumGene ? (
@@ -86,7 +88,14 @@ if (!triboliumGene) {
         phenotypes={phenotypes}
         homologs={homologs}
         client:load
-      />
+      >
+        <GenomeBrowser
+          slot="genomeBrowser"
+          id="genome-browser"
+          triboliumGene={triboliumGene}
+          client:only="react"
+        />
+      </GeneDetails>
     ) : (
       <GeneNotFound />
     )

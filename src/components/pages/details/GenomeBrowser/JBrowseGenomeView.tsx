@@ -1,11 +1,5 @@
-import { useEffect, useState } from "react";
-
+import { useState, useEffect } from "react";
 import { type TriboliumGene } from "@/utils/services/geneService";
-import assembly from "@/utils/config/genomebrowser/assembly.json";
-import tracks from "@/utils/config/genomebrowser/tracks.json";
-import defaultSession from "@/utils/config/genomebrowser/default_session.json";
-
-import configuration from "@/utils/config/genomebrowser/configuration.json";
 
 type JBrowseGenomeViewProps = {
   triboliumGene: TriboliumGene;
@@ -14,40 +8,44 @@ type JBrowseGenomeViewProps = {
 const JBrowseGenomeView: React.FC<JBrowseGenomeViewProps> = ({
   triboliumGene,
 }) => {
-  const { seqname, start: startStr, end: endStr } = triboliumGene;
-
-  const start = parseInt(startStr);
-  const end = parseInt(endStr);
-  const halfLength = (end - start) / 2;
-
-  const zoomedInStart = start - halfLength < 0 ? 0 : start - halfLength;
-  const zoomedInEnd = end + halfLength;
-  const zoomedInLocation = {
-    refName: seqname,
-    start: Math.floor(zoomedInStart),
-    end: Math.floor(zoomedInEnd),
-  };
-  const zoomedInLocationStr = `${zoomedInLocation.refName}:${zoomedInLocation.start}..${zoomedInLocation.end}`;
-
-  const [jbrowse, setJBrowse] = useState<any>(null);
+  const { seqname, start, end } = triboliumGene;
+  const [height, setHeight] = useState(310);
 
   useEffect(() => {
-    import("@jbrowse/react-linear-genome-view2").then(setJBrowse);
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "jbrowse-height") {
+        setHeight(event.data.height);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  if (!jbrowse) return null;
-
-  const { createViewState, JBrowseLinearGenomeView } = jbrowse;
-
-  const state = createViewState({
-    assembly,
-    tracks,
-    defaultSession,
-    configuration,
-    location: zoomedInLocationStr,
+  // Construct the isolated page URL with parameters
+  const params = new URLSearchParams({
+    seqname,
+    start,
+    end,
   });
 
-  return <JBrowseLinearGenomeView viewState={state} />;
+  // The isolated page is at /details/jbrowse-isolated/
+  const iframeUrl = `/details/jbrowse-isolated/?${params.toString()}`;
+
+  return (
+    <div
+      className="w-full bg-white rounded-lg border border-neutral-200 overflow-hidden relative shadow-sm"
+      style={{ height: `${height}px` }}
+    >
+      <iframe
+        src={iframeUrl}
+        className="w-full h-full border-0"
+        title="Genome Browser"
+        loading="lazy"
+        allowFullScreen
+      />
+    </div>
+  );
 };
 
 export default JBrowseGenomeView;

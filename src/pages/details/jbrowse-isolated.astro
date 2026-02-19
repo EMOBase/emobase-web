@@ -1,0 +1,34 @@
+---
+import BlankLayout from "@/layouts/blank.astro";
+import JBrowseIsolatedView from "@/components/pages/details/GenomeBrowser/JBrowseIsolatedView";
+
+export const prerender = false;
+
+const seqname = Astro.url.searchParams.get("seqname");
+const start = Astro.url.searchParams.get("start");
+const end = Astro.url.searchParams.get("end");
+
+const triboliumGene = {
+  seqname,
+  start,
+  end,
+} as any;
+---
+
+<BlankLayout>
+  <style is:global>
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  </style>
+  {
+    seqname && start && end ? (
+      <JBrowseIsolatedView triboliumGene={triboliumGene} client:only="react" />
+    ) : (
+      <div class="h-full w-full flex items-center justify-center text-neutral-400 italic">
+        Invalid parameters
+      </div>
+    )
+  }
+</BlankLayout>
