@@ -25,6 +25,18 @@ import {
 import { useSession } from "@/hooks/session/useSession";
 import { useFavoriteGenes } from "@/states/favoriteGenes";
 
+type NavItemAction = {
+  icon: string;
+  tooltip?: string;
+  onClick: (e: React.MouseEvent) => void;
+};
+
+type NavItemChild = {
+  label: string;
+  href: string;
+  actions?: NavItemAction[];
+};
+
 type NavItem = {
   id?:
     | "DASHBOARD"
@@ -38,7 +50,7 @@ type NavItem = {
   icon: string;
   href?: string;
   requiresAuth?: boolean;
-  children?: { label: string; href: string }[];
+  children?: NavItemChild[];
 };
 
 const homeItems: NavItem[] = [
@@ -106,19 +118,32 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
   const { isLoggedIn } = useSession();
   const activeView = getActiveView(url);
 
-  const { isLoading, getFavoriteGenes } = useFavoriteGenes();
+  const { isLoading, getFavoriteGenes, unmarkFavorite } = useFavoriteGenes();
   const favoriteGenes = getFavoriteGenes();
 
   const homeItemsWithFavorites = homeItems
     .filter((item) => !item.requiresAuth || isLoggedIn)
-    .map((item) => {
+    .map((item): NavItem => {
       if (item.id === "MY_GENES" && favoriteGenes.length > 0) {
         return {
           ...item,
-          children: favoriteGenes.map((gene) => ({
-            label: gene,
-            href: `/details/${gene}`,
-          })),
+          children: favoriteGenes.map(
+            (gene): NavItemChild => ({
+              label: gene,
+              href: `/details/${gene}`,
+              actions: [
+                {
+                  icon: "close",
+                  tooltip: "Remove from My Genes",
+                  onClick: (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    unmarkFavorite(gene);
+                  },
+                },
+              ],
+            }),
+          ),
         };
       }
       return item;
@@ -167,15 +192,30 @@ const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.children!.map((child) => (
-                    <SidebarMenuSubItem key={child.href}>
+                    <SidebarMenuSubItem
+                      key={child.label}
+                      className="group/subitem relative"
+                    >
                       <SidebarMenuSubButton
                         asChild
                         isActive={url === child.href}
                       >
                         <a href={child.href}>
-                          <span>{child.label}</span>
+                          <span className="truncate pr-6">{child.label}</span>
                         </a>
                       </SidebarMenuSubButton>
+                      <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                        {(child.actions ?? []).map((action, i) => (
+                          <button
+                            key={i}
+                            onClick={action.onClick}
+                            className="opacity-0 group-hover/subitem:opacity-100 hover:bg-neutral-100 p-1 rounded-md transition-all size-6 flex items-center justify-center text-neutral-400 hover:text-neutral-600"
+                            title={action.tooltip}
+                          >
+                            <Icon name={action.icon} className="text-sm" />
+                          </button>
+                        ))}
+                      </div>
                     </SidebarMenuSubItem>
                   ))}
                 </SidebarMenuSub>
