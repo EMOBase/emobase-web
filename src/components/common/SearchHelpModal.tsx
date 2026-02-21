@@ -54,7 +54,10 @@ export const SearchHelpModal = ({ children }: SearchHelpModalProps) => {
                 Search for RNAi phenotypes
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Search for <em className="italic">morphological structures</em>{" "}
+                Search for{" "}
+                <em className="italic font-semibold">
+                  morphological structures
+                </em>{" "}
                 (e.g. <Eg>leg</Eg> or <Eg>elytra</Eg>) that were affected by an
                 RNAi knock-down in the iBeetle screen.
               </p>
@@ -67,7 +70,9 @@ export const SearchHelpModal = ({ children }: SearchHelpModalProps) => {
                 </li>
                 <li>
                   You may also search for other aspects such as the{" "}
-                  <em className="italic">nature of a phenotypic change</em>{" "}
+                  <em className="italic font-semibold">
+                    nature of a phenotypic change
+                  </em>{" "}
                   (e.g. <Eg>colour</Eg> or <Eg>transformed</Eg>). Keep in mind
                   that the same phenotype can be described by different term
                   combinations (e.g., <Eg>leg shortened</Eg> or{" "}
