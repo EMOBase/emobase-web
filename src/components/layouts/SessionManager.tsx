@@ -9,43 +9,43 @@ import { useSession } from "@/hooks/session/useSession";
  * This component should be rendered once in the application layout.
  */
 export default function SessionManager() {
-    const { session, fetchSession } = useSessionStore();
-    const { logout, refresh } = useSession();
+  const { session, fetchSession } = useSessionStore();
+  const { logout, refresh } = useSession();
 
-    useEffect(() => {
-        fetchSession();
-    }, [fetchSession]);
+  useEffect(() => {
+    fetchSession();
+  }, [fetchSession]);
 
-    useEffect(() => {
-        if (session?.error) {
-            logout();
-            return;
-        }
+  useEffect(() => {
+    if (session?.error) {
+      logout();
+      return;
+    }
 
-        const handleFocus = () => {
-            // Logout user if token has expired
-            if (session && isBefore(parseISO(session.expires), Date.now())) {
-                logout();
-            }
-        };
+    const handleFocus = () => {
+      // Logout user if token has expired
+      if (session && isBefore(parseISO(session.expires), Date.now())) {
+        logout();
+      }
+    };
 
-        window.addEventListener("focus", handleFocus);
+    window.addEventListener("focus", handleFocus);
 
-        const intervalId = setInterval(() => {
-            // Refresh token if it will expire in 1 min
-            if (
-                session &&
-                isBefore(parseISO(session.expires), addMinutes(Date.now(), 1))
-            ) {
-                refresh();
-            }
-        }, 1000 * 30);
+    const intervalId = setInterval(() => {
+      // Refresh token if it will expire in 1 min
+      if (
+        session &&
+        isBefore(parseISO(session.expires), addMinutes(Date.now(), 1))
+      ) {
+        refresh();
+      }
+    }, 1000 * 30);
 
-        return () => {
-            window.removeEventListener("focus", handleFocus);
-            clearInterval(intervalId);
-        };
-    }, [session, fetchSession, logout, refresh]);
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      clearInterval(intervalId);
+    };
+  }, [session, fetchSession, logout, refresh]);
 
-    return null;
+  return null;
 }

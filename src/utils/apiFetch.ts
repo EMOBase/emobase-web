@@ -57,11 +57,11 @@ export const apiFetch = async <T>(
     : bodyOpt instanceof FormData
       ? [null, bodyOpt]
       : [
-        {
-          "Content-Type": "application/json",
-        },
-        JSON.stringify(bodyOpt),
-      ];
+          {
+            "Content-Type": "application/json",
+          },
+          JSON.stringify(bodyOpt),
+        ];
 
   const response = await fetch(url, {
     headers: {
