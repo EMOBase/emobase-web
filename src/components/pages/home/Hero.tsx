@@ -1,6 +1,8 @@
 import { navigate } from "astro:transitions/client";
 
 import { Button } from "@/components/ui/button";
+import { SearchHelpModal } from "@/components/common/SearchHelpModal";
+import { Icon } from "@/components/ui/icon";
 
 const examples = [
   "TC013553",
@@ -41,9 +43,7 @@ const Hero = () => {
           onSubmit={handleSubmit}
           className="relative bg-white p-2 rounded-2xl shadow-soft border border-slate-200 flex items-center focus-within:ring-2 focus-within:ring-primary/20 transition-all"
         >
-          <span className="material-symbols-outlined text-2xl text-slate-400 ml-4">
-            search
-          </span>
+          <Icon name="search" className="text-2xl text-slate-400 ml-4" />
           <input
             name="search"
             type="text"
@@ -52,13 +52,26 @@ const Hero = () => {
             placeholder="Search for gene IDs or phenotypes..."
             className="block w-full px-4 py-3 bg-transparent border-none text-slate-800 placeholder-slate-400 focus:ring-0 text-lg outline-none"
           />
-          <Button
-            type="submit"
-            variant="primary"
-            className="px-8 font-bold rounded-xl"
-          >
-            Search
-          </Button>
+          <div className="flex items-center gap-1 pr-1">
+            <SearchHelpModal>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                title="Search instruction"
+                className="text-slate-400 hover:text-slate-600 h-10 w-10 shrink-0"
+              >
+                <Icon name="help" className="text-2xl" />
+              </Button>
+            </SearchHelpModal>
+            <Button
+              type="submit"
+              variant="primary"
+              className="px-8 font-bold rounded-xl h-12"
+            >
+              Search
+            </Button>
+          </div>
         </form>
         <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-slate-500">
           <span className="font-semibold">Examples:</span>

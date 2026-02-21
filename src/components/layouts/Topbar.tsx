@@ -45,6 +45,7 @@ const Topbar = () => {
               <Button
                 variant="ghost"
                 size="icon"
+                title="Search instruction"
                 className="text-neutral-400 hover:text-neutral-600 h-8 w-8 -ml-2"
               >
                 <Icon name="help" className="text-xl" />
