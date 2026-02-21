@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/hooks/session/useSession";
+import { SearchHelpModal } from "@/components/common/SearchHelpModal";
 
 function getAvatarChars(name: string) {
   const words = name.trim().split(" ");
@@ -39,6 +40,17 @@ const Topbar = () => {
 
       <div className="flex items-center gap-5">
         <InputGroup>
+          <InputGroupAddon align="inline-end">
+            <SearchHelpModal>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-neutral-400 hover:text-neutral-600 h-8 w-8 -ml-2"
+              >
+                <Icon name="help" className="text-xl" />
+              </Button>
+            </SearchHelpModal>
+          </InputGroupAddon>
           <InputGroupInput
             className="rounded-md w-90 py-2"
             placeholder="Search for gene IDs or phenotypes..."
