@@ -7,9 +7,15 @@ import { Icon } from "@/components/ui/icon";
 const examples = [
   "TC013553",
   "FBgn0001180",
+  "CG9786",
   "rx",
+  "retinal homeobox",
+  "iB_05451",
   "larva head",
   "leg shortened",
+  "abdomen transformed",
+  "abdomen transformed -urogomphi",
+  "head AND wing AND NOT muscle",
 ];
 
 const Hero = () => {
@@ -37,11 +43,11 @@ const Hero = () => {
         </p>
       </div>
 
-      <div className="w-full max-w-2xl relative group">
+      <div className="w-full max-w-3xl relative group">
         <div className="absolute inset-0 bg-gradient-to-r from-orange-200 to-amber-200 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none"></div>
         <form
           onSubmit={handleSubmit}
-          className="relative bg-white p-2 rounded-2xl shadow-soft border border-slate-200 flex items-center focus-within:ring-2 focus-within:ring-primary/20 transition-all"
+          className="relative bg-white max-w-[45rem] mx-auto p-2 rounded-2xl shadow-soft border border-slate-200 flex items-center focus-within:ring-2 focus-within:ring-primary/20 transition-all"
         >
           <Icon name="search" className="text-2xl text-slate-400 ml-4" />
           <input
