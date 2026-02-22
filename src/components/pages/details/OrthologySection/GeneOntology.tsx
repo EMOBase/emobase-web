@@ -56,7 +56,7 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<TabId>(aspects[0].id);
 
-  const annotationMap = selectedHomolog.annotations.reduce(
+  const annotationMap = (selectedHomolog.annotations ?? []).reduce(
     (acc, item) => {
       if (item.term.aspect && Object.keys(acc).includes(item.term.aspect)) {
         acc[item.term.aspect].push(item);
