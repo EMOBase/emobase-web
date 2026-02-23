@@ -2,8 +2,6 @@
 import BlankLayout from "@/layouts/blank.astro";
 import JBrowseIsolatedView from "@/components/pages/details/GenomeBrowser/JBrowseIsolatedView";
 
-export const prerender = false;
-
 const seqname = Astro.url.searchParams.get("seqname");
 const start = Astro.url.searchParams.get("start");
 const end = Astro.url.searchParams.get("end");

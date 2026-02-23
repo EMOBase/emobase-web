@@ -8,8 +8,6 @@ import GeneDetails from "@/components/pages/details/GeneDetails";
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
 import JBrowseGenomeView from "@/components/pages/details/GenomeBrowser/JBrowseGenomeView";
 
-export const prerender = false;
-
 const { fetchIBs, fetchTriboliumGenes, fetchOrthology, fetchDrosophilaGenes } =
   geneService();
 const { fetchByGene: fetchPhenotypesByGene } = phenotypeService();

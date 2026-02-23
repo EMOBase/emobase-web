@@ -6,8 +6,6 @@ import BlankLayout from "@/layouts/blank.astro";
 import AdminLogin from "@/components/pages/admin/AdminLogin";
 import Dashboard from "@/components/pages/admin/Dashboard";
 
-export const prerender = false;
-
 const session = await getSession(Astro.request);
 ---
 

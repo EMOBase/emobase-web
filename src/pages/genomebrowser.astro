@@ -3,8 +3,6 @@ import BlankLayout from "@/layouts/blank.astro";
 import { mainSpecies } from "@/utils/mainSpecies";
 import { getEnv } from "@/utils/env";
 
-export const prerender = false;
-
 const loc = Astro.url.searchParams.get("loc");
 
 const genomebrowserBaseUrl = getEnv("PUBLIC_UI_PAGE_GENOMEBROWSER");

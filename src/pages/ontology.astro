@@ -1,8 +1,6 @@
 ---
 import Layout from "@/layouts/default.astro";
 
-export const prerender = false;
-
 const ontologyTermId = Astro.url.searchParams.get("id");
 
 import { getEnv } from "@/utils/env";
