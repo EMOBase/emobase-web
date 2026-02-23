@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { Icon } from "@/components/ui/icon";
 import {
   InputGroup,
@@ -16,6 +17,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/hooks/session/useSession";
 import { SearchHelpModal } from "@/components/common/SearchHelpModal";
+import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
+import SearchAutocomplete from "@/components/common/SearchAutocomplete";
+import { Spinner } from "@/components/ui/spinner";
+import { navigate } from "astro:transitions/client";
 
 function getAvatarChars(name: string) {
   const words = name.trim().split(" ");
@@ -33,13 +38,15 @@ function getAvatarChars(name: string) {
 
 const Topbar = () => {
   const { session, logout } = useSession();
+  const inputGroupRef = useRef<HTMLDivElement>(null);
+  const portalRef = useRef<HTMLDivElement>(null);
 
   return (
     <header className="h-16 border-b border-border-light bg-white/80 backdrop-blur-md px-10 flex items-center justify-between z-30 flex-shrink-0">
       <div></div>
 
       <div className="flex items-center gap-5">
-        <InputGroup>
+        <InputGroup ref={inputGroupRef}>
           <InputGroupAddon align="inline-end">
             <SearchHelpModal>
               <Button
@@ -52,13 +59,48 @@ const Topbar = () => {
               </Button>
             </SearchHelpModal>
           </InputGroupAddon>
-          <InputGroupInput
-            className="rounded-md w-90 py-2"
-            placeholder="Search for gene IDs or phenotypes..."
+          <SearchAutocomplete
+            anchor={inputGroupRef}
+            container={portalRef}
+            renderInput={({
+              searchValue,
+              setSearchValue,
+              loading,
+              fetchSuggestions,
+            }) => (
+              <>
+                <AutocompletePrimitive.Input
+                  render={
+                    <InputGroupInput
+                      className="rounded-md w-90 py-2"
+                      placeholder="Search for gene IDs or phenotypes..."
+                      value={searchValue}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setSearchValue(val);
+                        fetchSuggestions(val);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          if (searchValue.trim()) {
+                            navigate(`/search/${searchValue.trim()}`);
+                          }
+                        }
+                      }}
+                    />
+                  }
+                />
+                <InputGroupAddon>
+                  {loading ? (
+                    <Spinner className="size-4" />
+                  ) : (
+                    <Icon name="search" className="text-lg" />
+                  )}
+                </InputGroupAddon>
+              </>
+            )}
           />
-          <InputGroupAddon>
-            <Icon name="search" className="text-lg" />
-          </InputGroupAddon>
+          <div ref={portalRef} />
         </InputGroup>
 
         {session && (

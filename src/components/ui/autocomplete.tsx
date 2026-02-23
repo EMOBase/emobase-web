@@ -108,6 +108,15 @@ const AutocompleteInput = React.forwardRef<
   );
 });
 
+interface AutocompleteContentProps
+  extends AutocompletePrimitive.Popup.Props,
+  Pick<
+    AutocompletePrimitive.Positioner.Props,
+    "side" | "align" | "sideOffset" | "alignOffset" | "anchor"
+  > {
+  container?: AutocompletePrimitive.Portal.Props["container"];
+}
+
 function AutocompleteContent({
   className,
   side = "bottom",
@@ -115,14 +124,11 @@ function AutocompleteContent({
   align = "start",
   alignOffset = 0,
   anchor,
+  container,
   ...props
-}: AutocompletePrimitive.Popup.Props &
-  Pick<
-    AutocompletePrimitive.Positioner.Props,
-    "side" | "align" | "sideOffset" | "alignOffset" | "anchor"
-  >) {
+}: AutocompleteContentProps) {
   return (
-    <AutocompletePrimitive.Portal>
+    <AutocompletePrimitive.Portal container={container}>
       <AutocompletePrimitive.Positioner
         side={side}
         sideOffset={sideOffset}
@@ -152,7 +158,7 @@ function AutocompleteList({
     <AutocompletePrimitive.List
       data-slot="autocomplete-list"
       className={cn(
-        "max-h-[min(calc(--spacing(96)---spacing(9)),calc(var(--available-height)---spacing(9)))] scroll-py-1 overflow-y-auto p-1 data-empty:p-0",
+        "max-h-[min(calc(--spacing(96)---spacing(9)),calc(var(--available-height)---spacing(9)))] scroll-py-1 overflow-y-auto p-1",
         className,
       )}
       {...props}
