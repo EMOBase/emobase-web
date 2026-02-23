@@ -17,6 +17,10 @@ interface Props {
 }
 
 const { className } = Astro.props;
+
+const runtimeEnv = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => key.startsWith("PUBLIC_")),
+);
 ---
 
 <!doctype html>
@@ -38,6 +42,9 @@ const { className } = Astro.props;
 
     <ClientRouter />
     <LoadingIndicator color="var(--primary)" />
+    <script is:inline define:vars={{ runtimeEnv }}>
+      window.__ENV__ = runtimeEnv;
+    </script>
   </head>
   <body class="h-screen w-full overflow-hidden flex">
     <SessionManager client:load transition:persist />

@@ -1,7 +1,8 @@
 ---
 import BlankLayout from "@/layouts/blank.astro";
+import { getEnv } from "@/utils/env";
 
-const url = import.meta.env.PUBLIC_UI_PAGE_BLAST;
+const url = getEnv("PUBLIC_UI_PAGE_BLAST");
 ---
 
 <BlankLayout>

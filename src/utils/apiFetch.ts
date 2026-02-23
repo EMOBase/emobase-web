@@ -1,6 +1,7 @@
 import qs from "qs";
 
 import { type ApiService } from "./constants/api";
+import { getEnv } from "./env";
 
 /**
  * Resolves the base URL for a given service.
@@ -11,21 +12,24 @@ import { type ApiService } from "./constants/api";
  */
 export const resolveApiBaseUrl = (service: ApiService) => {
   const isServer = typeof window === "undefined";
-  const env = import.meta.env;
+  const publicBaseUrl = getEnv("PUBLIC_APIS_BASE_URL");
 
   // Client side always uses the public URL
   if (!isServer) {
-    return `${env.PUBLIC_APIS_BASE_URL}/${service}/v1`;
+    return `${publicBaseUrl}/${service}/v1`;
   }
 
   // Server-side logic
   // Automatic service discovery only in production if internal networking is enabled
-  if (env.PROD && env.INTERNAL_API_NETWORKING === "true") {
-    return `http://${service}:8080/${service}/v1`;
+  const envProd = import.meta.env.PROD || process.env.NODE_ENV === "production";
+  if (envProd && getEnv("INTERNAL_API_NETWORKING") === "true") {
+    // Internal container talk to each other usually at root or service specific root.
+    // Based on Nginx config,backend services expect requests at their root (/).
+    return `http://${service}:8080`;
   }
 
   // Local development fallback
-  return `${env.PUBLIC_APIS_BASE_URL}/${service}/v1`;
+  return `${publicBaseUrl}/${service}/v1`;
 };
 
 export const apiFetch = async <T>(
@@ -38,54 +42,76 @@ export const apiFetch = async <T>(
     authorization?: string;
   },
 ) => {
-  const {
-    responseType,
-    body: bodyOpt,
-    query,
-    authorization = "",
-    ...restOpts
-  } = opts ?? {};
+  const isServer = typeof window === "undefined";
 
-  const baseURL = resolveApiBaseUrl(service);
-  const url =
-    baseURL +
-    request +
-    (query ? `?${qs.stringify(query, { arrayFormat: "repeat" })}` : "");
+  try {
+    const {
+      responseType,
+      body: bodyOpt,
+      query,
+      authorization = "",
+      ...restOpts
+    } = opts ?? {};
 
-  const [headers, body] = !bodyOpt
-    ? [null, null]
-    : bodyOpt instanceof FormData
-      ? [null, bodyOpt]
-      : [
-          {
-            "Content-Type": "application/json",
-          },
-          JSON.stringify(bodyOpt),
-        ];
+    const baseURL = resolveApiBaseUrl(service);
+    // Ensure no double slashes when joining baseURL and request
+    const sanitizedBaseURL = baseURL.endsWith("/")
+      ? baseURL.slice(0, -1)
+      : baseURL;
+    const sanitizedRequest = request.startsWith("/") ? request : `/${request}`;
 
-  const response = await fetch(url, {
-    headers: {
-      ...headers,
-      Authorization: authorization,
-    },
-    body,
-    ...restOpts,
-  });
+    const url =
+      sanitizedBaseURL +
+      sanitizedRequest +
+      (query ? `?${qs.stringify(query, { arrayFormat: "repeat" })}` : "");
 
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error);
-  }
+    const [headers, body] = !bodyOpt
+      ? [null, null]
+      : bodyOpt instanceof FormData
+        ? [null, bodyOpt]
+        : [
+            {
+              "Content-Type": "application/json",
+            },
+            JSON.stringify(bodyOpt),
+          ];
 
-  if (responseType) return response[responseType]() as T;
+    const response = await fetch(url, {
+      headers: {
+        ...headers,
+        Authorization: authorization,
+      },
+      body,
+      ...restOpts,
+    });
 
-  const contentType = response.headers.get("Content-Type") ?? "";
-  if (contentType.includes("application/json")) {
-    return response.json() as T;
-  } else if (contentType.includes("image/")) {
-    return response.blob() as T;
-  } else {
-    return response.text() as T;
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (isServer) {
+        console.error(
+          `[Server Fetch Error] ${response.status} ${url}: ${errorText}`,
+        );
+      }
+      throw new Error(`API ${response.status} on ${url}: ${errorText}`);
+    }
+
+    if (responseType) return response[responseType]() as T;
+
+    const contentType = response.headers.get("Content-Type") ?? "";
+    if (contentType.includes("application/json")) {
+      return response.json() as T;
+    } else if (contentType.includes("image/")) {
+      return response.blob() as T;
+    } else {
+      return response.text() as T;
+    }
+  } catch (err: any) {
+    if (isServer) {
+      console.error(
+        `[Server Fetch Exception] Service: ${service}: ${err.message || err}`,
+      );
+    }
+    throw err;
   }
 };
 

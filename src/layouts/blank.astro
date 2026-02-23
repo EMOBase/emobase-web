@@ -1,5 +1,9 @@
 ---
 import "@/styles/global.css";
+
+const runtimeEnv = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => key.startsWith("PUBLIC_")),
+);
 ---
 
 <!doctype html>
@@ -18,6 +22,10 @@ import "@/styles/global.css";
     />
 
     <title>iBeetle Base</title>
+
+    <script is:inline define:vars={{ runtimeEnv }}>
+      window.__ENV__ = runtimeEnv;
+    </script>
   </head>
   <body class="h-screen w-full overflow-hidden">
     <slot />

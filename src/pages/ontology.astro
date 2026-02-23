@@ -5,7 +5,9 @@ export const prerender = false;
 
 const ontologyTermId = Astro.url.searchParams.get("id");
 
-const ontoscopeUrl = import.meta.env.PUBLIC_UI_PAGE_ONTOSCOPE;
+import { getEnv } from "@/utils/env";
+
+const ontoscopeUrl = getEnv("PUBLIC_UI_PAGE_ONTOSCOPE");
 
 const getUrl = () => {
   const obaUrl = "https://ibeetle-base.uni-goettingen.de/oba/tribolium";

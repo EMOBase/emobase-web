@@ -1,7 +1,6 @@
 import Keycloak from "@auth/core/providers/keycloak";
 import { defineConfig } from "auth-astro";
-
-const getEnv = (key) => import.meta.env[key] || process.env[key];
+import { getEnv } from "./src/utils/env";
 
 /**
  * Resolves Keycloak URLs based on the environment.
