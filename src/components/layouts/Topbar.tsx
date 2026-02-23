@@ -72,7 +72,7 @@ const Topbar = () => {
                 <AutocompletePrimitive.Input
                   render={
                     <InputGroupInput
-                      className="rounded-md w-90 py-2"
+                      className="rounded-md w-90 px-3 py-2"
                       placeholder="Search for gene IDs or phenotypes..."
                       value={searchValue}
                       onChange={(e) => {

@@ -23,8 +23,6 @@ export interface SearchAutocompleteProps {
     setSearchValue: (val: string) => void;
     loading: boolean;
     fetchSuggestions: (term: string) => void;
-    open: boolean;
-    setOpen: (open: boolean) => void;
   }) => React.ReactNode;
 }
 
@@ -38,7 +36,6 @@ const SearchAutocomplete = ({
   const [searchValue, setSearchValue] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
 
   const suggestRef = useRef(suggest);
   suggestRef.current = suggest;
@@ -48,14 +45,12 @@ const SearchAutocomplete = ({
       const trimmed = query.trim();
       if (!trimmed) {
         setSuggestions([]);
-        setOpen(false);
         return;
       }
       setLoading(true);
       try {
         const results = await suggestRef.current(trimmed);
         setSuggestions(results || []);
-        setOpen((results || []).length > 0);
       } catch (error) {
         console.error("Failed to fetch suggestions:", error);
       } finally {
@@ -67,8 +62,6 @@ const SearchAutocomplete = ({
 
   return (
     <Autocomplete
-      open={open}
-      onOpenChange={setOpen}
       onValueChange={(val: string | null) => {
         if (val) {
           setSearchValue(val);
@@ -81,27 +74,24 @@ const SearchAutocomplete = ({
           setSearchValue,
           loading,
           fetchSuggestions,
-          open,
-          setOpen,
         })}
 
-        <AutocompleteContent
-          sideOffset={8}
-          anchor={anchor}
-          container={container?.current}
-          className="w-full min-w-(--anchor-width)"
-        >
-          <AutocompleteList>
-            {suggestions.map((suggestion) => (
-              <AutocompleteItem key={suggestion} value={suggestion}>
-                {suggestion}
-              </AutocompleteItem>
-            ))}
-            {!loading && suggestions.length === 0 && searchValue.trim() && (
-              <AutocompleteEmpty>No results found</AutocompleteEmpty>
-            )}
-          </AutocompleteList>
-        </AutocompleteContent>
+        {suggestions.length > 0 && (
+          <AutocompleteContent
+            sideOffset={8}
+            anchor={anchor}
+            container={container?.current}
+            className="w-full min-w-(--anchor-width)"
+          >
+            <AutocompleteList>
+              {suggestions.map((suggestion) => (
+                <AutocompleteItem key={suggestion} value={suggestion}>
+                  {suggestion}
+                </AutocompleteItem>
+              ))}
+            </AutocompleteList>
+          </AutocompleteContent>
+        )}
       </div>
     </Autocomplete>
   );
