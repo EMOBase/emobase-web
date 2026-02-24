@@ -68,15 +68,7 @@ services:
     #   - .env
 ```
 
-### 2. Environment Variables
-
-This project uses a hybrid approach for environment variables to support both build-time and runtime configuration.
-
-- **`PUBLIC_` Prefix**: Variables prefixed with `PUBLIC_` are automatically injected into the client-side at runtime (via `window.__ENV__`). This allows the same Docker image to be used across different environments (staging, production) without rebuilding.
-- **Runtime Injection**: The injection logic is handled in `src/layouts/default.astro` and can be accessed anywhere using the `getEnv()` utility in `src/utils/env.ts`.
-- **Sensitive Variables**: Non-prefixed variables (like `AUTH_SECRET`, `KEYCLOAK_CLIENT_SECRET`) are only available on the server-side.
-
-### 3. Nginx Configuration
+### 2. Nginx Configuration
 
 When deploying behind Nginx, ensure you pass the correct headers so that the application can correctly handle redirects and authentication callbacks.
 
@@ -101,7 +93,7 @@ server {
 }
 ```
 
-### 4. Technical Details
+### 3. Technical Details
 - **Adapter**: `@astrojs/node` in `standalone` mode.
 - **Ports**: Listens on port `8080` by default.
 - **Base Image**: `node:20` (Build) / `node:20-slim` (Runtime).
