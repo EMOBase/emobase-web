@@ -48,27 +48,60 @@ Instructions for setting up and running the project locally on your machine:
 
 ## 🐳 Docker Deployment
 
-### 1. Environment Configuration
-Ensure you have a `.env` file in the root directory. You can use `.env.example` as a template:
-```bash
-cp .env.example .env
-# Edit .env with your actual values
-```
+### 1. Docker Compose Integration
 
-### 2. Usage with Docker Compose
-To deploy this service alongside other components, include it in your production Docker Compose stack. It will automatically talk to other services (like `geneservice` and `keycloak`) using their service names.
+To deploy this service alongside other components, include it in your `compose.yml`.
 
 ```yaml
 services:
   emobase-web:
     build:
       context: .
-    env_file:
-      - .env
     restart: always
+    environment:
+      - PUBLIC_APIS_BASE_URL=https://api.example.com/api
+      - PUBLIC_UI_PAGE_GENOMEBROWSER=https://genome.example.com/jbrowse2/
+      - AUTH_SECRET=your_secret_here
+      # ... other environment variables
+    # Alternatively, use an env_file
+    # env_file:
+    #   - .env
 ```
 
-### 3. Technical Details
+### 2. Environment Variables
+
+This project uses a hybrid approach for environment variables to support both build-time and runtime configuration.
+
+- **`PUBLIC_` Prefix**: Variables prefixed with `PUBLIC_` are automatically injected into the client-side at runtime (via `window.__ENV__`). This allows the same Docker image to be used across different environments (staging, production) without rebuilding.
+- **Runtime Injection**: The injection logic is handled in `src/layouts/default.astro` and can be accessed anywhere using the `getEnv()` utility in `src/utils/env.ts`.
+- **Sensitive Variables**: Non-prefixed variables (like `AUTH_SECRET`, `KEYCLOAK_CLIENT_SECRET`) are only available on the server-side.
+
+### 3. Nginx Configuration
+
+When deploying behind Nginx, ensure you pass the correct headers so that the application can correctly handle redirects and authentication callbacks.
+
+Sample Nginx configuration:
+
+```nginx
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://emobase-web:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Important for WebSocket support (if needed)
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+```
+
+### 4. Technical Details
 - **Adapter**: `@astrojs/node` in `standalone` mode.
-- **Node Version**: 20 (Build) / 20-slim (Runtime).
-- **Port**: 8080.
+- **Ports**: Listens on port `8080` by default.
+- **Base Image**: `node:20` (Build) / `node:20-slim` (Runtime).
