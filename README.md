@@ -55,8 +55,10 @@ To deploy this service alongside other components, include it in your `compose.y
 ```yaml
 services:
   emobase-web:
-    build:
-      context: .
+    # Build from source
+    build: ./path/to/emobase-web # Update context path as needed
+    # Or use pre-built image
+    # image: your-registry/emobase-web:latest
     restart: always
     environment:
       - PUBLIC_APIS_BASE_URL=https://api.example.com/api
