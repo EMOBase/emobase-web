@@ -1,3 +1,4 @@
+import { Icon } from "@/components/ui/icon";
 import FlybaseGeneId from "@/components/common/FlybaseGeneId";
 
 import type { Homolog } from "./types";
@@ -43,7 +44,7 @@ const HomologTable: React.FC<HomologTableProps> = ({ homologs, onViewGO }) => {
             {homologs.map((h) => (
               <tr key={h.id} className={`transition-colors hover:bg-gray-50`}>
                 <td className="px-6 py-4">
-                  <FlybaseGeneId gene={h.id} className={`font-semibold`} />
+                  <FlybaseGeneId gene={h.id} className="font-semibold" />
                 </td>
 
                 <td className="px-6 py-4 text-gray-500 text-xs">
@@ -61,10 +62,8 @@ const HomologTable: React.FC<HomologTableProps> = ({ homologs, onViewGO }) => {
                     onClick={() => onViewGO(h)}
                     className="text-gray-400 hover:text-primary transition-colors text-[10px] font-bold uppercase tracking-widest flex items-center gap-1"
                   >
-                    View Ontology{" "}
-                    <span className="material-symbols-outlined text-[16px]">
-                      chevron_right
-                    </span>
+                    <span>View GO Terms</span>{" "}
+                    <Icon name="chevron_right" className="text-lg" />
                   </a>
                 </td>
               </tr>
