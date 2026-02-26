@@ -53,7 +53,8 @@ type NavItem = {
     | "GENOME_BROWSER"
     | "BLAST"
     | "ID_CONVERTER"
-    | "ONTOLOGY_VIEWER";
+    | "ONTOLOGY_VIEWER"
+    | "RESOURCES";
   label: string;
   icon: string;
   href?: string;
@@ -111,20 +112,27 @@ const toolItems: NavItem[] = [
 ];
 
 export const getActiveView = (url: string): NavItem["id"] | undefined => {
-  return homeItems.concat(toolItems).find((item) => item.href === url)?.id;
+  return homeItems
+    .concat(toolItems)
+    .concat(resourceItems)
+    .find((item) => item.href === url)?.id;
 };
 
 const resourceItems: NavItem[] = [
   {
     label: "API Docs",
-
-    href: getEnv("PUBLIC_UI_PAGE_API_DOC"),
     icon: "api",
+    href: getEnv("PUBLIC_UI_PAGE_API_DOC"),
     external: true,
   },
 
-  { label: "Documentation", icon: "description" },
-  { label: "Downloads", icon: "download" },
+  {
+    id: "RESOURCES",
+    label: "Other Resources",
+    icon: "folder_open",
+    href: "/resources",
+  },
+  { label: "Help", icon: "help_center" },
 ];
 
 type SidebarProps = {
