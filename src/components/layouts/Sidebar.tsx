@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/collapsible";
 import { useSession } from "@/hooks/session/useSession";
 import { useFavoriteGenes } from "@/states/favoriteGenes";
+import { getEnv } from "@/utils/env";
 
 type NavItemAction = {
   icon: string;
@@ -56,6 +57,7 @@ type NavItem = {
   label: string;
   icon: string;
   href?: string;
+  external?: boolean;
   requiresAuth?: boolean;
   children?: NavItemChild[];
 };
@@ -113,6 +115,14 @@ export const getActiveView = (url: string): NavItem["id"] | undefined => {
 };
 
 const resourceItems: NavItem[] = [
+  {
+    label: "API Docs",
+
+    href: getEnv("PUBLIC_UI_PAGE_API_DOC"),
+    icon: "api",
+    external: true,
+  },
+
   { label: "Documentation", icon: "description" },
   { label: "Downloads", icon: "download" },
 ];
@@ -174,20 +184,29 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
           tooltip={isCollapsed ? undefined : item.label}
           isActive={isActive}
         >
-          <a href={item.href} className="cursor-pointer">
+          <a
+            href={item.href}
+            target={item.external ? "_blank" : "_self"}
+            className="flex items-center cursor-pointer"
+          >
             <Icon
               name={item.icon}
               fill={isActive}
               weight={isActive ? 500 : 400}
               className="text-xl"
             />
+            <span className="text-sm font-medium flex-1 truncate">
+              {item.label}
+            </span>
             {!isCollapsed && hasChildren && (
               <Icon
                 name="expand_more"
-                className="order-last text-lg text-neutral-500 ml-auto transition-transform group-data-[state=closed]/collapsible:-rotate-90"
+                className="text-lg text-neutral-500 transition-transform group-data-[state=closed]/collapsible:-rotate-90"
               />
             )}
-            <span className="text-sm font-medium">{item.label}</span>
+            {item.external && (
+              <Icon name="open_in_new" className="text-lg text-neutral-500" />
+            )}
           </a>
         </SidebarMenuButton>
       );
