@@ -88,7 +88,7 @@ const SearchResultByOrthology: React.FC<SearchResultByOrthologyProps> = ({
                         {group}
                         <Icon
                           name="open_in_new"
-                          className="text-xl text-slate-400"
+                          className="text-lg text-slate-400"
                         />
                       </a>
                     </div>

@@ -23,7 +23,7 @@ const FlybaseGeneId: React.FC<FlybaseGeneIdProps> = ({ gene, className }) => {
         </span>
         <Icon
           name="open_in_new"
-          className="text-xl text-slate-400 group-hover/link:text-slate-600"
+          className="text-lg text-slate-400 group-hover/link:text-slate-600"
         />
       </a>
     </div>

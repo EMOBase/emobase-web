@@ -169,9 +169,11 @@ const resources = [
 ---
 
 <Layout>
-  {
-    resources.map(({ header, links }) => (
-      <Section header={header} links={links} />
-    ))
-  }
+  <div class="max-w-6xl mx-auto">
+    {
+      resources.map(({ header, links }) => (
+        <Section header={header} links={links} />
+      ))
+    }
+  </div>
 </Layout>
