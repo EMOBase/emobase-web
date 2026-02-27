@@ -132,7 +132,7 @@ const resourceItems: NavItem[] = [
     icon: "folder_open",
     href: "/resources",
   },
-  { label: "Help", icon: "help_center" },
+  { label: "Help", icon: "quiz" },
 ];
 
 type SidebarProps = {
