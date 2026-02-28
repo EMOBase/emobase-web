@@ -62,7 +62,7 @@ const AnnotationList: React.FC<AnnotationListProps> = ({
   }
 
   return (
-    <div className="grid auto-rows-auto gap-y-2 gap-x-2 items-start">
+    <div className="grid grid-cols-[1fr_auto_auto] auto-rows-auto gap-y-2 gap-x-2 items-start">
       {annotations.map((annotation, index) => {
         const isReviewed = annotation.status === "INTERNAL";
 
@@ -112,27 +112,18 @@ const AnnotationList: React.FC<AnnotationListProps> = ({
 
             <div
               className={clsx(
-                "col-span-3 flex items-center gap-4 text-xs text-neutral-500 dark:text-neutral-400",
+                "col-span-3 text-xs text-neutral-500 dark:text-neutral-400",
                 index !== annotations.length - 1 && "mb-6",
               )}
             >
               {annotation.quotation && (
-                <div className="flex items-center gap-2">
-                  <Icon
-                    name="keyboard_double_arrow_right"
-                    className="text-base"
-                  />
-                  <span>{annotation.quotation}</span>
-                  <Icon
-                    name="keyboard_double_arrow_left"
-                    className="text-base"
-                  />
-                </div>
+                <>&ldquo;{annotation.quotation}&rdquo;</>
               )}
+              &nbsp;&nbsp;&nbsp;&nbsp;
               <a
                 href={getLinkReference(annotation)}
                 target="_blank"
-                className="group/link flex items-center gap-1"
+                className="group/link inline-flex items-center gap-1"
               >
                 <span className="group-hover/link:text-primary cursor-pointer transition-colors">
                   PMID:{getPmid(annotation)}

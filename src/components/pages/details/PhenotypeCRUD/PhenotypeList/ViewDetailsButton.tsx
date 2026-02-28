@@ -51,7 +51,7 @@ const ViewDetailsButton: React.FC<ViewDetailsButtonProps> = ({ phenotype }) => {
       <DialogTrigger className="px-3.5 py-1.75 rounded-sm bg-neutral-100 text-neutral-600 text-[10px] font-bold hover:bg-neutral-200 transition-colors uppercase tracking-wider">
         View details
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader className="border-b border-neutral-100">
           <DialogTitle>{phenotype.description}</DialogTitle>
         </DialogHeader>
