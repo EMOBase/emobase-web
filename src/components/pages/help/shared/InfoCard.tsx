@@ -10,7 +10,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ intro, sections }) => {
   return (
     <div className="bg-white rounded-xl border border-border-subtle shadow-sm overflow-hidden">
       <div className="p-8 lg:p-12 space-y-12">
-        <p className="text-slate-600 leading-relaxed">{intro}</p>
+        {intro && <p className="text-slate-600 leading-relaxed">{intro}</p>}
         {sections.map(({ title, content }, index) => (
           <section key={index}>
             <div className="flex items-center gap-3 mb-6">
