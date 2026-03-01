@@ -42,6 +42,7 @@ type NavItemAction = {
 type NavItemChild = {
   label: string;
   href: string;
+  external?: boolean;
   actions?: NavItemAction[];
 };
 
@@ -95,7 +96,17 @@ const toolItems: NavItem[] = [
     id: "ONTOLOGY_VIEWER",
     label: "Ontology Viewer",
     icon: "schema",
-    href: "/ontology",
+    children: [
+      {
+        label: "Ontoscope",
+        href: "/ontology",
+      },
+      {
+        label: "BioPortal",
+        href: "http://bioportal.bioontology.org/ontologies/TRON",
+        external: true,
+      },
+    ],
   },
   {
     id: "GENOME_BROWSER",
@@ -107,7 +118,17 @@ const toolItems: NavItem[] = [
     id: "BLAST",
     label: "Blast",
     icon: "genetics",
-    href: "/blast",
+    children: [
+      {
+        label: "iBB Blast",
+        href: "/blast/",
+      },
+      {
+        label: "NCBI Blast",
+        href: "https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&amp;USER_FORMAT_DEFAULTS=on&amp;SET_SAVED_SEARCH=true&amp;PAGE=MegaBlast&amp;PROGRAM=blastn&amp;GAPCOSTS=0%200&amp;MATCH_SCORES=1%2C-2&amp;BLAST_SPEC=OGP__7070__12539&amp;DATABASE=GPIPE/7070/103/ref_top_level&amp;BLAST_PROGRAMS=megaBlast&amp;MAX_NUM_SEQ=100&amp;SHORT_QUERY_ADJUST=on&amp;EXPECT=10&amp;WORD_SIZE=28&amp;REPEATS=7070&amp;TEMPLATE_TYPE=0&amp;TEMPLATE_LENGTH=0&amp;FILTER=L&amp;FILTER=R&amp;FILTER=m&amp;WWW_BLAST_TYPE=mapview&amp;EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&amp;PROG_DEFAULTS=on&amp;SHOW_OVERVIEW=on&amp;SHOW_LINKOUT=on&amp;ALIGNMENT_VIEW=Pairwise&amp;MASK_CHAR=2&amp;MASK_COLOR=1&amp;GET_SEQUENCE=on&amp;NUM_OVERVIEW=100&amp;DESCRIPTIONS=100&amp;ALIGNMENTS=100&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML",
+        external: true,
+      },
+    ],
   },
 ];
 
@@ -247,6 +268,7 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
                     render={
                       <a
                         href={child.href}
+                        target={child.external ? "_blank" : "_self"}
                         className="flex items-center justify-between w-full"
                       >
                         <span className="truncate">{child.label}</span>
@@ -265,6 +287,12 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
                               <Icon name={action.icon} className="text-sm" />
                             </button>
                           ))}
+                          {child.external && (
+                            <Icon
+                              name="open_in_new"
+                              className="text-lg text-neutral-500"
+                            />
+                          )}
                         </div>
                       </a>
                     }
@@ -297,8 +325,12 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
                         asChild
                         isActive={url === child.href}
                       >
-                        <a href={child.href}>
-                          <span className="truncate pr-6">{child.label}</span>
+                        <a
+                          href={child.href}
+                          target={child.external ? "_blank" : "_self"}
+                          className="pr-6"
+                        >
+                          <span className="truncate">{child.label}</span>
                         </a>
                       </SidebarMenuSubButton>
                       <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -313,6 +345,13 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
                           </button>
                         ))}
                       </div>
+                      {child.external && (
+                        <Icon
+                          name="open_in_new"
+
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-lg text-neutral-500"
+                        />
+                      )}
                     </SidebarMenuSubItem>
                   ))}
                 </SidebarMenuSub>
