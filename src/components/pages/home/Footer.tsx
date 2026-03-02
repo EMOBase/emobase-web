@@ -8,19 +8,56 @@ const Footer: React.FC = () => {
           <h4 className="font-bold text-slate-900 mb-2 text-sm uppercase tracking-wide">
             About the Data
           </h4>
-          <p className="text-sm text-slate-500 leading-relaxed">
+
+          <p className="text-sm text-slate-500 leading-relaxed mb-2">
             RNAi phenotypes documented in this database were collected in the
             iBeetle Screen, which was funded by the German Research Foundation
             (DFG) and BayerCrop Science. The development of the iBeetle-Base has
             been supported by DFG. Please refer to{" "}
-            <a className="text-primary hover:underline" href="#">
+            <a
+              href="https://doi.org/10.1038/ncomms8822"
+              target="_blank"
+              className="text-primary hover:underline"
+            >
               Schmitt-Engel et al. (2015)
             </a>{" "}
             and{" "}
-            <a className="text-primary hover:underline" href="#">
+            <a
+              href="https://doi.org/10.1186/s12915-022-01231-4"
+              target="_blank"
+              className="text-primary hover:underline"
+            >
               Hakeemi et al. (2022)
             </a>{" "}
-            for details.
+            for details on the iBeetle Screen and to{" "}
+            <a
+              href="https://doi.org/10.1093/nar/gku1054"
+              target="_blank"
+              className="text-primary hover:underline"
+            >
+              Dönitz et al. (2015)
+            </a>{" "}
+            and{" "}
+            <a
+              href="https://doi.org/10.1093/nar/gkx984"
+              target="_blank"
+              className="text-primary hover:underline"
+            >
+              Dönitz et al (2018)
+            </a>{" "}
+            for the iBeetle-Base.
+          </p>
+
+          <p className="text-sm text-slate-500 leading-relaxed">
+            NCBI is using another assembly (
+            <a
+              href="https://www.ncbi.nlm.nih.gov/nuccore/JANKOB000000000.1"
+              target="_blank"
+              className="text-primary hover:underline"
+            >
+              icTriCast1.1
+            </a>
+            ) based on long read sequencing
           </p>
         </div>
         <div className="flex flex-col gap-4">
@@ -41,13 +78,13 @@ const Footer: React.FC = () => {
       <div className="mt-12 flex items-center justify-between text-xs text-slate-400">
         <p>© 2026 Universitätsmedizin Göttingen. All rights reserved.</p>
         <div className="flex gap-4">
-          <a className="hover:text-slate-600" href="#">
+          <a className="hover:text-slate-600" href="/help/about">
             About
           </a>
-          <a className="hover:text-slate-600" href="#">
+          <a className="hover:text-slate-600" href="/help/datenschutz">
             Data Protection
           </a>
-          <a className="hover:text-slate-600" href="#">
+          <a className="hover:text-slate-600" href="/help/impressum">
             Imprint
           </a>
         </div>

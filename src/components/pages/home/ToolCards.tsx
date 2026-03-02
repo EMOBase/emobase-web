@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 interface ToolCardProps {
+  href: string;
   icon: React.ReactNode;
   title: string;
   description: string;
@@ -15,13 +16,14 @@ interface ToolCardProps {
 }
 
 const ToolCard: React.FC<ToolCardProps> = ({
+  href,
   icon,
   title,
   description,
   color,
 }) => (
   <a
-    href="#"
+    href={href}
     className="group bg-white p-8 rounded-2xl border border-slate-100 shadow-card hover:shadow-xl hover:shadow-orange-500/5 hover:border-primary/30 transition-all duration-300"
   >
     <div
@@ -43,26 +45,30 @@ const ToolCards: React.FC = () => {
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <ToolCard
+        href="/genomebrowser"
         icon={<Columns size={28} />}
         title="Genome Browser (Tcas5.2)"
         description="Interactive exploration of gene structure, expression patterns, and chromatin data based on the Tcas5.2 assembly."
         color="bg-orange-50 text-primary"
       />
       <ToolCard
+        href="/querypipeline"
         icon={<ArrowLeftRight size={28} />}
         title="ID Conversion Pipeline"
         description="Seamlessly convert lists of gene IDs between Drosophila (fly) and Tribolium (beetle) orthologs."
         color="bg-blue-50 text-blue-600"
       />
       <ToolCard
+        href="/ontology"
         icon={<GitBranch size={28} />}
         title="Ontology Viewer"
         description="Browse the Tribolium morphological ontology (TrOn) to understand phenotype classifications and relationships."
         color="bg-purple-50 text-purple-600"
       />
       <ToolCard
+        href="/resources"
         icon={<FolderOpen size={28} />}
-        title="External Resources"
+        title="Resources"
         description="Access gene sets, genome assemblies for download, links to resources, and community information."
         color="bg-emerald-50 text-emerald-600"
       />
