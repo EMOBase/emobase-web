@@ -8,21 +8,11 @@ import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomple
 import SearchAutocomplete from "@/components/common/SearchAutocomplete";
 import { Spinner } from "@/components/ui/spinner";
 
-const examples = [
-  "TC013553",
-  "FBgn0001180",
-  "CG9786",
-  "rx",
-  "retinal homeobox",
-  "iB_05451",
-  "larva head",
-  "leg shortened",
-  "abdomen transformed",
-  "abdomen transformed -urogomphi",
-  "head AND wing AND NOT muscle",
-];
+interface HeroProps {
+  examples?: string[];
+}
 
-const Hero = () => {
+const Hero = ({ examples = [] }: HeroProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

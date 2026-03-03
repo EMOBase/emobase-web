@@ -3,12 +3,25 @@ import Layout from "@/layouts/default.astro";
 import Hero from "@/components/pages/home/Hero";
 import ToolCards from "@/components/pages/home/ToolCards";
 import Footer from "@/components/pages/home/Footer";
+
+import { directus } from "@/utils/directus";
+import { readItems } from "@directus/sdk";
+
+let examples: string[] = [];
+try {
+  const exampleItems = await directus.request(readItems("examples"));
+  examples = exampleItems
+    .map((item) => item.value)
+    .filter((v): v is string => !!v);
+} catch (error) {
+  console.error("Failed to fetch examples from Directus:", error);
+}
 ---
 
 <Layout>
   <div class="p-4">
     <div class="max-w-6xl mx-auto flex flex-col gap-12">
-      <Hero client:load />
+      <Hero client:load examples={examples} />
       <ToolCards />
       <Footer />
     </div>
