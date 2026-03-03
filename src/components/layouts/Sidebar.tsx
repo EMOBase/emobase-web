@@ -348,7 +348,6 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
                       {child.external && (
                         <Icon
                           name="open_in_new"
-
                           className="absolute right-2 top-1/2 -translate-y-1/2 text-lg text-neutral-500"
                         />
                       )}
@@ -368,7 +367,7 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
         <div className="relative flex items-center justify-end gap-3">
           <div className="absolute left-0 w-full flex items-center gap-3 group-data-[collapsible=icon]:opacity-0 transition-opacity">
             <a
-              className="min-w-10 size-10 rounded-xl mustard-gradient flex items-center justify-center shadow-lg shadow-amber-500/20 text-white cursor-pointer"
+              className="min-w-10 size-10 rounded-xl mustard-gradient flex items-center justify-center shadow-lg shadow-primary-light/20 text-white cursor-pointer"
               href="/"
             >
               <span className="material-symbols-outlined text-2xl">

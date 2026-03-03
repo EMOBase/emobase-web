@@ -9,6 +9,8 @@ import { Toaster } from "@/components/ui/sonner";
 import Sidebar from "@/components/layouts/Sidebar";
 import Topbar from "@/components/layouts/Topbar";
 import SessionManager from "@/components/layouts/SessionManager";
+import { directus } from "@/utils/directus";
+import { readSingleton } from "@directus/sdk";
 
 const url = Astro.url.pathname;
 
@@ -21,6 +23,8 @@ const { className } = Astro.props;
 const runtimeEnv = Object.fromEntries(
   Object.entries(process.env).filter(([key]) => key.startsWith("PUBLIC_")),
 );
+
+const color = await directus.request(readSingleton("color"));
 ---
 
 <!doctype html>
@@ -39,6 +43,18 @@ const runtimeEnv = Object.fromEntries(
     />
 
     <title>iBeetle Base</title>
+
+    <style define:vars={{ directusColor: color.value ?? "#d97706" }}>
+      :root {
+        --primary: color-mix(in oklab, var(--directusColor) 80%, orange 20%);
+        --primary-bold: var(--directusColor);
+        --primary-light: color-mix(
+          in oklab,
+          var(--directusColor) 60%,
+          orange 30%
+        );
+      }
+    </style>
 
     <ClientRouter />
     <LoadingIndicator color="var(--primary)" />

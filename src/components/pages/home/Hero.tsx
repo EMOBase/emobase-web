@@ -27,7 +27,7 @@ const Hero = ({ examples = [] }: HeroProps) => {
   return (
     <section className="flex flex-col items-center justify-center text-center gap-8 p-10 md:p-16 lg:p-24 xl:p-32">
       <div className="flex flex-col items-center gap-4 max-w-3xl">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-amber-600 font-display">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-bold to-primary-light font-display">
           Tribolium Castaneum{" "}
           <span className="text-slate-900">Genomic Database</span>
         </h1>

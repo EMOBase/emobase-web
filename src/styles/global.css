@@ -19,6 +19,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-bold: var(--primary-bold);
+  --color-primary-light: var(--primary-light);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -146,7 +147,7 @@
 .mustard-gradient {
   background: linear-gradient(
     135deg,
-    var(--color-primary) 0%,
+    var(--color-primary-light) 0%,
     var(--color-primary-bold) 100%
   );
 }
