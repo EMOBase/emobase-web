@@ -12,7 +12,9 @@ interface HeroProps {
   examples?: string[];
 }
 
-const Hero = ({ examples = [] }: HeroProps) => {
+const Hero = ({
+  examples = ["FBgn0001180", "CG9786", "Retinal Homeobox", "rx", "larva head"],
+}: HeroProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
