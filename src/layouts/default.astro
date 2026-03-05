@@ -9,7 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Sidebar from "@/components/layouts/Sidebar";
 import Topbar from "@/components/layouts/Topbar";
 import SessionManager from "@/components/layouts/SessionManager";
-import { directus } from "@/utils/directus";
+import { directus, getAssetUrl } from "@/utils/directus";
 import { readSingleton } from "@directus/sdk";
 
 const url = Astro.url.pathname;
@@ -25,6 +25,7 @@ const runtimeEnv = Object.fromEntries(
 );
 
 const color = await directus.request(readSingleton("color"));
+const logo = await directus.request(readSingleton("logo"));
 ---
 
 <!doctype html>
@@ -65,7 +66,12 @@ const color = await directus.request(readSingleton("color"));
   <body class="h-screen w-full overflow-hidden flex">
     <SessionManager client:load transition:persist />
     <Toaster client:load transition:persist />
-    <Sidebar url={url} client:load transition:persist />
+    <Sidebar
+      url={url}
+      logoUrl={logo?.image ? getAssetUrl(logo.image as string) : undefined}
+      client:load
+      transition:persist
+    />
     <div class="flex-1 flex flex-col">
       <Topbar client:load transition:persist />
       <main

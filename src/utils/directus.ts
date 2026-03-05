@@ -7,3 +7,4 @@ export * from "./directus-schema";
 const directusUrl = getEnv("PUBLIC_DIRECTUS_URL");
 
 export const directus = createDirectus<Schema>(directusUrl).with(rest());
+export const getAssetUrl = (id: string) => `${directusUrl}/assets/${id}`;

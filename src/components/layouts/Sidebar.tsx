@@ -166,9 +166,10 @@ const resourceItems: NavItem[] = [
 
 type SidebarProps = {
   url: string;
+  logoUrl?: string;
 };
 
-const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
+const SidebarInner: React.FC<SidebarProps> = ({ url, logoUrl }) => {
   const { isLoggedIn } = useSession();
   const { state } = useSidebar();
   const activeView = getActiveView(url);
@@ -366,14 +367,27 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
       <SidebarHeader>
         <div className="relative flex items-center justify-end gap-3">
           <div className="absolute left-0 w-full flex items-center gap-3 group-data-[collapsible=icon]:opacity-0 transition-opacity">
-            <a
-              className="min-w-10 size-10 rounded-xl mustard-gradient flex items-center justify-center shadow-lg shadow-primary-light/20 text-white cursor-pointer"
-              href="/"
-            >
-              <span className="material-symbols-outlined text-2xl">
-                pest_control
-              </span>
-            </a>
+            {logoUrl ? (
+              <a
+                className="min-w-10 size-10 rounded-xl bg-linear-135 from-primary-bold to-primary-light/50 flex items-center justify-center shadow-lg shadow-primary-light/20 text-white cursor-pointer overflow-hidden p-1.5"
+                href="/"
+              >
+                <img
+                  src={logoUrl}
+                  alt="Logo"
+                  className="w-full h-full object-contain"
+                />
+              </a>
+            ) : (
+              <a
+                className="min-w-10 size-10 rounded-xl mustard-gradient flex items-center justify-center shadow-lg shadow-primary-light/20 text-white cursor-pointer overflow-hidden"
+                href="/"
+              >
+                <span className="material-symbols-outlined text-2xl">
+                  pest_control
+                </span>
+              </a>
+            )}
 
             <div className="flex-1 flex flex-col">
               <h1 className="text-text-main text-xl font-bold leading-tight tracking-tight font-display text-nowrap">
@@ -415,10 +429,10 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
   );
 };
 
-const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
+const ThisSidebar: React.FC<SidebarProps> = ({ url, logoUrl }) => {
   return (
     <SidebarProvider>
-      <SidebarInner url={url} />
+      <SidebarInner url={url} logoUrl={logoUrl} />
     </SidebarProvider>
   );
 };
