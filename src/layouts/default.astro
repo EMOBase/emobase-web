@@ -9,10 +9,9 @@ import { Toaster } from "@/components/ui/sonner";
 import Sidebar from "@/components/layouts/Sidebar";
 import Topbar from "@/components/layouts/Topbar";
 import SessionManager from "@/components/layouts/SessionManager";
-import { directus, getAssetUrl } from "@/utils/directus";
-import { readSingleton } from "@directus/sdk";
 
 import Logo from "@/astros/Logo.astro";
+import LayoutConfig from "@/astros/LayoutConfig.astro";
 
 const url = Astro.url.pathname;
 
@@ -21,12 +20,6 @@ interface Props {
 }
 
 const { className } = Astro.props;
-
-const runtimeEnv = Object.fromEntries(
-  Object.entries(process.env).filter(([key]) => key.startsWith("PUBLIC_")),
-);
-
-const color = await directus.request(readSingleton("color"));
 ---
 
 <!doctype html>
@@ -46,23 +39,10 @@ const color = await directus.request(readSingleton("color"));
 
     <title>iBeetle Base</title>
 
-    <style define:vars={{ directusColor: color.value ?? "#d97706" }}>
-      :root {
-        --primary: color-mix(in oklab, var(--directusColor) 80%, orange 20%);
-        --primary-bold: var(--directusColor);
-        --primary-light: color-mix(
-          in oklab,
-          var(--directusColor) 60%,
-          orange 30%
-        );
-      }
-    </style>
+    <LayoutConfig />
 
     <ClientRouter />
     <LoadingIndicator color="var(--primary)" />
-    <script is:inline define:vars={{ runtimeEnv }}>
-      window.__ENV__ = runtimeEnv;
-    </script>
   </head>
   <body class="h-screen w-full overflow-hidden flex">
     <SessionManager client:load transition:persist />

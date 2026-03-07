@@ -1,0 +1,25 @@
+---
+import { readSingleton } from "@directus/sdk";
+import { directus } from "@/utils/directus";
+
+const color = await directus.request(readSingleton("color"));
+const directusColor = color.value ?? "#d97706";
+
+const runtimeEnv = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => key.startsWith("PUBLIC_")),
+);
+---
+
+<!-- Theme Setup -->
+<style define:vars={{ directusColor }}>
+  :root {
+    --primary: color-mix(in oklab, var(--directusColor) 80%, orange 20%);
+    --primary-bold: var(--directusColor);
+    --primary-light: color-mix(in oklab, var(--directusColor) 60%, orange 30%);
+  }
+</style>
+
+<!-- Runtime Env Setup -->
+<script is:inline define:vars={{ runtimeEnv }}>
+  window.__ENV__ = runtimeEnv;
+</script>
