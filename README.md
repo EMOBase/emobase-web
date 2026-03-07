@@ -7,6 +7,7 @@
 /
 ├── public/          # Static assets
 ├── src/
+│   ├── astros/      # Server-only Astro components
 │   ├── components/  # React components
 │   │   ├── common/  # Shared components
 │   │   ├── form/    # Form components (Tanstack Form compatible)
