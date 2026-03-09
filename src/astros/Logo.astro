@@ -1,7 +1,9 @@
 ---
-import { directus, getAssetUrl } from "@/utils/directus";
 import { readSingleton } from "@directus/sdk";
 import { twMerge } from "tailwind-merge";
+
+import { directus, getAssetUrl } from "@/utils/directus";
+import { Icon } from "@/components/ui/icon";
 
 interface Props {
   className?: string;
@@ -39,13 +41,11 @@ try {
   ) : (
     <div
       class={twMerge(
-        "mustard-gradient flex items-center justify-center overflow-hidden",
+        "size-10 mustard-gradient flex items-center justify-center shadow-lg shadow-primary-light/20 text-white rounded-xl overflow-hidden",
         className,
       )}
     >
-      <span class={twMerge("material-symbols-outlined", iconClassName)}>
-        pest_control
-      </span>
+      <Icon name="pest_control" className={twMerge("text-xl", iconClassName)} />
     </div>
   )
 }
