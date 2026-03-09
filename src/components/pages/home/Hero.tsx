@@ -12,9 +12,7 @@ interface HeroProps {
   examples?: string[];
 }
 
-const Hero = ({
-  examples = ["FBgn0001180", "CG9786", "Retinal Homeobox", "rx", "larva head"],
-}: HeroProps) => {
+const Hero = ({ examples = [] }: HeroProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -102,18 +100,20 @@ const Hero = ({
             </form>
           )}
         />
-        <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-slate-500">
-          <span className="font-semibold">Examples:</span>
-          {examples.map((example) => (
-            <a
-              key={example}
-              href={`/search/${example}`}
-              className="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 transition-colors"
-            >
-              {example}
-            </a>
-          ))}
-        </div>
+        {examples.length > 0 && (
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-slate-500">
+            <span className="font-semibold">Examples:</span>
+            {examples.map((example) => (
+              <a
+                key={example}
+                href={`/search/${example}`}
+                className="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 transition-colors"
+              >
+                {example}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
