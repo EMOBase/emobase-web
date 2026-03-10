@@ -1,7 +1,7 @@
 import { Icon } from "@/components/ui/icon";
 import { useSession } from "@/hooks/session/useSession";
 
-const AdminLogin = () => {
+const AdminLogin = ({ logo }: { logo?: React.ReactNode }) => {
   const { login } = useSession();
 
   return (
@@ -11,9 +11,7 @@ const AdminLogin = () => {
           <div className="h-1.5 mustard-gradient w-full"></div>
           <div className="p-10 md:p-12 text-center">
             <div className="flex flex-col items-center gap-4 mb-10">
-              <div className="size-16 rounded-2xl mustard-gradient flex items-center justify-center shadow-xl shadow-orange-500/20 text-white">
-                <Icon name="pest_control" className="text-3xl" />
-              </div>
+              {logo}
               <div>
                 <h1 className="text-text-main text-3xl font-bold tracking-tight font-display">
                   iBeetle Base

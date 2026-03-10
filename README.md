@@ -7,6 +7,7 @@
 /
 ├── public/          # Static assets
 ├── src/
+│   ├── astros/      # Server-only Astro components
 │   ├── components/  # React components
 │   │   ├── common/  # Shared components
 │   │   ├── form/    # Form components (Tanstack Form compatible)
@@ -99,3 +100,30 @@ server {
 - **Adapter**: `@astrojs/node` in `standalone` mode.
 - **Ports**: Listens on port `8080` by default.
 - **Base Image**: `node:20` (Build) / `node:20-slim` (Runtime).
+
+---
+
+## 🛠 Directus Schema Synchronization
+
+The project uses TypeScript types derived directly from the Directus data model. When you change the schema in Directus, follow these steps to update the types:
+
+### 1. Obtain an Access Token
+Run the following command to log in as admin and get an `access_token`:
+
+```bash
+curl -X POST http://localhost:9090/ibb/cms/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@example.com", "password": "admin"}'
+```
+
+### 2. Regenerate Types
+Use the `directus-sdk-typegen` tool with the token obtained above:
+
+```bash
+npx directus-sdk-typegen \
+  -u http://localhost:9090/ibb/cms \
+  -o src/utils/directus-schema.ts \
+  -t [YOUR_ACCESS_TOKEN]
+```
+
+This will update `src/utils/directus-schema.ts`, ensuring full type safety and auto-completion for your Directus collections.

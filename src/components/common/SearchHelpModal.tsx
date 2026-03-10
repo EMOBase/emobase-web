@@ -142,7 +142,7 @@ export const SearchHelpModal = ({ children }: SearchHelpModalProps) => {
 
               {/* Recommendation Box */}
               <div className="relative pl-5 mt-3">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange-500 rounded-full" />
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange-700/50 rounded-full" />
                 <div className="bg-orange-50/30 border border-orange-100/50 rounded-r-md px-4 py-3">
                   <p className="text-slate-700 leading-relaxed text-[13px]">
                     We recommend{" "}

@@ -1,9 +1,6 @@
 ---
 import "@/styles/global.css";
-
-const runtimeEnv = Object.fromEntries(
-  Object.entries(process.env).filter(([key]) => key.startsWith("PUBLIC_")),
-);
+import LayoutConfig from "@/astros/LayoutConfig.astro";
 ---
 
 <!doctype html>
@@ -23,9 +20,7 @@ const runtimeEnv = Object.fromEntries(
 
     <title>iBeetle Base</title>
 
-    <script is:inline define:vars={{ runtimeEnv }}>
-      window.__ENV__ = runtimeEnv;
-    </script>
+    <LayoutConfig />
   </head>
   <body class="h-screen w-full overflow-hidden">
     <slot />

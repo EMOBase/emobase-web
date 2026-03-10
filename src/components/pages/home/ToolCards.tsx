@@ -49,7 +49,7 @@ const ToolCards: React.FC = () => {
         icon={<Columns size={28} />}
         title="Genome Browser (Tcas5.2)"
         description="Interactive exploration of gene structure, expression patterns, and chromatin data based on the Tcas5.2 assembly."
-        color="bg-orange-50 text-primary"
+        color="bg-orange-50 text-orange-600/80"
       />
       <ToolCard
         href="/querypipeline"

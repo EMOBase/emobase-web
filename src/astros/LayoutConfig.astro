@@ -1,0 +1,40 @@
+---
+import { readSingleton } from "@directus/sdk";
+import { directus } from "@/utils/directus";
+import { getEnv } from "@/utils/env";
+
+const directusUrl = getEnv("PUBLIC_DIRECTUS_URL");
+
+let directusColor = "#b45309"; // Default fallback color
+
+if (directusUrl) {
+  try {
+    const color = await directus.request(readSingleton("color"));
+    directusColor = color.value ?? "#b45309";
+  } catch (err) {
+    console.error("[LayoutConfig] Error fetching theme color:", err);
+  }
+}
+
+const runtimeEnv = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => key.startsWith("PUBLIC_")),
+);
+---
+
+<!-- Theme Setup -->
+<style
+  is:global
+  is:inline
+  set:html={`
+  html:root {
+    --primary: color-mix(in oklab, ${directusColor} 80%, orange 20%);
+    --primary-bold: ${directusColor};
+    --primary-light: color-mix(in oklab, ${directusColor} 60%, orange 30%);
+  }
+`}
+></style>
+
+<!-- Runtime Env Setup -->
+<script is:inline define:vars={{ runtimeEnv }}>
+  window.__ENV__ = runtimeEnv;
+</script>

@@ -1,0 +1,51 @@
+---
+import { readSingleton } from "@directus/sdk";
+import { twMerge } from "tailwind-merge";
+
+import { directus, getAssetUrl } from "@/utils/directus";
+import { Icon } from "@/components/ui/icon";
+
+interface Props {
+  className?: string;
+  imageClassName?: string;
+  iconClassName?: string;
+}
+
+const { className, imageClassName, iconClassName } = Astro.props;
+
+let logoUrl = undefined;
+try {
+  const logo = await directus.request(readSingleton("logo"));
+  if (logo?.image) {
+    logoUrl = getAssetUrl(logo.image as string);
+  }
+} catch (error) {
+  console.error("Failed to fetch logo:", error);
+}
+---
+
+{
+  logoUrl ? (
+    <div
+      class={twMerge(
+        "size-10 flex items-center justify-center bg-linear-135 from-primary-bold to-primary-light/50 shadow-lg shadow-primary-light/20 text-white rounded-xl overflow-hidden p-1.5",
+        className,
+      )}
+    >
+      <img
+        src={logoUrl}
+        alt="Logo"
+        class={twMerge("w-full h-full object-contain", imageClassName)}
+      />
+    </div>
+  ) : (
+    <div
+      class={twMerge(
+        "size-10 mustard-gradient flex items-center justify-center shadow-lg shadow-primary-light/20 text-white rounded-xl overflow-hidden",
+        className,
+      )}
+    >
+      <Icon name="pest_control" className={twMerge("text-xl", iconClassName)} />
+    </div>
+  )
+}

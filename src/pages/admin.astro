@@ -5,6 +5,7 @@ import Layout from "@/layouts/default.astro";
 import BlankLayout from "@/layouts/blank.astro";
 import AdminLogin from "@/components/pages/admin/AdminLogin";
 import Dashboard from "@/components/pages/admin/Dashboard";
+import Logo from "@/astros/Logo.astro";
 
 const session = await getSession(Astro.request);
 ---
@@ -17,7 +18,13 @@ const session = await getSession(Astro.request);
       </Layout>
     ) : (
       <BlankLayout>
-        <AdminLogin client:load />
+        <AdminLogin client:load>
+          <Logo
+            slot="logo"
+            className="size-16 rounded-2xl p-2"
+            iconClassName="text-3xl"
+          />
+        </AdminLogin>
       </BlankLayout>
     )
   }

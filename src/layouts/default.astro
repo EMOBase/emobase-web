@@ -10,6 +10,10 @@ import Sidebar from "@/components/layouts/Sidebar";
 import Topbar from "@/components/layouts/Topbar";
 import SessionManager from "@/components/layouts/SessionManager";
 
+import Logo from "@/astros/Logo.astro";
+import LayoutConfig from "@/astros/LayoutConfig.astro";
+import EnvWarning from "@/astros/EnvWarning.astro";
+
 const url = Astro.url.pathname;
 
 interface Props {
@@ -17,10 +21,6 @@ interface Props {
 }
 
 const { className } = Astro.props;
-
-const runtimeEnv = Object.fromEntries(
-  Object.entries(process.env).filter(([key]) => key.startsWith("PUBLIC_")),
-);
 ---
 
 <!doctype html>
@@ -40,26 +40,30 @@ const runtimeEnv = Object.fromEntries(
 
     <title>iBeetle Base</title>
 
+    <LayoutConfig />
+
     <ClientRouter />
     <LoadingIndicator color="var(--primary)" />
-    <script is:inline define:vars={{ runtimeEnv }}>
-      window.__ENV__ = runtimeEnv;
-    </script>
   </head>
-  <body class="h-screen w-full overflow-hidden flex">
-    <SessionManager client:load transition:persist />
-    <Toaster client:load transition:persist />
-    <Sidebar url={url} client:load transition:persist />
-    <div class="flex-1 flex flex-col">
-      <Topbar client:load transition:persist />
-      <main
-        class={twMerge(
-          "flex-1 overflow-y-auto scroll-smooth p-6 md:p-10 scroll-p-6 md:scroll-p-10",
-          className,
-        )}
-      >
-        <slot />
-      </main>
+  <body class="h-screen w-full overflow-hidden flex flex-col">
+    <EnvWarning />
+    <div class="flex-1 flex overflow-hidden">
+      <SessionManager client:load transition:persist />
+      <Toaster client:load transition:persist />
+      <Sidebar url={url} client:load transition:persist>
+        <Logo slot="logo" />
+      </Sidebar>
+      <div class="flex-1 flex flex-col">
+        <Topbar client:load transition:persist />
+        <main
+          class={twMerge(
+            "flex-1 overflow-y-auto scroll-smooth p-6 md:p-10 scroll-p-6 md:scroll-p-10",
+            className,
+          )}
+        >
+          <slot />
+        </main>
+      </div>
     </div>
   </body>
 </html>

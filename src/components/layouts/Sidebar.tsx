@@ -166,9 +166,10 @@ const resourceItems: NavItem[] = [
 
 type SidebarProps = {
   url: string;
+  logo?: React.ReactNode;
 };
 
-const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
+const SidebarInner: React.FC<SidebarProps> = ({ url, logo }) => {
   const { isLoggedIn } = useSession();
   const { state } = useSidebar();
   const activeView = getActiveView(url);
@@ -348,7 +349,6 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
                       {child.external && (
                         <Icon
                           name="open_in_new"
-
                           className="absolute right-2 top-1/2 -translate-y-1/2 text-lg text-neutral-500"
                         />
                       )}
@@ -367,15 +367,9 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
       <SidebarHeader>
         <div className="relative flex items-center justify-end gap-3">
           <div className="absolute left-0 w-full flex items-center gap-3 group-data-[collapsible=icon]:opacity-0 transition-opacity">
-            <a
-              className="min-w-10 size-10 rounded-xl mustard-gradient flex items-center justify-center shadow-lg shadow-amber-500/20 text-white cursor-pointer"
-              href="/"
-            >
-              <span className="material-symbols-outlined text-2xl">
-                pest_control
-              </span>
+            <a href="/" className="cursor-pointer">
+              {logo}
             </a>
-
             <div className="flex-1 flex flex-col">
               <h1 className="text-text-main text-xl font-bold leading-tight tracking-tight font-display text-nowrap">
                 iBeetle Base
@@ -416,10 +410,10 @@ const SidebarInner: React.FC<SidebarProps> = ({ url }) => {
   );
 };
 
-const ThisSidebar: React.FC<SidebarProps> = ({ url }) => {
+const ThisSidebar: React.FC<SidebarProps> = ({ url, logo }) => {
   return (
     <SidebarProvider>
-      <SidebarInner url={url} />
+      <SidebarInner url={url} logo={logo} />
     </SidebarProvider>
   );
 };

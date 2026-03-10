@@ -8,21 +8,11 @@ import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomple
 import SearchAutocomplete from "@/components/common/SearchAutocomplete";
 import { Spinner } from "@/components/ui/spinner";
 
-const examples = [
-  "TC013553",
-  "FBgn0001180",
-  "CG9786",
-  "rx",
-  "retinal homeobox",
-  "iB_05451",
-  "larva head",
-  "leg shortened",
-  "abdomen transformed",
-  "abdomen transformed -urogomphi",
-  "head AND wing AND NOT muscle",
-];
+interface HeroProps {
+  examples?: string[];
+}
 
-const Hero = () => {
+const Hero = ({ examples = [] }: HeroProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,7 +27,7 @@ const Hero = () => {
   return (
     <section className="flex flex-col items-center justify-center text-center gap-8 p-10 md:p-16 lg:p-24 xl:p-32">
       <div className="flex flex-col items-center gap-4 max-w-3xl">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-amber-600 font-display">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-bold to-primary-light font-display">
           Tribolium Castaneum{" "}
           <span className="text-slate-900">Genomic Database</span>
         </h1>
@@ -110,18 +100,20 @@ const Hero = () => {
             </form>
           )}
         />
-        <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-slate-500">
-          <span className="font-semibold">Examples:</span>
-          {examples.map((example) => (
-            <a
-              key={example}
-              href={`/search/${example}`}
-              className="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 transition-colors"
-            >
-              {example}
-            </a>
-          ))}
-        </div>
+        {examples.length > 0 && (
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-slate-500">
+            <span className="font-semibold">Examples:</span>
+            {examples.map((example) => (
+              <a
+                key={example}
+                href={`/search/${example}`}
+                className="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 transition-colors"
+              >
+                {example}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

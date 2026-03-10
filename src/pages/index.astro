@@ -3,12 +3,19 @@ import Layout from "@/layouts/default.astro";
 import Hero from "@/components/pages/home/Hero";
 import ToolCards from "@/components/pages/home/ToolCards";
 import Footer from "@/components/pages/home/Footer";
+
+import { isNotNullable } from "@/utils/filterFn";
+import { directus } from "@/utils/directus";
+import { readItems } from "@directus/sdk";
+
+const exampleItems = await directus.request(readItems("examples"));
+const examples = exampleItems.map((item) => item.value).filter(isNotNullable);
 ---
 
 <Layout>
   <div class="p-4">
     <div class="max-w-6xl mx-auto flex flex-col gap-12">
-      <Hero client:load />
+      <Hero client:load examples={examples} />
       <ToolCards />
       <Footer />
     </div>
