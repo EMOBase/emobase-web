@@ -1,0 +1,28 @@
+---
+import { getEnv } from "@/utils/env";
+
+const directusUrl = getEnv("PUBLIC_DIRECTUS_URL");
+const isMissing = !directusUrl;
+---
+
+{
+  isMissing && (
+    <div class="bg-amber-50 border-b border-amber-200 p-4 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 text-amber-800">
+          <span class="text-xl">⚠️</span>
+          <div class="text-sm font-medium">
+            <p>
+              <strong>Configuration Missing:</strong> PUBLIC_DIRECTUS_URL
+              environment variable is not set.
+            </p>
+            <p class="text-amber-700/80 font-normal">
+              CMS content and images will not be displayed. Please check your
+              .env file or deployment settings.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

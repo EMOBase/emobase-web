@@ -12,6 +12,7 @@ import SessionManager from "@/components/layouts/SessionManager";
 
 import Logo from "@/astros/Logo.astro";
 import LayoutConfig from "@/astros/LayoutConfig.astro";
+import EnvWarning from "@/astros/EnvWarning.astro";
 
 const url = Astro.url.pathname;
 
@@ -44,22 +45,25 @@ const { className } = Astro.props;
     <ClientRouter />
     <LoadingIndicator color="var(--primary)" />
   </head>
-  <body class="h-screen w-full overflow-hidden flex">
-    <SessionManager client:load transition:persist />
-    <Toaster client:load transition:persist />
-    <Sidebar url={url} client:load transition:persist>
-      <Logo slot="logo" />
-    </Sidebar>
-    <div class="flex-1 flex flex-col">
-      <Topbar client:load transition:persist />
-      <main
-        class={twMerge(
-          "flex-1 overflow-y-auto scroll-smooth p-6 md:p-10 scroll-p-6 md:scroll-p-10",
-          className,
-        )}
-      >
-        <slot />
-      </main>
+  <body class="h-screen w-full overflow-hidden flex flex-col">
+    <EnvWarning />
+    <div class="flex-1 flex overflow-hidden">
+      <SessionManager client:load transition:persist />
+      <Toaster client:load transition:persist />
+      <Sidebar url={url} client:load transition:persist>
+        <Logo slot="logo" />
+      </Sidebar>
+      <div class="flex-1 flex flex-col">
+        <Topbar client:load transition:persist />
+        <main
+          class={twMerge(
+            "flex-1 overflow-y-auto scroll-smooth p-6 md:p-10 scroll-p-6 md:scroll-p-10",
+            className,
+          )}
+        >
+          <slot />
+        </main>
+      </div>
     </div>
   </body>
 </html>

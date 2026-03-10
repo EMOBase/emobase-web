@@ -1,9 +1,20 @@
 ---
 import { readSingleton } from "@directus/sdk";
 import { directus } from "@/utils/directus";
+import { getEnv } from "@/utils/env";
 
-const color = await directus.request(readSingleton("color"));
-const directusColor = color.value ?? "#b45309";
+const directusUrl = getEnv("PUBLIC_DIRECTUS_URL");
+
+let directusColor = "#b45309"; // Default fallback color
+
+if (directusUrl) {
+  try {
+    const color = await directus.request(readSingleton("color"));
+    directusColor = color.value ?? "#b45309";
+  } catch (err) {
+    console.error("[LayoutConfig] Error fetching theme color:", err);
+  }
+}
 
 const runtimeEnv = Object.fromEntries(
   Object.entries(process.env).filter(([key]) => key.startsWith("PUBLIC_")),
