@@ -8,8 +8,14 @@ import { isNotNullable } from "@/utils/filterFn";
 import { directus } from "@/utils/directus";
 import { readItems } from "@directus/sdk";
 
-const exampleItems = await directus.request(readItems("examples"));
-const examples = exampleItems.map((item) => item.value).filter(isNotNullable);
+let examples: string[] = [];
+
+try {
+  const exampleItems = await directus.request(readItems("examples"));
+  examples = exampleItems.map((item) => item.value).filter(isNotNullable);
+} catch (err) {
+  console.error("Error fetching examples:", err);
+}
 ---
 
 <Layout>
