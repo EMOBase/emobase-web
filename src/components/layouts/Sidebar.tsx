@@ -167,9 +167,10 @@ const resourceItems: NavItem[] = [
 type SidebarProps = {
   url: string;
   logo?: React.ReactNode;
+  title: string;
 };
 
-const SidebarInner: React.FC<SidebarProps> = ({ url, logo }) => {
+const SidebarInner: React.FC<SidebarProps> = ({ url, logo, title }) => {
   const { isLoggedIn } = useSession();
   const { state } = useSidebar();
   const activeView = getActiveView(url);
@@ -372,7 +373,7 @@ const SidebarInner: React.FC<SidebarProps> = ({ url, logo }) => {
             </a>
             <div className="flex-1 flex flex-col">
               <h1 className="text-text-main text-xl font-bold leading-tight tracking-tight font-display text-nowrap">
-                iBeetle Base
+                {title}
               </h1>
               <p className="text-muted text-xs font-normal">version 0.1</p>
             </div>
@@ -410,10 +411,10 @@ const SidebarInner: React.FC<SidebarProps> = ({ url, logo }) => {
   );
 };
 
-const ThisSidebar: React.FC<SidebarProps> = ({ url, logo }) => {
+const ThisSidebar: React.FC<SidebarProps> = (props) => {
   return (
     <SidebarProvider>
-      <SidebarInner url={url} logo={logo} />
+      <SidebarInner {...props} />
     </SidebarProvider>
   );
 };

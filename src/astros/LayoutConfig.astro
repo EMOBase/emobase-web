@@ -1,19 +1,30 @@
 ---
 import { readSingleton } from "@directus/sdk";
-import { directus } from "@/utils/directus";
-import { getEnv } from "@/utils/env";
+import { directus, getAssetUrl } from "@/utils/directus";
 
-const directusUrl = getEnv("PUBLIC_DIRECTUS_URL");
+let directusColor = "#b45309";
+let faviconUrl = null;
+let siteTitle = "EMOBase";
 
-let directusColor = "#b45309"; // Default fallback color
-
-if (directusUrl) {
-  try {
-    const color = await directus.request(readSingleton("color"));
-    directusColor = color.value ?? "#b45309";
-  } catch (err) {
-    console.error("[LayoutConfig] Error fetching theme color:", err);
+try {
+  const color = await directus.request(readSingleton("color"));
+  if (color.value) {
+    directusColor = color.value;
   }
+} catch (err) {
+  console.error("[LayoutConfig] Error fetching theme color:", err);
+}
+
+try {
+  const siteInfo = await directus.request(readSingleton("site_info"));
+  if (siteInfo.favicon) {
+    faviconUrl = getAssetUrl(siteInfo.favicon as string);
+  }
+  if (siteInfo.title) {
+    siteTitle = siteInfo.title;
+  }
+} catch (err) {
+  console.error("[LayoutConfig] Error fetching site info:", err);
 }
 
 const runtimeEnv = Object.fromEntries(
@@ -21,7 +32,14 @@ const runtimeEnv = Object.fromEntries(
 );
 ---
 
-<!-- Theme Setup -->
+<!-- Theme Setup -->{
+  faviconUrl ? (
+    <link rel="icon" type="image/svg+xml" href={faviconUrl} />
+  ) : (
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  )
+}
+<title>{siteTitle}</title>
 <style
   is:global
   is:inline

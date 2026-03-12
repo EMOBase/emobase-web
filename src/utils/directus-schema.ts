@@ -16,6 +16,13 @@ export interface Logo {
 	image?: DirectusFile | string | null;
 }
 
+export interface SiteInfo {
+	/** @primaryKey */
+	id: number;
+	favicon?: DirectusFile | string | null;
+	title?: string | null;
+}
+
 export interface DirectusAccess {
 	/** @primaryKey */
 	id: string;
@@ -35,7 +42,6 @@ export interface DirectusActivity {
 	user_agent?: string | null;
 	collection?: string;
 	item?: string;
-	comment?: string | null;
 	origin?: string | null;
 	revisions?: DirectusRevision[] | string[];
 }
@@ -64,6 +70,18 @@ export interface DirectusCollection {
 	versioning?: boolean;
 }
 
+export interface DirectusComment {
+	/** @primaryKey */
+	id: string;
+	collection?: DirectusCollection | string;
+	item?: string;
+	comment?: string;
+	date_created?: string | null;
+	date_updated?: string | null;
+	user_created?: DirectusUser | string | null;
+	user_updated?: DirectusUser | string | null;
+}
+
 export interface DirectusField {
 	/** @primaryKey */
 	id: number;
@@ -85,6 +103,7 @@ export interface DirectusField {
 	group?: DirectusField | string | null;
 	validation?: 'json' | null;
 	validation_message?: string | null;
+	searchable?: boolean;
 }
 
 export interface DirectusFile {
@@ -262,6 +281,31 @@ export interface DirectusSettings {
 	public_registration_verify_email?: boolean;
 	public_registration_role?: DirectusRole | string | null;
 	public_registration_email_filter?: 'json' | null;
+	visual_editor_urls?: Array<{ url: string }> | null;
+	project_id?: string | null;
+	mcp_enabled?: boolean;
+	mcp_allow_deletes?: boolean;
+	mcp_prompts_collection?: string | null;
+	mcp_system_prompt_enabled?: boolean;
+	mcp_system_prompt?: string | null;
+	project_owner?: string | null;
+	project_usage?: string | null;
+	org_name?: string | null;
+	product_updates?: boolean | null;
+	project_status?: string | null;
+	ai_openai_api_key?: string | null;
+	ai_anthropic_api_key?: string | null;
+	ai_system_prompt?: string | null;
+	ai_google_api_key?: string | null;
+	ai_openai_compatible_api_key?: string | null;
+	ai_openai_compatible_base_url?: string | null;
+	ai_openai_compatible_name?: string | null;
+	ai_openai_compatible_models?: Array<{ id: string; name: string; context: number; output: number; attachment: boolean; reasoning: boolean; providerOptions: Record<string, any> }> | null;
+	ai_openai_compatible_headers?: Array<{ header: string; value: string }> | null;
+	ai_openai_allowed_models?: Array<`gpt-4o-mini` | `gpt-4.1-nano` | `gpt-4.1-mini` | `gpt-4.1` | `gpt-5-nano` | `gpt-5-mini` | `gpt-5` | `gpt-5.2` | `gpt-5.2-chat-latest` | `gpt-5.2-pro`> | null;
+	ai_anthropic_allowed_models?: Array<`claude-haiku-4-5` | `claude-sonnet-4-5` | `claude-opus-4-5`> | null;
+	ai_google_allowed_models?: Array<`gemini-3-pro-preview` | `gemini-3-flash-preview` | `gemini-2.5-pro` | `gemini-2.5-flash`> | null;
+	collaborative_editing_enabled?: boolean;
 }
 
 export interface DirectusUser {
@@ -283,7 +327,7 @@ export interface DirectusUser {
 	token?: string | null;
 	last_access?: string | null;
 	last_page?: string | null;
-	provider?: string;
+	provider?: 'keycloak';
 	external_identifier?: string | null;
 	auth_data?: 'json' | null;
 	email_notifications?: boolean | null;
@@ -292,22 +336,8 @@ export interface DirectusUser {
 	theme_light?: string | null;
 	theme_light_overrides?: 'json' | null;
 	theme_dark_overrides?: 'json' | null;
+	text_direction?: 'auto' | 'ltr' | 'rtl';
 	policies?: DirectusAccess[] | string[];
-}
-
-export interface DirectusWebhook {
-	/** @primaryKey */
-	id: number;
-	name?: string;
-	method?: null;
-	url?: string;
-	status?: 'active' | 'inactive';
-	data?: boolean;
-	actions?: 'create' | 'update' | 'delete';
-	collections?: string[];
-	headers?: Array<{ header: string; value: string }> | null;
-	was_active_before_deprecation?: boolean;
-	migrated_flow?: DirectusFlow | string | null;
 }
 
 export interface DirectusDashboard {
@@ -426,6 +456,7 @@ export interface DirectusVersion {
 	date_updated?: string | null;
 	user_created?: DirectusUser | string | null;
 	user_updated?: DirectusUser | string | null;
+	delta?: 'json' | null;
 }
 
 export interface DirectusExtension {
@@ -437,13 +468,57 @@ export interface DirectusExtension {
 	bundle?: string | null;
 }
 
+export interface DirectusDeployment {
+	/** @primaryKey */
+	id: string;
+	provider?: string;
+	credentials?: string | null;
+	options?: 'json' | null;
+	date_created?: string | null;
+	user_created?: DirectusUser | string | null;
+	webhook_ids?: 'json' | null;
+	webhook_secret?: string | null;
+	last_synced_at?: string | null;
+	projects?: DirectusDeploymentProject[] | string[];
+}
+
+export interface DirectusDeploymentProject {
+	/** @primaryKey */
+	id: string;
+	deployment?: DirectusDeployment | string;
+	external_id?: string;
+	name?: string;
+	date_created?: string | null;
+	user_created?: DirectusUser | string | null;
+	url?: string | null;
+	framework?: string | null;
+	deployable?: boolean;
+	runs?: DirectusDeploymentRun[] | string[];
+}
+
+export interface DirectusDeploymentRun {
+	/** @primaryKey */
+	id: string;
+	project?: DirectusDeploymentProject | string;
+	external_id?: string;
+	target?: string;
+	date_created?: string | null;
+	user_created?: DirectusUser | string | null;
+	status?: string | null;
+	url?: string | null;
+	started_at?: string | null;
+	completed_at?: string | null;
+}
+
 export interface Schema {
 	color: Color;
 	examples: Example[];
 	logo: Logo;
+	site_info: SiteInfo;
 	directus_access: DirectusAccess[];
 	directus_activity: DirectusActivity[];
 	directus_collections: DirectusCollection[];
+	directus_comments: DirectusComment[];
 	directus_fields: DirectusField[];
 	directus_files: DirectusFile[];
 	directus_folders: DirectusFolder[];
@@ -457,7 +532,6 @@ export interface Schema {
 	directus_sessions: DirectusSession[];
 	directus_settings: DirectusSettings;
 	directus_users: DirectusUser[];
-	directus_webhooks: DirectusWebhook[];
 	directus_dashboards: DirectusDashboard[];
 	directus_panels: DirectusPanel[];
 	directus_notifications: DirectusNotification[];
@@ -467,15 +541,20 @@ export interface Schema {
 	directus_translations: DirectusTranslation[];
 	directus_versions: DirectusVersion[];
 	directus_extensions: DirectusExtension[];
+	directus_deployments: DirectusDeployment[];
+	directus_deployment_projects: DirectusDeploymentProject[];
+	directus_deployment_runs: DirectusDeploymentRun[];
 }
 
 export enum CollectionNames {
 	color = 'color',
 	examples = 'examples',
 	logo = 'logo',
+	site_info = 'site_info',
 	directus_access = 'directus_access',
 	directus_activity = 'directus_activity',
 	directus_collections = 'directus_collections',
+	directus_comments = 'directus_comments',
 	directus_fields = 'directus_fields',
 	directus_files = 'directus_files',
 	directus_folders = 'directus_folders',
@@ -489,7 +568,6 @@ export enum CollectionNames {
 	directus_sessions = 'directus_sessions',
 	directus_settings = 'directus_settings',
 	directus_users = 'directus_users',
-	directus_webhooks = 'directus_webhooks',
 	directus_dashboards = 'directus_dashboards',
 	directus_panels = 'directus_panels',
 	directus_notifications = 'directus_notifications',
@@ -498,5 +576,8 @@ export enum CollectionNames {
 	directus_operations = 'directus_operations',
 	directus_translations = 'directus_translations',
 	directus_versions = 'directus_versions',
-	directus_extensions = 'directus_extensions'
+	directus_extensions = 'directus_extensions',
+	directus_deployments = 'directus_deployments',
+	directus_deployment_projects = 'directus_deployment_projects',
+	directus_deployment_runs = 'directus_deployment_runs'
 }
