@@ -10,7 +10,7 @@
     "check": "astro check"
   },
   "dependencies": {
-    "@astrojs/node": "^9.5.1",
+    "@astrojs/node": "9.5.1",
     "@astrojs/react": "^4.4.2",
     "@auth/core": "^0.37.4",
     "@base-ui/react": "^1.1.0",
@@ -33,7 +33,7 @@
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "@xyflow/react": "^12.10.0",
-    "astro": "^5.16.9",
+    "astro": "5.16.9",
     "astro-loading-indicator": "^0.7.1",
     "auth-astro": "^4.2.0",
     "class-variance-authority": "^0.7.1",
