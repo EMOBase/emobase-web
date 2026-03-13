@@ -1,3 +1,5 @@
+import { hasFeature } from "@/utils/features";
+
 const NothingFound = ({ term }: { term: string }) => {
   return (
     <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border-2 border-slate-100 border-dashed gap-8 animate-in zoom-in-95 duration-700">
@@ -36,21 +38,23 @@ const NothingFound = ({ term }: { term: string }) => {
               </span>
               <span>Try a broader phenotype term.</span>
             </li>
-            <li className="flex items-start gap-3 text-sm text-slate-600">
-              <span className="size-5 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-400 flex-shrink-0">
-                3
-              </span>
-              <span>
-                Use the{" "}
-                <a
-                  href="/querypipeline"
-                  className="text-primary font-semibold hover:underline decoration-2 underline-offset-4"
-                >
-                  Gene ID Converter
-                </a>{" "}
-                to find synonyms.
-              </span>
-            </li>
+            {hasFeature("geneIdConverter") && (
+              <li className="flex items-start gap-3 text-sm text-slate-600">
+                <span className="size-5 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-400 flex-shrink-0">
+                  3
+                </span>
+                <span>
+                  Use the{" "}
+                  <a
+                    href="/querypipeline"
+                    className="text-primary font-semibold hover:underline decoration-2 underline-offset-4"
+                  >
+                    Gene ID Converter
+                  </a>{" "}
+                  to find synonyms.
+                </span>
+              </li>
+            )}
           </ul>
         </div>
 
