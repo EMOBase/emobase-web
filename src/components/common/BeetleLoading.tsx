@@ -15,7 +15,8 @@ const BeetleLoading = ({ title }: { title: string }) => {
             {title}
           </p>
           <p className="text-[11px] text-slate-500 font-medium">
-            Querying iBeetle Base database...
+            Querying {typeof document !== "undefined" && document.title}{" "}
+            database...
           </p>
         </div>
       </div>
