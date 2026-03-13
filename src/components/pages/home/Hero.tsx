@@ -28,15 +28,10 @@ const Hero = ({ examples = [] }: HeroProps) => {
   return (
     <section className="flex flex-col items-center justify-center text-center gap-8 p-10 md:p-16 lg:p-24 xl:p-32">
       <div className="flex flex-col items-center gap-4 max-w-3xl">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-bold to-primary-light font-display">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-bold to-primary-light font-display mb-10">
           {getEnv("PUBLIC_SPECIES_SCIENTIFIC_NAME")}{" "}
           <span className="text-slate-900">Genomic Database</span>
         </h1>
-        <p className="text-slate-500 text-lg md:text-xl max-w-3xl font-light">
-          A comprehensive knowledge base for Beetle (aka Tribolium castaneum)
-          genomics. Access thousands indexed of genes, phenotypes, and
-          ontologies.
-        </p>
       </div>
 
       <div className="w-full max-w-3xl relative group">
