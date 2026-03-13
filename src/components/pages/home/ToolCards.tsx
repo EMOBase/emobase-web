@@ -7,12 +7,15 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+import { hasFeature } from "@/utils/features";
+
 interface ToolCardProps {
   href: string;
   icon: React.ReactNode;
   title: string;
   description: string;
   color: string;
+  buttonText?: string;
 }
 
 const ToolCard: React.FC<ToolCardProps> = ({
@@ -21,6 +24,7 @@ const ToolCard: React.FC<ToolCardProps> = ({
   title,
   description,
   color,
+  buttonText = "Launch Tool",
 }) => (
   <a
     href={href}
@@ -36,7 +40,7 @@ const ToolCard: React.FC<ToolCardProps> = ({
     </h3>
     <p className="text-slate-500 leading-relaxed">{description}</p>
     <div className="mt-6 flex items-center text-sm font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0">
-      Launch Tool <ArrowRight size={16} className="ml-1" />
+      {buttonText} <ArrowRight size={16} className="ml-1" />
     </div>
   </a>
 );
@@ -51,26 +55,31 @@ const ToolCards: React.FC = () => {
         description="Interactive exploration of gene structure, expression patterns, and chromatin data based on the Tcas5.2 assembly."
         color="bg-orange-50 text-orange-600/80"
       />
-      <ToolCard
-        href="/querypipeline"
-        icon={<ArrowLeftRight size={28} />}
-        title="ID Conversion Pipeline"
-        description="Seamlessly convert lists of gene IDs between Drosophila (fly) and Tribolium (beetle) orthologs."
-        color="bg-blue-50 text-blue-600"
-      />
-      <ToolCard
-        href="/ontology"
-        icon={<GitBranch size={28} />}
-        title="Ontology Viewer"
-        description="Browse the Tribolium morphological ontology (TrOn) to understand phenotype classifications and relationships."
-        color="bg-purple-50 text-purple-600"
-      />
+      {hasFeature("geneIdConverter") && (
+        <ToolCard
+          href="/querypipeline"
+          icon={<ArrowLeftRight size={28} />}
+          title="Gene ID Converter"
+          description="Seamlessly convert lists of gene IDs between Drosophila (fly) and Tribolium (beetle) orthologs."
+          color="bg-blue-50 text-blue-600"
+        />
+      )}
+      {hasFeature("ontologyViewer") && (
+        <ToolCard
+          href="/ontology"
+          icon={<GitBranch size={28} />}
+          title="Ontology Viewer"
+          description="Browse the Tribolium morphological ontology (TrOn) to understand phenotype classifications and relationships."
+          color="bg-purple-50 text-purple-600"
+        />
+      )}
       <ToolCard
         href="/resources"
         icon={<FolderOpen size={28} />}
         title="Resources"
         description="Access gene sets, genome assemblies for download, links to resources, and community information."
         color="bg-emerald-50 text-emerald-600"
+        buttonText="View Resources"
       />
     </section>
   );

@@ -32,6 +32,7 @@ import {
 import { useSession } from "@/hooks/session/useSession";
 import { useFavoriteGenes } from "@/states/favoriteGenes";
 import { getEnv } from "@/utils/env";
+import { hasFeature } from "@/utils/features";
 
 type NavItemAction = {
   icon: string;
@@ -62,6 +63,7 @@ type NavItem = {
   external?: boolean;
   requiresAuth?: boolean;
   children?: NavItemChild[];
+  disabled?: boolean;
 };
 
 const homeItems: NavItem[] = [
@@ -91,6 +93,7 @@ const toolItems: NavItem[] = [
     label: "Gene ID Converter",
     icon: "transform",
     href: "/querypipeline",
+    disabled: !hasFeature("geneIdConverter"),
   },
   {
     id: "ONTOLOGY_VIEWER",
@@ -107,6 +110,7 @@ const toolItems: NavItem[] = [
         external: true,
       },
     ],
+    disabled: !hasFeature("ontologyViewer"),
   },
   {
     id: "GENOME_BROWSER",
@@ -208,6 +212,8 @@ const SidebarInner: React.FC<SidebarProps> = ({ url, logo, title }) => {
 
   const renderNavs = (navItems: NavItem[]) =>
     navItems.map((item) => {
+      if (item.disabled) return null;
+
       const hasChildren = item.children && item.children.length > 0;
       const isActive = item.id && activeView === item.id;
       const hasActiveChild = (item?.children ?? []).some(
