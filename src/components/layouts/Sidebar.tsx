@@ -171,7 +171,7 @@ const resourceItems: NavItem[] = [
 type SidebarProps = {
   url: string;
   logo?: React.ReactNode;
-  title: string;
+  title?: string;
 };
 
 const SidebarInner: React.FC<SidebarProps> = ({ url, logo, title }) => {

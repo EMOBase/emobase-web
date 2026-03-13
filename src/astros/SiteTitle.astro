@@ -1,0 +1,18 @@
+---
+import { readSingleton } from "@directus/sdk";
+
+import { directus } from "@/utils/directus";
+
+let siteTitle = "EMOBase";
+
+try {
+  const siteInfo = await directus.request(readSingleton("site_info"));
+  if (siteInfo.title) {
+    siteTitle = siteInfo.title;
+  }
+} catch (err) {
+  console.error(" Error fetching site info:", err);
+}
+---
+
+{siteTitle}

@@ -6,6 +6,7 @@ import BlankLayout from "@/layouts/blank.astro";
 import AdminLogin from "@/components/pages/admin/AdminLogin";
 import Dashboard from "@/components/pages/admin/Dashboard";
 import Logo from "@/astros/Logo.astro";
+import SiteTitle from "@/astros/SiteTitle.astro";
 
 const session = await getSession(Astro.request);
 ---
@@ -24,6 +25,7 @@ const session = await getSession(Astro.request);
             className="size-16 rounded-2xl p-2"
             iconClassName="text-3xl"
           />
+          <SiteTitle slot="title" />
         </AdminLogin>
       </BlankLayout>
     )

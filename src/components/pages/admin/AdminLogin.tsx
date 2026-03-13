@@ -1,7 +1,13 @@
 import { Icon } from "@/components/ui/icon";
 import { useSession } from "@/hooks/session/useSession";
 
-const AdminLogin = ({ logo }: { logo?: React.ReactNode }) => {
+const AdminLogin = ({
+  logo,
+  title,
+}: {
+  logo?: React.ReactNode;
+  title?: string;
+}) => {
   const { login } = useSession();
 
   return (
@@ -14,7 +20,7 @@ const AdminLogin = ({ logo }: { logo?: React.ReactNode }) => {
               {logo}
               <div>
                 <h1 className="text-text-main text-3xl font-bold tracking-tight font-display">
-                  iBeetle Base
+                  {title}
                 </h1>
                 <p className="text-primary font-bold text-xs uppercase tracking-[0.2em] mt-1">
                   Administrative Gateway
