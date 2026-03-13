@@ -1,4 +1,8 @@
+import { navigate } from "astro:transitions/client";
 import { useRef } from "react";
+import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
+
+import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@/components/ui/icon";
 import {
   InputGroup,
@@ -17,10 +21,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/hooks/session/useSession";
 import { SearchHelpModal } from "@/components/common/SearchHelpModal";
-import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
 import SearchAutocomplete from "@/components/common/SearchAutocomplete";
-import { Spinner } from "@/components/ui/spinner";
-import { navigate } from "astro:transitions/client";
+import { getEnv } from "@/utils/env";
 
 function getAvatarChars(name: string) {
   const words = name.trim().split(" ");
@@ -134,7 +136,15 @@ const Topbar = () => {
                   <Icon name="dashboard" className="text-lg" />
                   Review Dashboard
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-slate-600 gap-2 px-3 py-2">
+                <DropdownMenuItem
+                  render={
+                    <a
+                      href={`${getEnv("PUBLIC_DIRECTUS_URL")}/admin`}
+                      target="_blank"
+                    />
+                  }
+                  className="text-slate-600 gap-2 px-3 py-2"
+                >
                   <Icon name="settings" className="text-lg" />
                   Site Configuration
                   <span className="flex-1 inline-flex justify-end">
