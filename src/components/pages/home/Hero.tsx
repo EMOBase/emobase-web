@@ -1,12 +1,13 @@
-import { navigate } from "astro:transitions/client";
-
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { SearchHelpModal } from "@/components/common/SearchHelpModal";
-import { Icon } from "@/components/ui/icon";
+import { navigate } from "astro:transitions/client";
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
-import SearchAutocomplete from "@/components/common/SearchAutocomplete";
+
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { Spinner } from "@/components/ui/spinner";
+import SearchAutocomplete from "@/components/common/SearchAutocomplete";
+import { SearchHelpModal } from "@/components/common/SearchHelpModal";
+import { getEnv } from "@/utils/env";
 
 interface HeroProps {
   examples?: string[];
@@ -28,7 +29,7 @@ const Hero = ({ examples = [] }: HeroProps) => {
     <section className="flex flex-col items-center justify-center text-center gap-8 p-10 md:p-16 lg:p-24 xl:p-32">
       <div className="flex flex-col items-center gap-4 max-w-3xl">
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-bold to-primary-light font-display">
-          Tribolium Castaneum{" "}
+          {getEnv("PUBLIC_SPECIES_SCIENTIFIC_NAME")}{" "}
           <span className="text-slate-900">Genomic Database</span>
         </h1>
         <p className="text-slate-500 text-lg md:text-xl max-w-3xl font-light">
