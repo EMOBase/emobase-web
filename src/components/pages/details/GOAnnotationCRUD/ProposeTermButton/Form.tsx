@@ -12,8 +12,7 @@ const hints = {
   evidence:
     "The evidence code describes with which method the function or location expressed by the GO term, was show for this gene product.",
   pmid: "The PubMed ID of the publication where the function or location is described for the gene product.",
-  quotation:
-    "If you paste here the relevant section of the reference, it is for us a great help to review your annotation. The quotation may be also be displayed to the users of iBeetle-Base.",
+  quotation: `If you paste here the relevant section of the reference, it is for us a great help to review your annotation. The quotation may be also be displayed to the users of ${typeof document !== "undefined" && document.title}.`,
   name: "Name of the person who is contributing this data. The contact information can help us to clarify any question.",
   email:
     "We will use your email address only for possible questions regarding this annotation. We will never show your address or give it away.",
