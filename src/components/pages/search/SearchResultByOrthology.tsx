@@ -1,5 +1,5 @@
 import type { GeneSearchResult } from "@/utils/services/geneService";
-import { mainSpecies } from "@/utils/mainSpecies";
+import { mainSpecies, shortName } from "@/utils/mainSpecies";
 import { Icon } from "@/components/ui/icon";
 import IBBGeneId from "@/components/common/IBBGeneId";
 import FlybaseGeneId from "@/components/common/FlybaseGeneId";
@@ -16,7 +16,7 @@ const SearchResultByOrthology: React.FC<SearchResultByOrthologyProps> = ({
   const allSpecies = orthologies[0].orthologs.map((o) => o.species);
 
   const speciesDisplay = (species: string) => {
-    if (species === "Tcas") return "Tribolium";
+    if (species === mainSpecies) return shortName;
     if (species === "Dmel") return "Drosophila";
     return species;
   };

@@ -8,6 +8,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { shortName, genePrefix } from "@/utils/mainSpecies";
 
 interface SearchHelpModalProps {
   children: React.ReactElement;
@@ -38,10 +39,10 @@ export const SearchHelpModal = ({ children }: SearchHelpModalProps) => {
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
                 Utilize gene identifiers for{" "}
-                <em className="italic">Tribolium</em> (e.g., TC number) or{" "}
-                <em className="italic">Drosophila</em> (e.g. CG number, FBgn
-                number), gene names (e.g., knirps, croc) or iBeetle number
-                (e.g., iB_00108).
+                <em className="italic">{shortName}</em> (e.g., {genePrefix}{" "}
+                number) or <em className="italic">Drosophila</em> (e.g. CG
+                number, FBgn number), gene names (e.g., knirps, croc) or iBeetle
+                number (e.g., iB_00108).
               </p>
             </div>
           </div>

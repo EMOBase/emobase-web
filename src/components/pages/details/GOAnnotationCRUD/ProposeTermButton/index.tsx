@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { shortName } from "@/utils/mainSpecies";
 
 import ProposeTermForm from "./Form";
 
@@ -57,8 +58,8 @@ const ProposeTermButton = ({ gene }: { gene: string }) => {
             for the correct GO ID. Use only the most specific term ("child
             terms" are more specific; the more general "parent" terms will be
             automatically linked). Only information based on{" "}
-            <i className="font-medium">Tribolium</i> data should be entered - do
-            not define terms just based on{" "}
+            <i className="font-medium">{shortName}</i> data should be entered -
+            do not define terms just based on{" "}
             <i className="font-medium">Drosophila</i> knowledge. We will review
             this information and submit the annotation to the Gene Ontology
             consortium.
