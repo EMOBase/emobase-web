@@ -1,14 +1,4 @@
-import { navigate } from "astro:transitions/client";
-import { useRef } from "react";
-import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
-
-import { Spinner } from "@/components/ui/spinner";
 import { Icon } from "@/components/ui/icon";
-import {
-  InputGroup,
-  InputGroupInput,
-  InputGroupAddon,
-} from "@/components/ui/input-group";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -20,8 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/hooks/session/useSession";
-import { SearchHelpModal } from "@/components/common/SearchHelpModal";
-import SearchAutocomplete from "@/components/common/SearchAutocomplete";
+import SearchInput from "@/components/common/SearchInput";
 import { getEnv } from "@/utils/env";
 
 function getAvatarChars(name: string) {
@@ -40,70 +29,13 @@ function getAvatarChars(name: string) {
 
 const Topbar = () => {
   const { session, logout } = useSession();
-  const inputGroupRef = useRef<HTMLDivElement>(null);
-  const portalRef = useRef<HTMLDivElement>(null);
 
   return (
     <header className="h-16 border-b border-border-light bg-white/80 backdrop-blur-md px-10 flex items-center justify-between z-30 flex-shrink-0">
       <div></div>
 
       <div className="flex items-center gap-5">
-        <InputGroup ref={inputGroupRef}>
-          <InputGroupAddon align="inline-end">
-            <SearchHelpModal>
-              <Button
-                variant="ghost"
-                size="icon"
-                title="Search instruction"
-                className="text-neutral-400 hover:text-neutral-600 h-8 w-8 -ml-2"
-              >
-                <Icon name="help" className="text-xl" />
-              </Button>
-            </SearchHelpModal>
-          </InputGroupAddon>
-          <SearchAutocomplete
-            anchor={inputGroupRef}
-            container={portalRef}
-            renderInput={({
-              searchValue,
-              setSearchValue,
-              loading,
-              fetchSuggestions,
-            }) => (
-              <>
-                <AutocompletePrimitive.Input
-                  render={
-                    <InputGroupInput
-                      className="rounded-md w-90 px-3 py-2"
-                      placeholder="Search for gene IDs or phenotypes..."
-                      value={searchValue}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setSearchValue(val);
-                        fetchSuggestions(val);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          if (searchValue.trim()) {
-                            navigate(`/search/${searchValue.trim()}`);
-                          }
-                        }
-                      }}
-                    />
-                  }
-                />
-                <InputGroupAddon>
-                  {loading ? (
-                    <Spinner className="size-4" />
-                  ) : (
-                    <Icon name="search" className="text-lg" />
-                  )}
-                </InputGroupAddon>
-              </>
-            )}
-          />
-          <div ref={portalRef} />
-        </InputGroup>
+        <SearchInput size="small" />
 
         {session && (
           <DropdownMenu>
