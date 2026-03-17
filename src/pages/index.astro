@@ -1,14 +1,38 @@
 ---
+import { readItems, readSingleton } from "@directus/sdk";
+
 import Layout from "@/layouts/default.astro";
 import Hero from "@/components/pages/home/Hero";
 import ToolCards from "@/components/pages/home/ToolCards";
 import Footer from "@/components/pages/home/Footer";
-
 import { isNotNullable } from "@/utils/filterFn";
 import { directus } from "@/utils/directus";
-import { readItems } from "@directus/sdk";
 
+let siteTitle = "EMOBase";
+let homeTitle: string | undefined = undefined;
+let description: string | undefined = undefined;
 let examples: string[] = [];
+
+try {
+  const siteInfo = await directus.request(readSingleton("site_info"));
+  if (siteInfo.title) {
+    siteTitle = siteInfo.title;
+  }
+} catch (err) {
+  console.error(" Error fetching site info:", err);
+}
+
+try {
+  const homeData = await directus.request(readSingleton("homepage"));
+  if (homeData.title) {
+    homeTitle = homeData.title;
+  }
+  if (homeData.description) {
+    description = homeData.description;
+  }
+} catch (err) {
+  console.error(" Error fetching homagepage data:", err);
+}
 
 try {
   const exampleItems = await directus.request(readItems("examples"));
@@ -21,7 +45,12 @@ try {
 <Layout>
   <div class="p-4">
     <div class="max-w-6xl mx-auto flex flex-col gap-12">
-      <Hero client:load examples={examples} />
+      <Hero
+        client:load
+        title={homeTitle ?? siteTitle}
+        description={description}
+        examples={examples}
+      />
       <ToolCards />
       <Footer />
     </div>

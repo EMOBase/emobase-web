@@ -10,6 +10,13 @@ export interface Example {
 	value?: string | null;
 }
 
+export interface Homepage {
+	/** @primaryKey */
+	id: number;
+	title?: string | null;
+	description?: string | null;
+}
+
 export interface Logo {
 	/** @primaryKey */
 	id: number;
@@ -513,6 +520,7 @@ export interface DirectusDeploymentRun {
 export interface Schema {
 	color: Color;
 	examples: Example[];
+	homepage: Homepage;
 	logo: Logo;
 	site_info: SiteInfo;
 	directus_access: DirectusAccess[];
@@ -549,6 +557,7 @@ export interface Schema {
 export enum CollectionNames {
 	color = 'color',
 	examples = 'examples',
+	homepage = 'homepage',
 	logo = 'logo',
 	site_info = 'site_info',
 	directus_access = 'directus_access',

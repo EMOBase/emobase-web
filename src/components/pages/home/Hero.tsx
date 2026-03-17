@@ -7,13 +7,14 @@ import { Icon } from "@/components/ui/icon";
 import { Spinner } from "@/components/ui/spinner";
 import SearchAutocomplete from "@/components/common/SearchAutocomplete";
 import { SearchHelpModal } from "@/components/common/SearchHelpModal";
-import { getEnv } from "@/utils/env";
 
 interface HeroProps {
+  title: string;
+  description?: string;
   examples?: string[];
 }
 
-const Hero = ({ examples = [] }: HeroProps) => {
+const Hero = ({ title, description, examples = [] }: HeroProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,13 +26,28 @@ const Hero = ({ examples = [] }: HeroProps) => {
     }
   };
 
+  const titleLines = title.split("\n");
+
   return (
     <section className="flex flex-col items-center justify-center text-center gap-8 p-10 md:p-16 lg:p-24 xl:p-32">
       <div className="flex flex-col items-center gap-4 max-w-3xl">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-bold to-primary-light font-display mb-10">
-          {getEnv("PUBLIC_SPECIES_SCIENTIFIC_NAME")}{" "}
-          <span className="text-slate-900">Genomic Database</span>
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-bold to-primary-light font-display">
+          {titleLines[0]}
+          <br />
+          {titleLines.slice(1).map((line) => (
+            <>
+              <span className="text-slate-900">{line}</span>
+              <br />
+            </>
+          ))}
         </h1>
+        {description ? (
+          <p className="text-slate-500 text-lg md:text-xl max-w-3xl font-light">
+            {description}
+          </p>
+        ) : (
+          <div className="h-10" />
+        )}
       </div>
 
       <div className="w-full max-w-3xl relative group">
