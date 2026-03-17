@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FlybaseGeneId from "@/components/common/FlybaseGeneId";
 import { type GeneSearchResult } from "@/utils/services/geneService";
 import { type PhenotypeSearchResult } from "@/utils/services/phenotypeService";
+import { shortName } from "@/utils/mainSpecies";
 
 import NothingFound from "./NothingFound";
 import SearchResultByOrthology from "./SearchResultByOrthology";
@@ -73,7 +74,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
             </div>
             <p>
               which have no orthologous gene in{" "}
-              <i className="font-medium italic">Tribolium</i>.
+              <i className="font-medium italic">{shortName}</i>.
             </p>
           </div>
         ) : (
