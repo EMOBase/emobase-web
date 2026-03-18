@@ -160,6 +160,7 @@ const resourceItems: NavItem[] = [
   {
     label: "Help",
     icon: "quiz",
+    disabled: !hasFeature("helpPages"),
     children: [
       { label: "About", href: "/help/about" },
       { label: "Data Protection", href: "/help/datenschutz/" },

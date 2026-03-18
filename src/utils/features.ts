@@ -6,6 +6,7 @@ const featureEnabled = {
   geneIdConverter: isBeetle,
   ontologyViewer: isBeetle,
   searchInstruction: isBeetle,
+  helpPages: isBeetle,
 };
 
 export const hasFeature = (feature: keyof typeof featureEnabled) => {

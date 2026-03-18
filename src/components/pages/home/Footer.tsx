@@ -1,5 +1,7 @@
 import React from "react";
 
+import { hasFeature } from "@/utils/features";
+
 const Footer: React.FC = () => {
   return (
     <footer className="mt-12 pt-12 border-t border-slate-200">
@@ -77,17 +79,19 @@ const Footer: React.FC = () => {
       </div>
       <div className="mt-12 flex items-center justify-between text-xs text-slate-400">
         <p>© 2026 Universitätsmedizin Göttingen. All rights reserved.</p>
-        <div className="flex gap-4">
-          <a className="hover:text-slate-600" href="/help/about">
-            About
-          </a>
-          <a className="hover:text-slate-600" href="/help/datenschutz">
-            Data Protection
-          </a>
-          <a className="hover:text-slate-600" href="/help/impressum">
-            Imprint
-          </a>
-        </div>
+        {hasFeature("helpPages") && (
+          <div className="flex gap-4">
+            <a className="hover:text-slate-600" href="/help/about">
+              About
+            </a>
+            <a className="hover:text-slate-600" href="/help/datenschutz">
+              Data Protection
+            </a>
+            <a className="hover:text-slate-600" href="/help/impressum">
+              Imprint
+            </a>
+          </div>
+        )}
       </div>
     </footer>
   );
