@@ -3,10 +3,10 @@ import SearchInput from "@/components/common/SearchInput";
 interface HeroProps {
   title: string;
   description?: string;
-  examples?: string[];
+  examples: string[];
 }
 
-const Hero = ({ title, description, examples = [] }: HeroProps) => {
+const Hero = ({ title, description, examples }: HeroProps) => {
   const titleLines = title.split("\n");
 
   return (

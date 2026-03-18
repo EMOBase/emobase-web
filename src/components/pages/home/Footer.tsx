@@ -1,8 +1,15 @@
 import React from "react";
+import DOMPurify from "isomorphic-dompurify";
 
 import { hasFeature } from "@/utils/features";
 
-const Footer: React.FC = () => {
+type FooterProps = {
+  aboutTheData: string;
+};
+
+const Footer: React.FC<FooterProps> = ({ aboutTheData }) => {
+  const sanitizedAboutData = DOMPurify.sanitize(aboutTheData);
+
   return (
     <footer className="mt-12 pt-12 border-t border-slate-200">
       <div className="flex flex-col md:flex-row gap-10 items-start justify-between">
@@ -11,56 +18,10 @@ const Footer: React.FC = () => {
             About the Data
           </h4>
 
-          <p className="text-sm text-slate-500 leading-relaxed mb-2">
-            RNAi phenotypes documented in this database were collected in the
-            iBeetle Screen, which was funded by the German Research Foundation
-            (DFG) and BayerCrop Science. The development of the iBeetle-Base has
-            been supported by DFG. Please refer to{" "}
-            <a
-              href="https://doi.org/10.1038/ncomms8822"
-              target="_blank"
-              className="text-primary hover:underline"
-            >
-              Schmitt-Engel et al. (2015)
-            </a>{" "}
-            and{" "}
-            <a
-              href="https://doi.org/10.1186/s12915-022-01231-4"
-              target="_blank"
-              className="text-primary hover:underline"
-            >
-              Hakeemi et al. (2022)
-            </a>{" "}
-            for details on the iBeetle Screen and to{" "}
-            <a
-              href="https://doi.org/10.1093/nar/gku1054"
-              target="_blank"
-              className="text-primary hover:underline"
-            >
-              Dönitz et al. (2015)
-            </a>{" "}
-            and{" "}
-            <a
-              href="https://doi.org/10.1093/nar/gkx984"
-              target="_blank"
-              className="text-primary hover:underline"
-            >
-              Dönitz et al (2018)
-            </a>{" "}
-            for the iBeetle-Base.
-          </p>
-
-          <p className="text-sm text-slate-500 leading-relaxed">
-            NCBI is using another assembly (
-            <a
-              href="https://www.ncbi.nlm.nih.gov/nuccore/JANKOB000000000.1"
-              target="_blank"
-              className="text-primary hover:underline"
-            >
-              icTriCast1.1
-            </a>
-            ) based on long read sequencing
-          </p>
+          <div
+            className="text-sm text-slate-500 leading-relaxed [&>p:not(:last-child)]:mb-2 [&_a]:text-primary [&_a]:hover:underline"
+            dangerouslySetInnerHTML={{ __html: sanitizedAboutData }}
+          />
         </div>
         <div className="flex flex-col gap-4">
           <span className="text-xs font-bold text-slate-400 uppercase">

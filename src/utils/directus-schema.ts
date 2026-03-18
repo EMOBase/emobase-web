@@ -11,10 +11,11 @@ export interface Example {
 }
 
 export interface Homepage {
+	about_the_data?: string | null;
+	description?: string | null;
 	/** @primaryKey */
 	id: number;
 	title?: string | null;
-	description?: string | null;
 }
 
 export interface Logo {
@@ -24,123 +25,123 @@ export interface Logo {
 }
 
 export interface SiteInfo {
+	favicon?: DirectusFile | string | null;
 	/** @primaryKey */
 	id: number;
-	favicon?: DirectusFile | string | null;
 	title?: string | null;
 }
 
 export interface DirectusAccess {
 	/** @primaryKey */
 	id: string;
-	role?: DirectusRole | string | null;
-	user?: DirectusUser | string | null;
 	policy?: DirectusPolicy | string;
+	role?: DirectusRole | string | null;
 	sort?: number | null;
+	user?: DirectusUser | string | null;
 }
 
 export interface DirectusActivity {
+	action?: string;
+	collection?: string;
 	/** @primaryKey */
 	id: number;
-	action?: string;
-	user?: DirectusUser | string | null;
-	timestamp?: string;
 	ip?: string | null;
-	user_agent?: string | null;
-	collection?: string;
 	item?: string;
 	origin?: string | null;
+	timestamp?: string;
+	user?: DirectusUser | string | null;
+	user_agent?: string | null;
 	revisions?: DirectusRevision[] | string[];
 }
 
 export interface DirectusCollection {
+	accountability?: 'all' | 'activity' | null | null;
+	archive_app_filter?: boolean;
+	archive_field?: string | null;
+	archive_value?: string | null;
+	collapse?: string;
 	/** @primaryKey */
 	collection: string;
-	icon?: string | null;
-	note?: string | null;
-	display_template?: string | null;
-	hidden?: boolean;
-	singleton?: boolean;
-	translations?: Array<{ language: string; translation: string; singular: string; plural: string }> | null;
-	archive_field?: string | null;
-	archive_app_filter?: boolean;
-	archive_value?: string | null;
-	unarchive_value?: string | null;
-	sort_field?: string | null;
-	accountability?: 'all' | 'activity' | null | null;
 	color?: string | null;
-	item_duplication_fields?: 'json' | null;
-	sort?: number | null;
+	display_template?: string | null;
 	group?: DirectusCollection | string | null;
-	collapse?: string;
+	hidden?: boolean;
+	icon?: string | null;
+	item_duplication_fields?: 'json' | null;
+	note?: string | null;
 	preview_url?: string | null;
+	singleton?: boolean;
+	sort?: number | null;
+	sort_field?: string | null;
+	translations?: Array<{ language: string; translation: string; singular: string; plural: string }> | null;
+	unarchive_value?: string | null;
 	versioning?: boolean;
 }
 
 export interface DirectusComment {
-	/** @primaryKey */
-	id: string;
 	collection?: DirectusCollection | string;
-	item?: string;
 	comment?: string;
 	date_created?: string | null;
 	date_updated?: string | null;
+	/** @primaryKey */
+	id: string;
+	item?: string;
 	user_created?: DirectusUser | string | null;
 	user_updated?: DirectusUser | string | null;
 }
 
 export interface DirectusField {
-	/** @primaryKey */
-	id: number;
 	collection?: DirectusCollection | string;
-	field?: string;
-	special?: string[] | null;
-	interface?: string | null;
-	options?: 'json' | null;
+	conditions?: 'json' | null;
 	display?: string | null;
 	display_options?: 'json' | null;
-	readonly?: boolean;
-	hidden?: boolean;
-	sort?: number | null;
-	width?: string | null;
-	translations?: 'json' | null;
-	note?: string | null;
-	conditions?: 'json' | null;
-	required?: boolean | null;
+	field?: string;
 	group?: DirectusField | string | null;
+	hidden?: boolean;
+	/** @primaryKey */
+	id: number;
+	interface?: string | null;
+	note?: string | null;
+	options?: 'json' | null;
+	readonly?: boolean;
+	required?: boolean | null;
+	searchable?: boolean;
+	sort?: number | null;
+	special?: string[] | null;
+	translations?: 'json' | null;
 	validation?: 'json' | null;
 	validation_message?: string | null;
-	searchable?: boolean;
+	width?: string | null;
 }
 
 export interface DirectusFile {
-	/** @primaryKey */
-	id: string;
-	storage?: string;
-	filename_disk?: string | null;
-	filename_download?: string;
-	title?: string | null;
-	type?: string | null;
-	folder?: DirectusFolder | string | null;
-	uploaded_by?: DirectusUser | string | null;
-	created_on?: string;
-	modified_by?: DirectusUser | string | null;
-	modified_on?: string;
 	charset?: string | null;
-	filesize?: number | null;
-	width?: number | null;
-	height?: number | null;
+	created_on?: string;
+	description?: string | null;
 	duration?: number | null;
 	embed?: string | null;
-	description?: string | null;
-	location?: string | null;
-	tags?: string[] | null;
-	metadata?: 'json' | null;
+	filename_disk?: string | null;
+	filename_download?: string;
+	filesize?: number | null;
 	focal_point_x?: number | null;
 	focal_point_y?: number | null;
-	tus_id?: string | null;
+	folder?: DirectusFolder | string | null;
+	height?: number | null;
+	/** @primaryKey */
+	id: string;
+	location?: string | null;
+	metadata?: 'json' | null;
+	modified_by?: DirectusUser | string | null;
+	modified_on?: string;
+	storage?: string;
+	tags?: string[] | null;
+	title?: string | null;
 	tus_data?: 'json' | null;
+	tus_id?: string | null;
+	type?: string | null;
+	uploaded_by?: DirectusUser | string | null;
 	uploaded_on?: string | null;
+	width?: number | null;
 }
 
 export interface DirectusFolder {
@@ -151,90 +152,90 @@ export interface DirectusFolder {
 }
 
 export interface DirectusMigration {
-	/** @primaryKey */
-	version: string;
 	name?: string;
 	timestamp?: string | null;
+	/** @primaryKey */
+	version: string;
 }
 
 export interface DirectusPermission {
+	action?: string;
+	collection?: string;
+	fields?: string[] | null;
 	/** @primaryKey */
 	id: number;
-	collection?: string;
-	action?: string;
 	permissions?: 'json' | null;
-	validation?: 'json' | null;
-	presets?: 'json' | null;
-	fields?: string[] | null;
 	policy?: DirectusPolicy | string;
+	presets?: 'json' | null;
+	validation?: 'json' | null;
 }
 
 export interface DirectusPolicy {
-	/** @primaryKey */
-	id: string;
-	/** @required */
-	name: string;
-	icon?: string;
-	description?: string | null;
-	ip_access?: string[] | null;
-	enforce_tfa?: boolean;
 	admin_access?: boolean;
 	app_access?: boolean;
+	description?: string | null;
+	enforce_tfa?: boolean;
+	icon?: string;
+	/** @primaryKey */
+	id: string;
+	ip_access?: string[] | null;
+	/** @required */
+	name: string;
 	permissions?: DirectusPermission[] | string[];
 	users?: DirectusAccess[] | string[];
 	roles?: DirectusAccess[] | string[];
 }
 
 export interface DirectusPreset {
-	/** @primaryKey */
-	id: number;
 	bookmark?: string | null;
-	user?: DirectusUser | string | null;
-	role?: DirectusRole | string | null;
 	collection?: string | null;
-	search?: string | null;
-	layout?: string | null;
-	layout_query?: 'json' | null;
-	layout_options?: 'json' | null;
-	refresh_interval?: number | null;
+	color?: string | null;
 	filter?: 'json' | null;
 	icon?: string | null;
-	color?: string | null;
+	/** @primaryKey */
+	id: number;
+	layout?: string | null;
+	layout_options?: 'json' | null;
+	layout_query?: 'json' | null;
+	refresh_interval?: number | null;
+	role?: DirectusRole | string | null;
+	search?: string | null;
+	user?: DirectusUser | string | null;
 }
 
 export interface DirectusRelation {
 	/** @primaryKey */
 	id: number;
+	junction_field?: string | null;
 	many_collection?: string;
 	many_field?: string;
-	one_collection?: string | null;
-	one_field?: string | null;
-	one_collection_field?: string | null;
 	one_allowed_collections?: string[] | null;
-	junction_field?: string | null;
-	sort_field?: string | null;
+	one_collection?: string | null;
+	one_collection_field?: string | null;
 	one_deselect_action?: string;
+	one_field?: string | null;
+	sort_field?: string | null;
 }
 
 export interface DirectusRevision {
-	/** @primaryKey */
-	id: number;
 	activity?: DirectusActivity | string;
 	collection?: string;
-	item?: string;
 	data?: 'json' | null;
 	delta?: 'json' | null;
+	/** @primaryKey */
+	id: number;
+	item?: string;
 	parent?: DirectusRevision | string | null;
 	version?: DirectusVersion | string | null;
 }
 
 export interface DirectusRole {
+	description?: string | null;
+	icon?: string;
 	/** @primaryKey */
 	id: string;
 	/** @required */
 	name: string;
-	icon?: string;
-	description?: string | null;
 	parent?: DirectusRole | string | null;
 	children?: DirectusRole[] | string[];
 	policies?: DirectusAccess[] | string[];
@@ -242,201 +243,201 @@ export interface DirectusRole {
 }
 
 export interface DirectusSession {
+	expires?: string;
+	ip?: string | null;
+	next_token?: string | null;
+	origin?: string | null;
+	share?: DirectusShare | string | null;
 	/** @primaryKey */
 	token: string;
 	user?: DirectusUser | string | null;
-	expires?: string;
-	ip?: string | null;
 	user_agent?: string | null;
-	share?: DirectusShare | string | null;
-	origin?: string | null;
-	next_token?: string | null;
 }
 
 export interface DirectusSettings {
-	/** @primaryKey */
-	id: number;
-	project_name?: string;
-	project_url?: string | null;
-	project_color?: string;
-	project_logo?: DirectusFile | string | null;
-	public_foreground?: DirectusFile | string | null;
-	public_background?: DirectusFile | string | null;
-	public_note?: string | null;
-	auth_login_attempts?: number | null;
-	auth_password_policy?: null | `/^.{8,}$/` | `/(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{';'?>.<,])(?!.*\\s).*$/` | null;
-	storage_asset_transform?: 'all' | 'none' | 'presets' | null;
-	storage_asset_presets?: Array<{ key: string; fit: 'contain' | 'cover' | 'inside' | 'outside'; width: number; height: number; quality: number; withoutEnlargement: boolean; format: 'auto' | 'jpeg' | 'png' | 'webp' | 'tiff' | 'avif'; transforms: 'json' }> | null;
-	custom_css?: string | null;
-	storage_default_folder?: DirectusFolder | string | null;
-	basemaps?: Array<{ name: string; type: 'raster' | 'tile' | 'style'; url: string; tileSize: number; attribution: string }> | null;
-	mapbox_key?: string | null;
-	module_bar?: 'json' | null;
-	project_descriptor?: string | null;
-	default_language?: string;
-	custom_aspect_ratios?: Array<{ text: string; value: number }> | null;
-	public_favicon?: DirectusFile | string | null;
-	default_appearance?: 'auto' | 'light' | 'dark';
-	default_theme_light?: string | null;
-	theme_light_overrides?: 'json' | null;
-	default_theme_dark?: string | null;
-	theme_dark_overrides?: 'json' | null;
-	report_error_url?: string | null;
-	report_bug_url?: string | null;
-	report_feature_url?: string | null;
-	public_registration?: boolean;
-	public_registration_verify_email?: boolean;
-	public_registration_role?: DirectusRole | string | null;
-	public_registration_email_filter?: 'json' | null;
-	visual_editor_urls?: Array<{ url: string }> | null;
-	project_id?: string | null;
-	mcp_enabled?: boolean;
-	mcp_allow_deletes?: boolean;
-	mcp_prompts_collection?: string | null;
-	mcp_system_prompt_enabled?: boolean;
-	mcp_system_prompt?: string | null;
-	project_owner?: string | null;
-	project_usage?: string | null;
-	org_name?: string | null;
-	product_updates?: boolean | null;
-	project_status?: string | null;
-	ai_openai_api_key?: string | null;
+	ai_anthropic_allowed_models?: Array<`claude-haiku-4-5` | `claude-sonnet-4-5` | `claude-opus-4-5`> | null;
 	ai_anthropic_api_key?: string | null;
-	ai_system_prompt?: string | null;
+	ai_google_allowed_models?: Array<`gemini-3-pro-preview` | `gemini-3-flash-preview` | `gemini-2.5-pro` | `gemini-2.5-flash`> | null;
 	ai_google_api_key?: string | null;
+	ai_openai_allowed_models?: Array<`gpt-4o-mini` | `gpt-4.1-nano` | `gpt-4.1-mini` | `gpt-4.1` | `gpt-5-nano` | `gpt-5-mini` | `gpt-5` | `gpt-5.2` | `gpt-5.2-chat-latest` | `gpt-5.2-pro`> | null;
+	ai_openai_api_key?: string | null;
 	ai_openai_compatible_api_key?: string | null;
 	ai_openai_compatible_base_url?: string | null;
-	ai_openai_compatible_name?: string | null;
-	ai_openai_compatible_models?: Array<{ id: string; name: string; context: number; output: number; attachment: boolean; reasoning: boolean; providerOptions: Record<string, any> }> | null;
 	ai_openai_compatible_headers?: Array<{ header: string; value: string }> | null;
-	ai_openai_allowed_models?: Array<`gpt-4o-mini` | `gpt-4.1-nano` | `gpt-4.1-mini` | `gpt-4.1` | `gpt-5-nano` | `gpt-5-mini` | `gpt-5` | `gpt-5.2` | `gpt-5.2-chat-latest` | `gpt-5.2-pro`> | null;
-	ai_anthropic_allowed_models?: Array<`claude-haiku-4-5` | `claude-sonnet-4-5` | `claude-opus-4-5`> | null;
-	ai_google_allowed_models?: Array<`gemini-3-pro-preview` | `gemini-3-flash-preview` | `gemini-2.5-pro` | `gemini-2.5-flash`> | null;
+	ai_openai_compatible_models?: Array<{ id: string; name: string; context: number; output: number; attachment: boolean; reasoning: boolean; providerOptions: Record<string, any> }> | null;
+	ai_openai_compatible_name?: string | null;
+	ai_system_prompt?: string | null;
+	auth_login_attempts?: number | null;
+	auth_password_policy?: null | `/^.{8,}$/` | `/(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{';'?>.<,])(?!.*\\s).*$/` | null;
+	basemaps?: Array<{ name: string; type: 'raster' | 'tile' | 'style'; url: string; tileSize: number; attribution: string }> | null;
 	collaborative_editing_enabled?: boolean;
+	custom_aspect_ratios?: Array<{ text: string; value: number }> | null;
+	custom_css?: string | null;
+	default_appearance?: 'auto' | 'light' | 'dark';
+	default_language?: string;
+	default_theme_dark?: string | null;
+	default_theme_light?: string | null;
+	/** @primaryKey */
+	id: number;
+	mapbox_key?: string | null;
+	mcp_allow_deletes?: boolean;
+	mcp_enabled?: boolean;
+	mcp_prompts_collection?: string | null;
+	mcp_system_prompt?: string | null;
+	mcp_system_prompt_enabled?: boolean;
+	module_bar?: 'json' | null;
+	org_name?: string | null;
+	product_updates?: boolean | null;
+	project_color?: string;
+	project_descriptor?: string | null;
+	project_id?: string | null;
+	project_logo?: DirectusFile | string | null;
+	project_name?: string;
+	project_owner?: string | null;
+	project_status?: string | null;
+	project_url?: string | null;
+	project_usage?: string | null;
+	public_background?: DirectusFile | string | null;
+	public_favicon?: DirectusFile | string | null;
+	public_foreground?: DirectusFile | string | null;
+	public_note?: string | null;
+	public_registration?: boolean;
+	public_registration_email_filter?: 'json' | null;
+	public_registration_role?: DirectusRole | string | null;
+	public_registration_verify_email?: boolean;
+	report_bug_url?: string | null;
+	report_error_url?: string | null;
+	report_feature_url?: string | null;
+	storage_asset_presets?: Array<{ key: string; fit: 'contain' | 'cover' | 'inside' | 'outside'; width: number; height: number; quality: number; withoutEnlargement: boolean; format: 'auto' | 'jpeg' | 'png' | 'webp' | 'tiff' | 'avif'; transforms: 'json' }> | null;
+	storage_asset_transform?: 'all' | 'none' | 'presets' | null;
+	storage_default_folder?: DirectusFolder | string | null;
+	theme_dark_overrides?: 'json' | null;
+	theme_light_overrides?: 'json' | null;
+	visual_editor_urls?: Array<{ url: string }> | null;
 }
 
 export interface DirectusUser {
+	appearance?: null | 'auto' | 'light' | 'dark' | null;
+	auth_data?: 'json' | null;
+	avatar?: DirectusFile | string | null;
+	description?: string | null;
+	email?: string | null;
+	email_notifications?: boolean | null;
+	external_identifier?: string | null;
+	first_name?: string | null;
 	/** @primaryKey */
 	id: string;
-	first_name?: string | null;
-	last_name?: string | null;
-	email?: string | null;
-	password?: string | null;
-	location?: string | null;
-	title?: string | null;
-	description?: string | null;
-	tags?: string[] | null;
-	avatar?: DirectusFile | string | null;
 	language?: string | null;
-	tfa_secret?: string | null;
-	status?: 'draft' | 'invited' | 'unverified' | 'active' | 'suspended' | 'archived';
-	role?: DirectusRole | string | null;
-	token?: string | null;
 	last_access?: string | null;
+	last_name?: string | null;
 	last_page?: string | null;
+	location?: string | null;
+	password?: string | null;
 	provider?: 'keycloak';
-	external_identifier?: string | null;
-	auth_data?: 'json' | null;
-	email_notifications?: boolean | null;
-	appearance?: null | 'auto' | 'light' | 'dark' | null;
+	role?: DirectusRole | string | null;
+	status?: 'draft' | 'invited' | 'unverified' | 'active' | 'suspended' | 'archived';
+	tags?: string[] | null;
+	text_direction?: 'auto' | 'ltr' | 'rtl';
+	tfa_secret?: string | null;
 	theme_dark?: string | null;
+	theme_dark_overrides?: 'json' | null;
 	theme_light?: string | null;
 	theme_light_overrides?: 'json' | null;
-	theme_dark_overrides?: 'json' | null;
-	text_direction?: 'auto' | 'ltr' | 'rtl';
+	title?: string | null;
+	token?: string | null;
 	policies?: DirectusAccess[] | string[];
 }
 
 export interface DirectusDashboard {
+	color?: string | null;
+	date_created?: string | null;
+	icon?: string;
 	/** @primaryKey */
 	id: string;
 	name?: string;
-	icon?: string;
 	note?: string | null;
-	date_created?: string | null;
 	user_created?: DirectusUser | string | null;
-	color?: string | null;
 	panels?: DirectusPanel[] | string[];
 }
 
 export interface DirectusPanel {
+	color?: string | null;
+	dashboard?: DirectusDashboard | string;
+	date_created?: string | null;
+	height?: number;
+	icon?: string | null;
 	/** @primaryKey */
 	id: string;
-	dashboard?: DirectusDashboard | string;
 	name?: string | null;
-	icon?: string | null;
-	color?: string | null;
-	show_header?: boolean;
 	note?: string | null;
-	type?: string;
+	options?: 'json' | null;
 	position_x?: number;
 	position_y?: number;
-	width?: number;
-	height?: number;
-	options?: 'json' | null;
-	date_created?: string | null;
+	show_header?: boolean;
+	type?: string;
 	user_created?: DirectusUser | string | null;
+	width?: number;
 }
 
 export interface DirectusNotification {
+	collection?: string | null;
 	/** @primaryKey */
 	id: number;
-	timestamp?: string | null;
-	status?: string | null;
+	item?: string | null;
+	message?: string | null;
 	recipient?: DirectusUser | string;
 	sender?: DirectusUser | string | null;
+	status?: string | null;
 	subject?: string;
-	message?: string | null;
-	collection?: string | null;
-	item?: string | null;
+	timestamp?: string | null;
 }
 
 export interface DirectusShare {
+	collection?: DirectusCollection | string;
+	date_created?: string | null;
+	date_end?: string | null;
+	date_start?: string | null;
 	/** @primaryKey */
 	id: string;
-	name?: string | null;
-	collection?: DirectusCollection | string;
 	item?: string;
-	role?: DirectusRole | string | null;
-	password?: string | null;
-	user_created?: DirectusUser | string | null;
-	date_created?: string | null;
-	date_start?: string | null;
-	date_end?: string | null;
-	times_used?: number | null;
 	max_uses?: number | null;
+	name?: string | null;
+	password?: string | null;
+	role?: DirectusRole | string | null;
+	times_used?: number | null;
+	user_created?: DirectusUser | string | null;
 }
 
 export interface DirectusFlow {
+	accountability?: string | null;
+	color?: string | null;
+	date_created?: string | null;
+	description?: string | null;
+	icon?: string | null;
 	/** @primaryKey */
 	id: string;
 	name?: string;
-	icon?: string | null;
-	color?: string | null;
-	description?: string | null;
+	operation?: DirectusOperation | string | null;
+	options?: 'json' | null;
 	status?: string;
 	trigger?: string | null;
-	accountability?: string | null;
-	options?: 'json' | null;
-	operation?: DirectusOperation | string | null;
-	date_created?: string | null;
 	user_created?: DirectusUser | string | null;
 	operations?: DirectusOperation[] | string[];
 }
 
 export interface DirectusOperation {
+	date_created?: string | null;
+	flow?: DirectusFlow | string;
 	/** @primaryKey */
 	id: string;
-	name?: string | null;
 	key?: string;
-	type?: string;
+	name?: string | null;
+	options?: 'json' | null;
 	position_x?: number;
 	position_y?: number;
-	options?: 'json' | null;
-	resolve?: DirectusOperation | string | null;
 	reject?: DirectusOperation | string | null;
-	flow?: DirectusFlow | string;
-	date_created?: string | null;
+	resolve?: DirectusOperation | string | null;
+	type?: string;
 	user_created?: DirectusUser | string | null;
 }
 
@@ -444,77 +445,77 @@ export interface DirectusTranslation {
 	/** @primaryKey */
 	id: string;
 	/** @required */
-	language: string;
-	/** @required */
 	key: string;
+	/** @required */
+	language: string;
 	/** @required */
 	value: string;
 }
 
 export interface DirectusVersion {
-	/** @primaryKey */
-	id: string;
-	key?: string;
-	name?: string | null;
 	collection?: DirectusCollection | string;
-	item?: string;
-	hash?: string | null;
 	date_created?: string | null;
 	date_updated?: string | null;
+	delta?: 'json' | null;
+	hash?: string | null;
+	/** @primaryKey */
+	id: string;
+	item?: string;
+	key?: string;
+	name?: string | null;
 	user_created?: DirectusUser | string | null;
 	user_updated?: DirectusUser | string | null;
-	delta?: 'json' | null;
 }
 
 export interface DirectusExtension {
+	bundle?: string | null;
 	enabled?: boolean;
+	folder?: string;
 	/** @primaryKey */
 	id: string;
-	folder?: string;
 	source?: string;
-	bundle?: string | null;
 }
 
 export interface DirectusDeployment {
+	credentials?: string | null;
+	date_created?: string | null;
 	/** @primaryKey */
 	id: string;
-	provider?: string;
-	credentials?: string | null;
+	last_synced_at?: string | null;
 	options?: 'json' | null;
-	date_created?: string | null;
+	provider?: string;
 	user_created?: DirectusUser | string | null;
 	webhook_ids?: 'json' | null;
 	webhook_secret?: string | null;
-	last_synced_at?: string | null;
 	projects?: DirectusDeploymentProject[] | string[];
 }
 
 export interface DirectusDeploymentProject {
-	/** @primaryKey */
-	id: string;
+	date_created?: string | null;
+	deployable?: boolean;
 	deployment?: DirectusDeployment | string;
 	external_id?: string;
-	name?: string;
-	date_created?: string | null;
-	user_created?: DirectusUser | string | null;
-	url?: string | null;
 	framework?: string | null;
-	deployable?: boolean;
+	/** @primaryKey */
+	id: string;
+	name?: string;
+	url?: string | null;
+	user_created?: DirectusUser | string | null;
 	runs?: DirectusDeploymentRun[] | string[];
 }
 
 export interface DirectusDeploymentRun {
+	completed_at?: string | null;
+	date_created?: string | null;
+	external_id?: string;
 	/** @primaryKey */
 	id: string;
 	project?: DirectusDeploymentProject | string;
-	external_id?: string;
-	target?: string;
-	date_created?: string | null;
-	user_created?: DirectusUser | string | null;
-	status?: string | null;
-	url?: string | null;
 	started_at?: string | null;
-	completed_at?: string | null;
+	status?: string | null;
+	target?: string;
+	url?: string | null;
+	user_created?: DirectusUser | string | null;
 }
 
 export interface Schema {

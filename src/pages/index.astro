@@ -12,6 +12,8 @@ let siteTitle = "EMOBase";
 let homeTitle: string | undefined = undefined;
 let description: string | undefined = undefined;
 let examples: string[] = [];
+let aboutTheData: string =
+  "The development of this project has been supported by DFG.";
 
 try {
   const siteInfo = await directus.request(readSingleton("site_info"));
@@ -29,6 +31,9 @@ try {
   }
   if (homeData.description) {
     description = homeData.description;
+  }
+  if (homeData.about_the_data) {
+    aboutTheData = homeData.about_the_data;
   }
 } catch (err) {
   console.error(" Error fetching homagepage data:", err);
@@ -52,7 +57,7 @@ try {
         examples={examples}
       />
       <ToolCards />
-      <Footer />
+      <Footer aboutTheData={aboutTheData} />
     </div>
   </div>
 </Layout>
