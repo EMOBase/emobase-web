@@ -1,12 +1,101 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
+
 import { type TriboliumGene } from "@/utils/services/geneService";
+import { mainSpecies } from "@/utils/mainSpecies";
+import { getEnv } from "@/utils/env";
 import assembly from "@/utils/config/genomebrowser/assembly.json";
 import tracks from "@/utils/config/genomebrowser/tracks.json";
+
 import defaultSession from "@/utils/config/genomebrowser/default_session.json";
 import configuration from "@/utils/config/genomebrowser/configuration.json";
 
 type JBrowseIsolatedViewProps = {
   triboliumGene: TriboliumGene;
+};
+
+const getJBrowseConfig = (zoomedInLocationStr: string) => {
+  if (mainSpecies !== "Tcas") {
+    const baseURL = getEnv("PUBLIC_UI_PAGE_GENOMEBROWSER");
+    return {
+      assembly: {
+        name: "genomic.fna",
+        sequence: {
+          type: "ReferenceSequenceTrack",
+          trackId: "genomic.fna",
+          adapter: {
+            type: "IndexedFastaAdapter",
+            fastaLocation: {
+              uri: `${baseURL}/data/genomic.fna`,
+              locationType: "UriLocation",
+            },
+            faiLocation: {
+              uri: `${baseURL}/data/genomic.fna.fai`,
+              locationType: "UriLocation",
+            },
+          },
+        },
+      },
+      tracks: [
+        {
+          type: "FeatureTrack",
+          trackId: "genomic.sorted.gff",
+          name: "genomic.sorted.gff",
+          adapter: {
+            type: "Gff3TabixAdapter",
+            gffGzLocation: {
+              uri: `${baseURL}/data/genomic.sorted.gff.gz`,
+              locationType: "UriLocation",
+            },
+            index: {
+              location: {
+                uri: `${baseURL}/data/genomic.sorted.gff.gz.tbi`,
+                locationType: "UriLocation",
+              },
+              indexType: "TBI",
+            },
+          },
+          assemblyNames: ["genomic.fna"],
+        },
+      ],
+      defaultSession: {
+        name: "default",
+        view: {
+          type: "LinearGenomeView",
+          tracks: [
+            {
+              type: "FeatureTrack",
+              configuration: "genomic.sorted.gff",
+              displays: [
+                {
+                  type: "LinearBasicDisplay",
+                  configuration: "genomic.sorted.gff-LinearBasicDisplay",
+                  height: 180,
+                },
+              ],
+            },
+          ],
+          hideHeader: true,
+          hideHeaderOverview: true,
+          hideNoTracksActive: true,
+          trackSelectorType: "hierarchical",
+          trackLabels: "offset",
+          showCenterLine: false,
+          showCytobandsSetting: false,
+          showGridlines: true,
+        },
+      },
+      configuration,
+      location: zoomedInLocationStr,
+    };
+  }
+
+  return {
+    assembly,
+    tracks,
+    defaultSession,
+    configuration,
+    location: zoomedInLocationStr,
+  };
 };
 
 const JBrowseIsolatedView: React.FC<JBrowseIsolatedViewProps> = ({
@@ -54,17 +143,12 @@ const JBrowseIsolatedView: React.FC<JBrowseIsolatedViewProps> = ({
     const zoomedInLocationStr = `${seqname}:${Math.floor(zoomedInStart)}..${Math.floor(zoomedInEnd)}`;
 
     const { createViewState } = jbrowse;
-    return createViewState({
-      assembly,
-      tracks,
-      defaultSession,
-      configuration,
-      location: zoomedInLocationStr,
-    });
+
+    return createViewState(getJBrowseConfig(zoomedInLocationStr));
   }, [jbrowse, triboliumGene]);
 
   if (!jbrowse || !state) {
-    return null; // Empty page inside iframe while loading
+    return null;
   }
 
   const { JBrowseLinearGenomeView } = jbrowse;
