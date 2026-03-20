@@ -18,10 +18,28 @@ export interface Homepage {
 	title?: string | null;
 }
 
+export interface Link {
+	comment?: string | null;
+	download?: boolean | null;
+	/** @primaryKey */
+	id: number;
+	resource_section_id?: ResourceSection | string | null;
+	text?: string | null;
+	/** @required */
+	to: string;
+}
+
 export interface Logo {
 	/** @primaryKey */
 	id: number;
 	image?: DirectusFile | string | null;
+}
+
+export interface ResourceSection {
+	header?: string | null;
+	/** @primaryKey */
+	id: number;
+	links?: Link[] | string[];
 }
 
 export interface SiteInfo {
@@ -522,7 +540,9 @@ export interface Schema {
 	color: Color;
 	examples: Example[];
 	homepage: Homepage;
+	links: Link[];
 	logo: Logo;
+	resource_sections: ResourceSection[];
 	site_info: SiteInfo;
 	directus_access: DirectusAccess[];
 	directus_activity: DirectusActivity[];
@@ -559,7 +579,9 @@ export enum CollectionNames {
 	color = 'color',
 	examples = 'examples',
 	homepage = 'homepage',
+	links = 'links',
 	logo = 'logo',
+	resource_sections = 'resource_sections',
 	site_info = 'site_info',
 	directus_access = 'directus_access',
 	directus_activity = 'directus_activity',
