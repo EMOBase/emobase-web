@@ -1,10 +1,15 @@
 ---
+import { readItems } from "@directus/sdk";
+
 import Layout from "@/layouts/default.astro";
 import geneService from "@/utils/services/geneService";
 import phenotypeService from "@/utils/services/phenotypeService";
 import goAnnotationService from "@/utils/services/goAnnotationService";
 import ontologyService from "@/utils/services/ontologyService";
-import GeneDetails from "@/components/pages/details/GeneDetails";
+import { directus } from "@/utils/directus";
+import GeneDetails, {
+  type GeneLinkTemplate,
+} from "@/components/pages/details/GeneDetails";
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
 import JBrowseGenomeView from "@/components/pages/details/GenomeBrowser/JBrowseGenomeView";
 
@@ -61,6 +66,20 @@ const homologs = (await fetchDrosophilaGenes(orthologousGenes)).map((gene) => ({
   annotations: annsById[gene.id],
 }));
 
+let linkTemplates: GeneLinkTemplate[] = [];
+
+try {
+  const items = await directus.request(readItems("gene_link_templates"));
+  linkTemplates = items
+    .map(({ label, template }) => ({
+      label: label || "",
+      template: template || "",
+    }))
+    .filter((link) => link.template.includes("{gene}"));
+} catch (err) {
+  console.error(" Error fetching gene link templates:", err);
+}
+
 if (!triboliumGene) {
   Astro.response.status = 404;
   Astro.response.statusText = "Not Found";
@@ -72,6 +91,7 @@ if (!triboliumGene) {
     triboliumGene ? (
       <GeneDetails
         gene={gene}
+        linkTemplates={linkTemplates}
         triboliumGene={triboliumGene}
         dsRNAs={dsRNAs}
         phenotypes={phenotypes}

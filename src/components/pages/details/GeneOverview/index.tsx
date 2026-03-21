@@ -5,16 +5,23 @@ import { type TriboliumGene } from "@/utils/services/geneService";
 
 import ViewSequencesButton from "./ViewSequencesButton";
 
+export type GeneLinkTemplate = {
+  label: string;
+  template: string;
+};
+
 type GeneOverviewProps = {
   id: string;
   gene: string;
   triboliumGene: TriboliumGene;
+  linkTemplates: GeneLinkTemplate[];
 };
 
 const GeneOverview: React.FC<GeneOverviewProps> = ({
   id: sectionId,
   gene,
   triboliumGene,
+  linkTemplates,
 }) => {
   const { seqname, start, end, id, mRNAs, CDS, proteins } = triboliumGene;
   const genomicLocation = `${seqname}:${start}..${end}`;
@@ -37,19 +44,6 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
       title: `${id} Proteins`,
       sequences: proteins,
       icon: "biotech",
-    },
-  ];
-
-  const links = [
-    {
-      label: "BeetleAtlas Expression",
-      icon: "open_in_new",
-      href: `https://motif.mvls.gla.ac.uk/BeetleAtlas/?search=gene&gene=${gene}&idtype=geneID`,
-    },
-    {
-      label: "OrthoDB Orthologs",
-      icon: "open_in_new",
-      href: `http://www.orthodb.org/?query=${gene}`,
     },
   ];
 
@@ -109,14 +103,14 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
             Quick Links
           </span>
           <div className="flex flex-col gap-2 text-sm">
-            {links.map((link) => (
+            {linkTemplates.map((link) => (
               <a
                 key={link.label}
-                href={link.href}
+                href={link.template.replace("{gene}", gene)}
                 target="_blank"
                 className="flex items-center gap-2 text-neutral-600 hover:text-primary transition-colors dark:text-neutral-400 dark:hover:text-primary"
               >
-                <Icon name={link.icon} className="text-base" />
+                <Icon name="open_in_new" className="text-base" />
                 {link.label}
               </a>
             ))}

@@ -7,7 +7,7 @@ import type {
 import { type Phenotype } from "@/utils/constants/phenotype";
 import { stringToURLHash } from "@/utils/stringToURLHash";
 
-import GeneOverview from "./GeneOverview";
+import GeneOverview, { type GeneLinkTemplate } from "./GeneOverview";
 import GenomeBrowser from "./GenomeBrowser";
 import OrthologySection from "./OrthologySection";
 import GOAnnotationCRUD from "./GOAnnotationCRUD";
@@ -18,6 +18,7 @@ import { type ReactNode } from "react";
 
 type GeneDetailsProps = {
   gene: string;
+  linkTemplates: GeneLinkTemplate[];
   triboliumGene: TriboliumGene;
   dsRNAs: IBDsRNA[];
   phenotypes: Phenotype[];
@@ -27,6 +28,7 @@ type GeneDetailsProps = {
 
 const GeneDetails: React.FC<GeneDetailsProps> = ({
   gene,
+  linkTemplates,
   triboliumGene,
   dsRNAs,
   phenotypes,
@@ -61,6 +63,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
       component: GeneOverview,
       props: {
         gene,
+        linkTemplates,
         triboliumGene,
       },
     },
@@ -154,5 +157,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
     </div>
   );
 };
+
+export { type GeneLinkTemplate };
 
 export default GeneDetails;
