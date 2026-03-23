@@ -18,8 +18,9 @@ export const resolveBaseUrl = (
 ): string => {
   const isServer = typeof window === "undefined";
   const isProd = import.meta.env.PROD || process.env.NODE_ENV === "production";
+  const isDocker = isProd && getEnv("INTERNAL_API_NETWORKING") === "true";
 
-  if (!isServer || !isProd)
+  if (!isServer || !isDocker)
     return {
       directus: directusUrl,
       keycloak: getKeyCloakBaseUrl(keycloakIssuerUrl),
