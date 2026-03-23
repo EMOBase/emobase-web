@@ -1,4 +1,5 @@
 import React from "react";
+import { navigate } from "astro:transitions/client";
 import {
   Columns,
   ArrowLeftRight,
@@ -6,14 +7,17 @@ import {
   FolderOpen,
   ArrowRight,
 } from "lucide-react";
+import { twMerge } from "tailwind-merge";
 
+import { Icon } from "@/components/ui/icon";
 import { hasFeature } from "@/utils/features";
+import { mainSpecies } from "@/utils/mainSpecies";
 
 interface ToolCardProps {
   href: string;
   icon: React.ReactNode;
   title: string;
-  description: string;
+  description: React.ReactNode;
   color: string;
   buttonText?: string;
 }
@@ -26,9 +30,16 @@ const ToolCard: React.FC<ToolCardProps> = ({
   color,
   buttonText = "Launch Tool",
 }) => (
-  <a
-    href={href}
-    className="group bg-white p-8 rounded-2xl border border-slate-100 shadow-card hover:shadow-xl hover:shadow-orange-500/5 hover:border-primary/30 transition-all duration-300"
+  <div
+    onClick={() => {
+      console.log("zo onClick");
+      navigate(href);
+    }}
+    className={twMerge(
+      "cursor-pointer group bg-white p-8 rounded-2xl border border-slate-100 shadow-card transition-all duration-300",
+      "[&:hover:not(:has(a:hover))]:shadow-xl [&:hover:not(:has(a:hover))]:shadow-orange-500/5 [&:hover:not(:has(a:hover))]:border-primary/30",
+      "[&:hover:not(:has(a:hover))>#hover-text]:opacity-100 [&:hover:not(:has(a:hover))>#hover-text]:translate-x-0",
+    )}
   >
     <div
       className={`size-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 ${color}`}
@@ -39,10 +50,13 @@ const ToolCard: React.FC<ToolCardProps> = ({
       {title}
     </h3>
     <p className="text-slate-500 leading-relaxed">{description}</p>
-    <div className="mt-6 flex items-center text-sm font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0">
+    <div
+      id="hover-text"
+      className="mt-6 flex items-center text-sm font-bold text-primary opacity-0 transition-opacity -translate-x-2"
+    >
       {buttonText} <ArrowRight size={16} className="ml-1" />
     </div>
-  </a>
+  </div>
 );
 
 const ToolCards: React.FC = () => {
@@ -51,8 +65,29 @@ const ToolCards: React.FC = () => {
       <ToolCard
         href="/genomebrowser"
         icon={<Columns size={28} />}
-        title="Genome Browser (Tcas5.2)"
-        description="Interactive exploration of gene structure, expression patterns, and chromatin data based on the Tcas5.2 assembly."
+        title="Genome Browser"
+        description={
+          mainSpecies === "Tcas" ? (
+            <span>
+              Interactive exploration of Gene structure, expression patterns and
+              chromatin data based on Tcas5.2 (
+              <a
+                href="https://doi.org/10.1186/s12864-019-6394-6"
+                target="_blank"
+                onClick={(e) => e.stopPropagation()}
+                className="group/link text-primary whitespace-nowrap inline-flex items-center gap-1"
+              >
+                <span className="group-hover/link:underline underline-offset-2">
+                  Herndon et al. 2020
+                </span>
+                <Icon name="open_in_new" className="text-lg text-slate-500" />
+              </a>
+              )
+            </span>
+          ) : (
+            `Interactive exploration of gene structure, expression patterns, and chromatin data based on the ${mainSpecies} assembly.`
+          )
+        }
         color="bg-orange-50 text-orange-600/80"
       />
       {hasFeature("geneIdConverter") && (
