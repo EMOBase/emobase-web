@@ -1,36 +1,8 @@
 import qs from "qs";
 
 import { type ApiService } from "./constants/api";
-import { getEnv } from "./env";
 
-/**
- * Resolves the base URL for a given service.
- * In production, this uses internal container names to allow the Astro server
- * to talk directly to backend services within the same Docker network.
- * - Production: http://service:8080/...
- * - Development/Client: Uses the public base URL
- */
-export const resolveApiBaseUrl = (service: ApiService) => {
-  const isServer = typeof window === "undefined";
-  const publicBaseUrl = getEnv("PUBLIC_APIS_BASE_URL");
-
-  // Client side always uses the public URL
-  if (!isServer) {
-    return `${publicBaseUrl}/${service}/v1`;
-  }
-
-  // Server-side logic
-  // Automatic service discovery only in production if internal networking is enabled
-  const envProd = import.meta.env.PROD || process.env.NODE_ENV === "production";
-  if (envProd && getEnv("INTERNAL_API_NETWORKING") === "true") {
-    // Internal container talk to each other usually at root or service specific root.
-    // Based on Nginx config,backend services expect requests at their root (/).
-    return `http://${service}:8080`;
-  }
-
-  // Local development fallback
-  return `${publicBaseUrl}/${service}/v1`;
-};
+import { resolveBaseUrl } from "./url";
 
 export const apiFetch = async <T>(
   service: ApiService,
@@ -53,7 +25,7 @@ export const apiFetch = async <T>(
       ...restOpts
     } = opts ?? {};
 
-    const baseURL = resolveApiBaseUrl(service);
+    const baseURL = resolveBaseUrl("api", service);
     // Ensure no double slashes when joining baseURL and request
     const sanitizedBaseURL = baseURL.endsWith("/")
       ? baseURL.slice(0, -1)

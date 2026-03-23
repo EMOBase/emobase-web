@@ -2,28 +2,25 @@ import Keycloak from "@auth/core/providers/keycloak";
 import { defineConfig } from "auth-astro";
 import { getEnv } from "./src/utils/env";
 
+import { resolveBaseUrl } from "./src/utils/url";
+
+const getKeyCloakPath = (issuerUrl) => {
+  const ibbIndex = issuerUrl.indexOf("/ibb/keycloak/");
+  return ibbIndex !== -1 ? issuerUrl.substring(ibbIndex) : "";
+};
+
 /**
  * Resolves Keycloak URLs based on the environment.
- * In production, it uses internal container names (like http://keycloak:8080)
+ * In production, it uses internal container names
  * to ensure faster and more reliable server-to-server communication.
  */
 const resolveKeycloakUrls = () => {
-  const isServer = typeof window === "undefined";
-  const isProd = import.meta.env.PROD || process.env.NODE_ENV === "production";
-  const clientUrl = getEnv("KEYCLOAK_CLIENT_URL") || getEnv("KEYCLOAK_ISSUER");
+  const issuerUrl = getEnv("KEYCLOAK_ISSUER");
 
-  if (!isServer) return { server: clientUrl, client: clientUrl };
-
-  // Server-side logic
-  if (isProd) {
-    return {
-      server: "http://keycloak:8080/ibb/keycloak/realms/ibb",
-      client: clientUrl,
-    };
-  }
-
-  // Local development fallback
-  return { server: clientUrl, client: clientUrl };
+  return {
+    server: resolveBaseUrl("keycloak") + getKeyCloakPath(issuerUrl),
+    client: issuerUrl,
+  };
 };
 
 // In-memory cache to prevent parallel refresh requests for the same token
