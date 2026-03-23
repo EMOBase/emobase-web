@@ -33,6 +33,7 @@ import { useSession } from "@/hooks/session/useSession";
 import { useFavoriteGenes } from "@/states/favoriteGenes";
 import { getEnv } from "@/utils/env";
 import { hasFeature } from "@/utils/features";
+import { mainSpecies } from "@/utils/mainSpecies";
 
 type NavItemAction = {
   icon: string;
@@ -41,7 +42,7 @@ type NavItemAction = {
 };
 
 type NavItemChild = {
-  label: string;
+  label: React.ReactNode;
   href: string;
   external?: boolean;
   actions?: NavItemAction[];
@@ -172,7 +173,7 @@ const resourceItems: NavItem[] = [
 type SidebarProps = {
   url: string;
   logo?: React.ReactNode;
-  title?: string;
+  title?: React.ReactNode;
 };
 
 const SidebarInner: React.FC<SidebarProps> = ({ url, logo, title }) => {
@@ -210,6 +211,20 @@ const SidebarInner: React.FC<SidebarProps> = ({ url, logo, title }) => {
       }
       return item;
     });
+
+  const toolItemsForNonBeetle = toolItems.map((item) => {
+    if (item.id === "BLAST") {
+      return {
+        ...item,
+        children: (item.children ?? []).map((child) => ({
+          ...child,
+          label: child.href === "/blast/" ? <>{title} Blast</> : child.label,
+        })),
+      };
+    }
+
+    return item;
+  });
 
   const renderNavs = (navItems: NavItem[]) =>
     navItems.map((item) => {
@@ -273,7 +288,7 @@ const SidebarInner: React.FC<SidebarProps> = ({ url, logo, title }) => {
                 </div>
                 {item.children!.map((child) => (
                   <DropdownMenuItem
-                    key={child.label}
+                    key={child.href}
                     render={
                       <a
                         href={child.href}
@@ -327,7 +342,7 @@ const SidebarInner: React.FC<SidebarProps> = ({ url, logo, title }) => {
                 <SidebarMenuSub>
                   {item.children!.map((child) => (
                     <SidebarMenuSubItem
-                      key={child.label}
+                      key={child.href}
                       className="group/subitem relative"
                     >
                       <SidebarMenuSubButton
@@ -401,7 +416,11 @@ const SidebarInner: React.FC<SidebarProps> = ({ url, logo, title }) => {
             Tools
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>{renderNavs(toolItems)}</SidebarMenu>
+            <SidebarMenu>
+              {renderNavs(
+                mainSpecies === "Tcas" ? toolItems : toolItemsForNonBeetle,
+              )}
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
