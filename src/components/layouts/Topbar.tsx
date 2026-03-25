@@ -27,7 +27,7 @@ function getAvatarChars(name: string) {
   return words[0][0];
 }
 
-const Topbar = () => {
+const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
   const { session, logout } = useSession();
 
   return (
@@ -79,6 +79,24 @@ const Topbar = () => {
                 >
                   <Icon name="settings" className="text-lg" />
                   Site Configuration
+                  <span className="flex-1 inline-flex justify-end">
+                    <Icon
+                      name="open_in_new"
+                      className="text-base text-slate-400"
+                    />
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  render={
+                    <a
+                      href={`${keycloakBaseUrl}/ibb/keycloak/admin/ibb/console/`}
+                      target="_blank"
+                    />
+                  }
+                  className="text-slate-600 gap-2 px-3 py-2"
+                >
+                  <Icon name="group" className="text-lg" />
+                  User Management
                   <span className="flex-1 inline-flex justify-end">
                     <Icon
                       name="open_in_new"

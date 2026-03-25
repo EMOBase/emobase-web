@@ -13,6 +13,7 @@ import LayoutConfig from "@/astros/LayoutConfig.astro";
 import EnvWarning from "@/astros/EnvWarning.astro";
 import Logo from "@/astros/Logo.astro";
 import SiteTitle from "@/astros/SiteTitle.astro";
+import { keycloakBaseUrl } from "@/utils/url";
 
 const url = Astro.url.pathname;
 
@@ -52,7 +53,7 @@ const { className } = Astro.props;
         <SiteTitle slot="title" />
       </Sidebar>
       <div class="flex-1 flex flex-col">
-        <Topbar client:load transition:persist />
+        <Topbar keycloakBaseUrl={keycloakBaseUrl} client:load />
         <main
           class={twMerge(
             "flex-1 overflow-y-auto scroll-smooth p-6 md:p-10 scroll-p-6 md:scroll-p-10",

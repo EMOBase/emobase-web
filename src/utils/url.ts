@@ -2,12 +2,14 @@ import { getEnv } from "./env";
 
 const directusUrl = getEnv("PUBLIC_DIRECTUS_URL");
 const keycloakIssuerUrl = getEnv("KEYCLOAK_ISSUER");
-const publicBaseUrl = getEnv("PUBLIC_APIS_BASE_URL");
+const apiBaseUrl = getEnv("PUBLIC_APIS_BASE_URL");
 
-const getKeyCloakBaseUrl = (issuerUrl: string) => {
+export const getKeyCloakBaseUrl = (issuerUrl: string) => {
   const ibbIndex = issuerUrl.indexOf("/ibb/keycloak/");
   return ibbIndex !== -1 ? issuerUrl.substring(0, ibbIndex) : "";
 };
+
+export const keycloakBaseUrl = getKeyCloakBaseUrl(keycloakIssuerUrl);
 
 /**
  * Resolves base URLs for server-to-server communication within Docker.
@@ -23,8 +25,8 @@ export const resolveBaseUrl = (
   if (!isServer || !isDocker)
     return {
       directus: directusUrl,
-      keycloak: getKeyCloakBaseUrl(keycloakIssuerUrl),
-      api: `${publicBaseUrl}/${service}/v1`,
+      keycloak: keycloakBaseUrl,
+      api: `${apiBaseUrl}/${service}/v1`,
     }[type];
 
   if (type === "directus") {
