@@ -88,4 +88,4 @@ export const apiFetch = async <T>(
 };
 
 export const getApiBaseUrl = (service: ApiService) =>
-  resolveApiBaseUrl(service);
+  resolveBaseUrl("api", service);
