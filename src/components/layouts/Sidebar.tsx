@@ -62,6 +62,7 @@ type NavItem = {
   label: string;
   icon: string;
   href?: string;
+  matchingHref?: string;
   external?: boolean;
   requiresAuth?: boolean;
   children?: NavItemChild[];
@@ -101,6 +102,7 @@ const toolItems: NavItem[] = [
     id: "ONTOLOGY_VIEWER",
     label: "Ontology Viewer",
     icon: "schema",
+    matchingHref: "/ontology",
     children: [
       {
         label: "Ontoscope",
@@ -124,10 +126,11 @@ const toolItems: NavItem[] = [
     id: "BLAST",
     label: "Blast",
     icon: "genetics",
+    matchingHref: "/blast",
     children: [
       {
         label: "iBB Blast",
-        href: "/blast/",
+        href: "/blast",
       },
       {
         label: "NCBI Blast",
@@ -142,7 +145,7 @@ export const getActiveView = (url: string): NavItem["id"] | undefined => {
   return homeItems
     .concat(toolItems)
     .concat(resourceItems)
-    .find((item) => item.href === url)?.id;
+    .find((item) => item.href === url || item.matchingHref === url)?.id;
 };
 
 const resourceItems: NavItem[] = [
