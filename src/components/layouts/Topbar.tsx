@@ -20,7 +20,7 @@ function getAvatarChars(name: string) {
     return words[0][0] + words[1][0];
   }
 
-  if (words[0].length > 0) {
+  if (words[0].length > 1) {
     return words[0][0] + words[0][1];
   }
 
