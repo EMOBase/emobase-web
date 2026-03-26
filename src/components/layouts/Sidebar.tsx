@@ -242,7 +242,7 @@ const SidebarInner: React.FC<SidebarProps> = ({ url, logo, title }) => {
         <SidebarMenuButton
           asChild
           size="free"
-          tooltip={isCollapsed ? undefined : item.label}
+          tooltip={item.label}
           isActive={isActive}
         >
           <a
