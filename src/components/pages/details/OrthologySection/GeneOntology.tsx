@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 import {
   Select,
@@ -47,12 +48,14 @@ type GeneOntologyProps = {
   homologs: Homolog[];
   selectedHomolog: Homolog;
   onSelectHomolog: (h: Homolog | null) => void;
+  className?: string;
 };
 
 const GeneOntology: React.FC<GeneOntologyProps> = ({
   homologs,
   selectedHomolog,
   onSelectHomolog,
+  className,
 }) => {
   const [activeTab, setActiveTab] = useState<TabId>(aspects[0].id);
 
@@ -75,7 +78,10 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({
   return (
     <div
       id="ortholog-gene-ontology"
-      className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden"
+      className={twMerge(
+        "bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden",
+        className,
+      )}
     >
       <div className="bg-gray-50/50 border-b border-gray-200 px-6 py-3 flex items-center justify-between">
         <h4 className="text-[10px] font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2">

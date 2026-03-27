@@ -1,3 +1,5 @@
+import { twMerge } from "tailwind-merge";
+
 import { Icon } from "@/components/ui/icon";
 import FlybaseGeneId from "@/components/common/FlybaseGeneId";
 
@@ -6,11 +8,21 @@ import type { Homolog } from "./types";
 type HomologTableProps = {
   homologs: Homolog[];
   onViewGO: (homolog: Homolog) => void;
+  className?: string;
 };
 
-const HomologTable: React.FC<HomologTableProps> = ({ homologs, onViewGO }) => {
+const HomologTable: React.FC<HomologTableProps> = ({
+  homologs,
+  onViewGO,
+  className,
+}) => {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div
+      className={twMerge(
+        "bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden",
+        className,
+      )}
+    >
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="bg-gray-50 border-b border-gray-200">
