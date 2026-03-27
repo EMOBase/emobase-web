@@ -10,7 +10,7 @@ type HomologTableProps = {
 
 const HomologTable: React.FC<HomologTableProps> = ({ homologs, onViewGO }) => {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="bg-gray-50 border-b border-gray-200">

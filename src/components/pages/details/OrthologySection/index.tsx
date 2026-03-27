@@ -26,14 +26,16 @@ const OrthologySection: React.FC<OrthologySectionProps> = ({
         <Icon name="group_work" weight={500} className="text-primary" />
         Closest Fly Homologs
       </h2>
-      <HomologTable homologs={homologs} onViewGO={setSelectedHomolog} />
-      {selectedHomolog && (
-        <GeneOntology
-          homologs={homologs}
-          selectedHomolog={selectedHomolog}
-          onSelectHomolog={setSelectedHomolog}
-        />
-      )}
+      <div className="flex flex-col 3xl:flex-row 3xl:items-start gap-6">
+        <HomologTable homologs={homologs} onViewGO={setSelectedHomolog} />
+        {selectedHomolog && (
+          <GeneOntology
+            homologs={homologs}
+            selectedHomolog={selectedHomolog}
+            onSelectHomolog={setSelectedHomolog}
+          />
+        )}
+      </div>
     </div>
   );
 };
