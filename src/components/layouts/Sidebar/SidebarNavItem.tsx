@@ -34,6 +34,8 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   activeView,
   isLoading,
 }) => {
+  if (item.disabled) return null;
+
   const { state } = useSidebar();
   const hasChildren = item.children && item.children.length > 0;
   const isActive = item.id && activeView === item.id;
