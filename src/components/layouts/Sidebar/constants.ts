@@ -18,8 +18,17 @@ export const homeItems: NavItem[] = [
     id: "ADMIN",
     label: "Admin Portal",
     icon: "admin_panel_settings",
-    href: "/admin",
     requiresAuth: true,
+    children: [
+      {
+        label: "Review Dashboard",
+        href: "/admin/review",
+      },
+      {
+        label: "Data Management",
+        href: "/admin/versions",
+      },
+    ],
   },
 ];
 
