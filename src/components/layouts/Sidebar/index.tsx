@@ -15,13 +15,8 @@ import type { SidebarProps } from "./types";
 
 const SidebarInner: React.FC<SidebarProps> = (props) => {
   const { url, title } = props;
-  const {
-    homeItems,
-    toolItems,
-    resourceItems,
-    activeView,
-    isLoading,
-  } = useSidebarSections(url, title);
+  const { homeItems, toolItems, resourceItems, activeView } =
+    useSidebarSections(url, title);
 
   return (
     <Sidebar collapsible="icon">
@@ -37,7 +32,6 @@ const SidebarInner: React.FC<SidebarProps> = (props) => {
                   item={item}
                   url={url}
                   activeView={activeView}
-                  isLoading={isLoading}
                 />
               ))}
             </SidebarMenu>
@@ -56,7 +50,6 @@ const SidebarInner: React.FC<SidebarProps> = (props) => {
                   item={item}
                   url={url}
                   activeView={activeView}
-                  isLoading={isLoading}
                 />
               ))}
             </SidebarMenu>
@@ -75,7 +68,6 @@ const SidebarInner: React.FC<SidebarProps> = (props) => {
                   item={item}
                   url={url}
                   activeView={activeView}
-                  isLoading={isLoading}
                 />
               ))}
             </SidebarMenu>

@@ -25,14 +25,12 @@ type SidebarNavItemProps = {
   item: NavItem;
   url: string;
   activeView?: string;
-  isLoading?: boolean;
 };
 
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   item,
   url,
   activeView,
-  isLoading,
 }) => {
   if (item.disabled) return null;
 
@@ -62,7 +60,9 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           weight={isActive ? 500 : 400}
           className="text-xl"
         />
-        <span className="text-sm font-medium flex-1 truncate">{item.label}</span>
+        <span className="text-sm font-medium flex-1 truncate">
+          {item.label}
+        </span>
         {!isCollapsed && hasChildren && (
           <Icon
             name="expand_more"
@@ -78,7 +78,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
 
   if (isCollapsed && hasChildren) {
     return (
-      <SidebarMenuItem key={`${item.id ?? item.label} ${isLoading}`}>
+      <SidebarMenuItem key={`${item.id ?? item.label} ${hasActiveChild}`}>
         <DropdownMenu>
           <DropdownMenuTrigger render={navButton} />
           <DropdownMenuContent
@@ -135,7 +135,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
 
   return (
     <Collapsible
-      key={`${item.id ?? item.label} ${isLoading}`}
+      key={`${item.id ?? item.label} ${hasActiveChild}`}
       asChild
       defaultOpen={hasActiveChild}
     >
