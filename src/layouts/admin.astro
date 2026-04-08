@@ -1,0 +1,31 @@
+---
+import { getSession } from "auth-astro/server";
+
+import Logo from "@/astros/Logo.astro";
+import SiteTitle from "@/astros/SiteTitle.astro";
+import AdminLogin from "@/components/layouts/AdminLogin";
+
+import Layout from "./default.astro";
+import BlankLayout from "./blank.astro";
+
+const session = await getSession(Astro.request);
+---
+
+{
+  session ? (
+    <Layout>
+      <slot />
+    </Layout>
+  ) : (
+    <BlankLayout>
+      <AdminLogin client:load>
+        <Logo
+          slot="logo"
+          className="size-16 rounded-2xl"
+          iconClassName="text-3xl"
+        />
+        <SiteTitle slot="title" />
+      </AdminLogin>
+    </BlankLayout>
+  )
+}
