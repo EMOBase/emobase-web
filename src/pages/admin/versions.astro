@@ -1,8 +1,9 @@
 ---
 import AdminLayout from "@/layouts/admin.astro";
+import VersionsManager from "@/components/pages/admin/versions/VersionsManager";
 ---
 
 <AdminLayout>
-  <div>Version list</div>
+  <VersionsManager client:load />
 </AdminLayout>
 ---
