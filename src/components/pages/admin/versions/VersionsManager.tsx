@@ -2,8 +2,9 @@ import React from "react";
 import { twMerge } from "tailwind-merge";
 
 import { Icon } from "@/components/ui/icon";
-import { Button } from "@/components/ui/button";
 import TableFooter from "@/components/common/TableFooter";
+
+import CreateVersionButton from "./CreateVersionButton";
 
 interface Version {
   id: string;
@@ -68,10 +69,7 @@ const VersionsManager: React.FC = () => {
             Upload and publish genomic data
           </p>
         </div>
-        <Button variant="primary">
-          <Icon name="add" weight={500} className="text-xl" />
-          Create New Version
-        </Button>
+        <CreateVersionButton />
       </div>
 
       <div className="bg-white rounded-2xl shadow-card border overflow-hidden">
