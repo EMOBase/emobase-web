@@ -6,6 +6,7 @@ export const API_SERVICES = [
   "publicationservice",
   "querypipelineservice",
   "geneservice",
+  "genomics",
 ] as const;
 
 export type ApiService = (typeof API_SERVICES)[number];
