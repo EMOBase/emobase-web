@@ -217,8 +217,20 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "v3.5.0" }) => {
   return (
     <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Info (Mocked from design) */}
-      <div className="px-2">
-        <h1 className="text-2xl font-bold">Version {name}</h1>
+      <div className="px-2 space-y-4">
+        <a
+          href="/admin/versions"
+          className="inline-flex items-center gap-2 text-[10px] font-bold text-slate-400 hover:text-primary transition-colors group tracking-widest uppercase"
+        >
+          <Icon
+            name="arrow_back"
+            className="text-lg group-hover:-translate-x-1 transition-transform"
+          />
+          Back to Data Management
+        </a>
+        <h1 className="text-3xl font-bold text-slate-900 font-display tracking-tight">
+          Version {name}
+        </h1>
       </div>
 
       {/* Main Files Grid */}
