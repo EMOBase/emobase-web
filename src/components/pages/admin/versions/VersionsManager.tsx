@@ -116,9 +116,12 @@ const VersionsManager: React.FC = () => {
                   <td className="px-8 py-6 relative">
                     <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-primary rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="flex items-center gap-3">
-                      <span className="font-bold text-slate-700 tracking-tight">
+                      <a
+                        href={`/admin/versions/${version.id}`}
+                        className="font-bold text-slate-700 tracking-tight hover:text-primary transition-colors cursor-pointer"
+                      >
                         {version.id}
-                      </span>
+                      </a>
                       {version.isCurrent && (
                         <span className="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-primary-light/20 text-primary-bold">
                           CURRENT
