@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { parseISO, format } from "date-fns";
 
 import genomicsService, { type VersionItem } from "@/utils/services/genomics";
+import useAsyncData from "@/hooks/useAsyncData";
 import { Icon } from "@/components/ui/icon";
 import TableFooter from "@/components/common/TableFooter";
+import BeetleLoading from "@/components/common/BeetleLoading";
 
 import CreateVersionButton from "./CreateVersionButton";
 
@@ -33,13 +35,19 @@ const StatusBadge = ({ status }: { status: VersionItem["status"] }) => {
 };
 
 const VersionsManager: React.FC = () => {
-  const [versions, setVersions] = useState<VersionItem[]>([]);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    fetchVersions().then((response) => {
-      setVersions(response.data.versions);
-    });
-  }, []);
+  const { data, loading } = useAsyncData(
+    () =>
+      fetchVersions({
+        pageSize: itemsPerPage,
+        page,
+      }),
+    [itemsPerPage, page],
+  );
+
+  const versions = data?.data.versions ?? [];
 
   return (
     <div className="max-w-6xl space-y-8 animate-in fade-in duration-700 mx-auto">
@@ -91,74 +99,91 @@ const VersionsManager: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50/50">
-              {versions.map((version) => (
-                <tr
-                  key={version.id}
-                  className="group hover:bg-slate-50/50 transition-colors"
-                >
-                  <td className="px-8 py-6 relative">
-                    <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-primary rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="flex items-center gap-3">
-                      <a
-                        href={`/admin/versions/${version.name}`}
-                        className="font-bold text-slate-700 tracking-tight hover:text-primary transition-colors cursor-pointer"
-                      >
-                        {version.name}
-                      </a>
-                      {version.isDefault && (
-                        <span className="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-primary-light/20 text-primary-bold">
-                          CURRENT
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <StatusBadge status={version.status} />
-                  </td>
-                  <td className="px-8 py-6 text-slate-500 font-medium text-sm">
-                    {format(parseISO(version.createdAt), "P")}
-                  </td>
-                  <td className="px-8 py-6 text-slate-500 font-bold text-sm">
-                    {version.totalFileSize}
-                  </td>
-                  <td className="px-8 py-6 text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      {version.status === "DRAFT" ? null : version.status ===
-                        "PROCESSING" ? (
-                        <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors">
-                          <Icon name="close" className="text-xl" />
-                        </button>
-                      ) : (
-                        <>
-                          {version.isDefault && (
-                            <button className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors">
-                              <Icon name="edit" className="text-xl" />
-                            </button>
-                          )}
-                          <button className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors">
-                            <Icon name="download" className="text-xl" />
-                          </button>
-                          {!version.isDefault && (
-                            <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors">
-                              <Icon name="delete" className="text-xl" />
-                            </button>
-                          )}
-                        </>
-                      )}
-                    </div>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="relative h-48">
+                    <BeetleLoading title="Getting Data" />
                   </td>
                 </tr>
-              ))}
+              ) : versions.length > 0 ? (
+                versions.map((version) => (
+                  <tr
+                    key={version.id}
+                    className="group hover:bg-slate-50/50 transition-colors"
+                  >
+                    <td className="px-8 py-6 relative">
+                      <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-primary rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="flex items-center gap-3">
+                        <a
+                          href={`/admin/versions/${version.name}`}
+                          className="font-bold text-slate-700 tracking-tight hover:text-primary transition-colors cursor-pointer"
+                        >
+                          {version.name}
+                        </a>
+                        {version.isDefault && (
+                          <span className="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-primary-light/20 text-primary-bold">
+                            CURRENT
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <StatusBadge status={version.status} />
+                    </td>
+                    <td className="px-8 py-6 text-slate-500 font-medium text-sm">
+                      {format(parseISO(version.createdAt), "P")}
+                    </td>
+                    <td className="px-8 py-6 text-slate-500 font-bold text-sm">
+                      {version.totalFileSize}
+                    </td>
+                    <td className="px-8 py-6 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        {version.status === "DRAFT" ? null : version.status ===
+                          "PROCESSING" ? (
+                          <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors">
+                            <Icon name="close" className="text-xl" />
+                          </button>
+                        ) : (
+                          <>
+                            {version.isDefault && (
+                              <button className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors">
+                                <Icon name="edit" className="text-xl" />
+                              </button>
+                            )}
+                            <button className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors">
+                              <Icon name="download" className="text-xl" />
+                            </button>
+                            {!version.isDefault && (
+                              <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors">
+                                <Icon name="delete" className="text-xl" />
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="px-8 py-12 text-center text-slate-400 text-sm"
+                  >
+                    No version found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
         <TableFooter
-          itemsPerPage={10}
-          setItemsPerPage={() => {}}
-          page={1}
-          setPage={() => {}}
-          totalRecord={3}
+          itemsPerPage={itemsPerPage}
+          setItemsPerPage={setItemsPerPage}
+          page={page}
+          setPage={setPage}
+          totalRecord={data?.data.total ?? 0}
           className="px-8"
         />
       </div>

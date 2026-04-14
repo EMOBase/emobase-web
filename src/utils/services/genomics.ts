@@ -35,8 +35,11 @@ type FetchVersionsResponse = {
 };
 
 const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
-  const fetchVersions = async () => {
-    return await fetch<FetchVersionsResponse>("genomics", "/versions", {
+  const fetchVersions = async (opts?: { page: number; pageSize: number }) => {
+    const { page = 1, pageSize = 10 } = opts ?? {};
+    const url = `/versions?page=${page}&page_size=${pageSize}`;
+
+    return await fetch<FetchVersionsResponse>("genomics", url, {
       authorization: `Bearer ${ACCESS_TOKEN}`,
     });
   };
