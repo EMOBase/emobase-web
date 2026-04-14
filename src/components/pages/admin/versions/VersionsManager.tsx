@@ -1,53 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
+import { parseISO, format } from "date-fns";
 
+import genomicsService, { type VersionItem } from "@/utils/services/genomics";
 import { Icon } from "@/components/ui/icon";
 import TableFooter from "@/components/common/TableFooter";
 
 import CreateVersionButton from "./CreateVersionButton";
 
-interface Version {
-  id: string;
-  status: "PROCESSING" | "LIVE" | "ARCHIVED";
-  isCurrent?: boolean;
-  createdDate: string;
-  totalSize: string;
-}
+const { fetchVersions } = genomicsService();
 
-const mockVersions: Version[] = [
-  {
-    id: "Tcas5.2",
-    status: "PROCESSING",
-    createdDate: "Oct 24, 2023, 11:15 AM",
-    totalSize: "412.5 GB",
-  },
-  {
-    id: "Tcas5.1",
-    status: "LIVE",
-    isCurrent: true,
-    createdDate: "Oct 20, 2023, 09:30 AM",
-    totalSize: "1.2 TB",
-  },
-  {
-    id: "Tcas4.5",
-    status: "ARCHIVED",
-    createdDate: "Sep 12, 2023, 04:45 PM",
-    totalSize: "890.1 GB",
-  },
-];
-
-const StatusBadge = ({ status }: { status: Version["status"] }) => {
+const StatusBadge = ({ status }: { status: VersionItem["status"] }) => {
   const styles = {
     PROCESSING: "bg-amber-50 text-amber-600 border-amber-200/50",
-    LIVE: "bg-emerald-50 text-emerald-600 border-emerald-200/50",
-    ARCHIVED: "bg-slate-100 text-slate-500 border-slate-200/50",
+    READY: "bg-emerald-50 text-emerald-600 border-emerald-200/50",
+    DRAFT: "bg-slate-100 text-slate-500 border-slate-200/50",
+    ERROR: "bg-red-50 text-red-600 border-red-200/50",
   };
 
   return (
     <div className="flex items-center gap-2">
       <span
         className={twMerge(
-          "px-2.5 py-0.5 rounded-sm text-[10px] font-bold uppercase tracking-wider border",
+          "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
           styles[status],
         )}
       >
@@ -58,6 +33,14 @@ const StatusBadge = ({ status }: { status: Version["status"] }) => {
 };
 
 const VersionsManager: React.FC = () => {
+  const [versions, setVersions] = useState<VersionItem[]>([]);
+
+  useEffect(() => {
+    fetchVersions().then((response) => {
+      setVersions(response.data.versions);
+    });
+  }, []);
+
   return (
     <div className="max-w-6xl space-y-8 animate-in fade-in duration-700 mx-auto">
       <div className="flex items-center justify-between">
@@ -108,7 +91,7 @@ const VersionsManager: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50/50">
-              {mockVersions.map((version) => (
+              {versions.map((version) => (
                 <tr
                   key={version.id}
                   className="group hover:bg-slate-50/50 transition-colors"
@@ -117,12 +100,12 @@ const VersionsManager: React.FC = () => {
                     <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-primary rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="flex items-center gap-3">
                       <a
-                        href={`/admin/versions/${version.id}`}
+                        href={`/admin/versions/${version.name}`}
                         className="font-bold text-slate-700 tracking-tight hover:text-primary transition-colors cursor-pointer"
                       >
-                        {version.id}
+                        {version.name}
                       </a>
-                      {version.isCurrent && (
+                      {version.isDefault && (
                         <span className="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-primary-light/20 text-primary-bold">
                           CURRENT
                         </span>
@@ -133,20 +116,21 @@ const VersionsManager: React.FC = () => {
                     <StatusBadge status={version.status} />
                   </td>
                   <td className="px-8 py-6 text-slate-500 font-medium text-sm">
-                    {version.createdDate}
+                    {format(parseISO(version.createdAt), "P")}
                   </td>
                   <td className="px-8 py-6 text-slate-500 font-bold text-sm">
-                    {version.totalSize}
+                    {version.totalFileSize}
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      {version.status === "PROCESSING" ? (
+                      {version.status === "DRAFT" ? null : version.status ===
+                        "PROCESSING" ? (
                         <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors">
                           <Icon name="close" className="text-xl" />
                         </button>
                       ) : (
                         <>
-                          {version.isCurrent && (
+                          {version.isDefault && (
                             <button className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors">
                               <Icon name="edit" className="text-xl" />
                             </button>
@@ -154,7 +138,7 @@ const VersionsManager: React.FC = () => {
                           <button className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors">
                             <Icon name="download" className="text-xl" />
                           </button>
-                          {!version.isCurrent && (
+                          {!version.isDefault && (
                             <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors">
                               <Icon name="delete" className="text-xl" />
                             </button>
