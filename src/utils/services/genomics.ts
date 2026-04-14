@@ -4,15 +4,6 @@ import { apiFetch } from "@/utils/apiFetch";
 const ACCESS_TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvdWxvdWRpIn0.xDl3GuKVz743m9Cmit_ME4dzr91bIaJiC-2ExUNwK0c";
 
-type CreateVersionInput = {
-  name: string;
-};
-
-type CreateVersionResult = {
-  ID: number;
-  Name: string;
-};
-
 export type VersionItem = {
   id: string;
   name: string;
@@ -34,6 +25,20 @@ type FetchVersionsResponse = {
   requestId: string;
 };
 
+type CreateVersionInput = {
+  name: string;
+};
+
+type CreateVersionResponse = {
+  data: {
+    id: string;
+    name: string;
+    createdAt: string;
+    createdBy: string;
+  };
+  requestId: string;
+};
+
 const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   const fetchVersions = async (opts?: { page: number; pageSize: number }) => {
     const { page = 1, pageSize = 10 } = opts ?? {};
@@ -45,7 +50,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   const createVersion = async (versionInput: CreateVersionInput) => {
-    return await fetch<CreateVersionResult>("genomics", "/versions", {
+    return await fetch<CreateVersionResponse>("genomics", "/versions", {
       method: "POST",
       authorization: `Bearer ${ACCESS_TOKEN}`,
       body: {

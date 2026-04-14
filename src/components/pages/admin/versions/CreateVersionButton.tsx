@@ -46,7 +46,7 @@ const CreateVersionButton = () => {
       );
       toast.success("New version initialized");
       setOpen(false);
-      navigate(`/admin/versions/${data.Name}`);
+      navigate(`/admin/versions/${data.data.name}`);
     },
     onSubmitInvalid() {
       const invalidInput = document.querySelector(
