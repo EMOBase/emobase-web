@@ -102,9 +102,10 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
 
   const fetchJobs = async (version: string) => {
     return await fetch<FetchJobResponse>("genomics", "/jobs", {
-      body: {
+      query: {
         version,
       },
+      authorization: `Bearer ${ACCESS_TOKEN}`,
     });
   };
 
