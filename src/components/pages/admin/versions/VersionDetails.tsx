@@ -56,7 +56,7 @@ const mockMainFiles: FileStatus[] = [
     theme: "orange",
   },
   {
-    name: "genomic.faa",
+    name: "rna.fna",
     category: "PROTEIN SEQUENCE",
     status: "INDEXING",
     progress: 84,
@@ -65,7 +65,7 @@ const mockMainFiles: FileStatus[] = [
     theme: "orange",
   },
   {
-    name: "transcript.gbk",
+    name: "cds.fna",
     category: "TRANSCRIPTS",
     status: "VALIDATING",
     progress: 45,
@@ -75,20 +75,14 @@ const mockMainFiles: FileStatus[] = [
     theme: "orange",
   },
   {
-    name: "protein.fa",
+    name: "protein.faa",
     category: "READY",
     status: "READY",
     progress: 100,
     progressTitle: "STRUCTURAL ANNOTATION",
     size: "150 MB",
-    icon: "check_circle",
+    icon: "conversion_path",
     theme: "blue",
-  },
-  {
-    name: "assembly.stats",
-    category: "ASSEMBLY METRICS",
-    status: "PENDING",
-    icon: "bar_chart",
   },
 ];
 
