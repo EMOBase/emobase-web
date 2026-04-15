@@ -1,3 +1,5 @@
+import { Upload as TusUpload } from "tus-js-client";
+
 import { apiFetch } from "@/utils/apiFetch";
 
 /* Fixed token to test for now, will remove later in favor of useService() that apply token from session automatically */
@@ -58,6 +60,26 @@ type FetchJobResponse = {
   requestId: string;
 };
 
+type UploadInput = {
+  file: File;
+  version: string;
+  fileType: string;
+  fileName?: string;
+  order?: string;
+  algorithm?: string;
+  onProgress?: (
+    percentage: number,
+    bytesUploaded: number,
+    bytesTotal: number,
+  ) => void;
+};
+
+export type UploadResponse = {
+  uploadUrl?: string;
+};
+
+const GENOMICS_BASE_URL = "http://localhost:8000/api";
+
 const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   const fetchVersions = async (opts?: { page: number; pageSize: number }) => {
     const { page = 1, pageSize = 10 } = opts ?? {};
@@ -79,10 +101,52 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   const fetchJobs = async (version: string) => {
-    return await fetch("genomics", "/jobs", {
+    return await fetch<FetchJobResponse>("genomics", "/jobs", {
       body: {
         version,
       },
+    });
+  };
+
+  const upload = async ({
+    file,
+    version,
+    fileType,
+    fileName,
+    order,
+    algorithm,
+    onProgress,
+  }: UploadInput): Promise<UploadResponse> => {
+    return await new Promise((resolve, reject) => {
+      const tusUpload = new TusUpload(file, {
+        // Trailing slash avoids nginx/tusd redirect on preflight.
+        endpoint: `${GENOMICS_BASE_URL}/uploads/`,
+        retryDelays: [0, 1000, 3000, 5000],
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+        metadata: {
+          fileType,
+          fileName: fileName ?? file.name,
+          version,
+          ...(order ? { order } : {}),
+          ...(algorithm ? { algorithm } : {}),
+        },
+        removeFingerprintOnSuccess: true,
+        onError: (error) => {
+          reject(error);
+        },
+        onProgress: (bytesUploaded, bytesTotal) => {
+          const percentage =
+            bytesTotal > 0 ? (bytesUploaded / bytesTotal) * 100 : 0;
+          onProgress?.(percentage, bytesUploaded, bytesTotal);
+        },
+        onSuccess: () => {
+          resolve({ uploadUrl: tusUpload.url ?? undefined });
+        },
+      });
+
+      tusUpload.start();
     });
   };
 
@@ -90,6 +154,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     fetchVersions,
     createVersion,
     fetchJobs,
+    upload,
   };
 };
 

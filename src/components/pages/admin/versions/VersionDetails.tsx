@@ -1,12 +1,23 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { toast } from "sonner";
 
 import useAsyncData from "@/hooks/useAsyncData";
 import genomicsService from "@/utils/services/genomics";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 
-const { fetchJobs } = genomicsService();
+const { fetchJobs, upload } = genomicsService();
+const ALLOWED_UPLOAD_FILE_TYPES = new Set([
+  "genomic.fna",
+  "genomic.gff",
+  "rna.fna",
+  "cds.fna",
+  "protein.faa",
+  "orthology.tsv",
+  "fb_synonym.tsv",
+  "fbgn_fbtr_fbpp.tsv",
+]);
 
 interface FileStatus {
   name: string;
@@ -130,7 +141,17 @@ const ProgressBar = ({
   );
 };
 
-const FileCard = ({ file }: { file: FileStatus }) => {
+const FileCard = ({
+  file,
+  onChooseFile,
+  isUploading = false,
+  uploadProgress = 0,
+}: {
+  file: FileStatus;
+  onChooseFile: (fileName: string) => void;
+  isUploading?: boolean;
+  uploadProgress?: number;
+}) => {
   const isReady = file.status === "READY";
   const isPending = file.status === "PENDING";
 
@@ -194,9 +215,15 @@ const FileCard = ({ file }: { file: FileStatus }) => {
             showComplete={isReady}
           />
         ) : isPending ? (
-          <button className="flex-1 flex items-center justify-center gap-3 border-2 border-dashed border-slate-200 rounded-xl py-3 text-slate-400 hover:border-slate-300 hover:bg-slate-50 transition-all font-bold text-sm">
+          <button
+            onClick={() => onChooseFile(file.name)}
+            disabled={isUploading}
+            className="flex-1 flex items-center justify-center gap-3 border-2 border-dashed border-slate-200 rounded-xl py-3 text-slate-400 hover:border-slate-300 hover:bg-slate-50 transition-all font-bold text-sm disabled:cursor-not-allowed disabled:opacity-70"
+          >
             <Icon name="upload_file" className="text-xl" />
-            CHOOSE FILE
+            {isUploading
+              ? `UPLOADING ${Math.round(uploadProgress)}%`
+              : "CHOOSE FILE"}
           </button>
         ) : null}
 
@@ -220,15 +247,74 @@ const FileCard = ({ file }: { file: FileStatus }) => {
   );
 };
 
-const VersionDetails: React.FC<{ name?: string }> = ({ name = "v3.5.0" }) => {
-  const { data, loading } = useAsyncData(() => fetchJobs(name));
+const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
+  const { data, loading } = useAsyncData(() => fetchJobs(name), [name]);
+  console.log({ data, loading });
 
-  const jobs = data?.data ?? [];
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedTargetFile, setSelectedTargetFile] = useState<string | null>(
+    null,
+  );
+  const [uploadingTargetFile, setUploadingTargetFile] = useState<string | null>(
+    null,
+  );
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  console.log({ jobs });
+  const openFilePicker = (fileName: string) => {
+    setSelectedTargetFile(fileName);
+    fileInputRef.current?.click();
+  };
+
+  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file || !selectedTargetFile) {
+      return;
+    }
+
+    if (!ALLOWED_UPLOAD_FILE_TYPES.has(selectedTargetFile)) {
+      toast.error(`Unsupported upload type: ${selectedTargetFile}`);
+      event.target.value = "";
+      return;
+    }
+
+    if (!file.name.endsWith(".gz") && !file.name.endsWith(".gzip")) {
+      toast.error("Only .gz or .gzip files are accepted");
+      event.target.value = "";
+      return;
+    }
+
+    try {
+      setUploadingTargetFile(selectedTargetFile);
+      setUploadProgress(0);
+
+      await upload({
+        file,
+        version: name,
+        fileType: selectedTargetFile,
+        onProgress: (progress) => setUploadProgress(progress),
+      });
+
+      toast.success(`Uploaded ${file.name}`);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast.error(`Failed to upload ${file.name}`);
+    } finally {
+      setUploadingTargetFile(null);
+      setSelectedTargetFile(null);
+      setUploadProgress(0);
+      event.target.value = "";
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        onChange={onFileChange}
+      />
       {/* Header Info (Mocked from design) */}
       <div className="px-2 space-y-4">
         <a
@@ -249,7 +335,13 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "v3.5.0" }) => {
       {/* Main Files Grid */}
       <div className="space-y-4 relative">
         {mockMainFiles.map((file, idx) => (
-          <FileCard key={idx} file={file} />
+          <FileCard
+            key={idx}
+            file={file}
+            onChooseFile={openFilePicker}
+            isUploading={uploadingTargetFile === file.name}
+            uploadProgress={uploadProgress}
+          />
         ))}
       </div>
 
