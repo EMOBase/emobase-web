@@ -1,7 +1,12 @@
 import React from "react";
 import { twMerge } from "tailwind-merge";
+
+import useAsyncData from "@/hooks/useAsyncData";
+import genomicsService from "@/utils/services/genomics";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+
+const { fetchJobs } = genomicsService();
 
 interface FileStatus {
   name: string;
@@ -131,15 +136,17 @@ const FileCard = ({ file }: { file: FileStatus }) => {
 
   return (
     <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex items-center gap-6 relative overflow-hidden group hover:shadow-md transition-shadow">
-      {/* Sidebar indicator */}
-      {!isPending && (
-        <div
-          className={twMerge(
-            "absolute left-0 top-6 bottom-6 w-1 rounded-r-full",
-            file.theme === "blue" ? "bg-blue-600" : "bg-[#c2410c]",
-          )}
-        />
-      )}
+      {/* Left-side indicator */}
+      <div
+        className={twMerge(
+          "absolute left-0 top-6 bottom-6 w-1 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity",
+          isPending
+            ? "bg-neutral-400"
+            : isReady
+              ? "bg-blue-600"
+              : "bg-[#c2410c]",
+        )}
+      />
 
       {/* Icon */}
       <div
@@ -214,6 +221,12 @@ const FileCard = ({ file }: { file: FileStatus }) => {
 };
 
 const VersionDetails: React.FC<{ name?: string }> = ({ name = "v3.5.0" }) => {
+  const { data, loading } = useAsyncData(() => fetchJobs(name));
+
+  const jobs = data?.data ?? [];
+
+  console.log({ jobs });
+
   return (
     <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Info (Mocked from design) */}
@@ -251,11 +264,8 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "v3.5.0" }) => {
               Supplementary clinical evidence and batch records
             </p>
           </div>
-          <Button
-            variant="ghost"
-            className="bg-white border rounded-lg text-orange-800 hover:bg-orange-50 font-bold text-xs px-4"
-          >
-            <Icon name="add_circle" className="text-lg" />
+          <Button variant="outline" className="font-bold text-xs px-4 py-2">
+            <Icon name="add_circle" weight={500} className="text-lg" />
             APPEND DATASET
           </Button>
         </div>
@@ -266,9 +276,11 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "v3.5.0" }) => {
               key={idx}
               className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex items-center gap-6 relative overflow-hidden group transition-all hover:shadow-md"
             >
-              {file.status === "UPLOADING" && (
-                <div className="absolute left-0 top-6 bottom-6 w-1 bg-[#c2410c] rounded-r-full" />
-              )}
+              <div
+                className={
+                  "absolute left-0 top-6 bottom-6 w-1 rounded-r-full bg-[#c2410c] opacity-0 group-hover:opacity-100 transition-opacity"
+                }
+              />
 
               <div className="size-12 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors shrink-0">
                 <Icon

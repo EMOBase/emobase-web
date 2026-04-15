@@ -39,6 +39,25 @@ type CreateVersionResponse = {
   requestId: string;
 };
 
+type JobItem = {
+  id: string;
+  versionId: string;
+  type:
+    | "GENOMIC.FNA"
+    | "GENOMIC.GFF"
+    | "RNA.FNA"
+    | "PROTEIN.FAA"
+    | "ORTHOLOGY.TSV"
+    | "SYNONYM";
+  status: "PENDING" | "RUNNING" | "DONE" | "FAILED";
+  error?: string;
+};
+
+type FetchJobResponse = {
+  data: JobItem[];
+  requestId: string;
+};
+
 const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   const fetchVersions = async (opts?: { page: number; pageSize: number }) => {
     const { page = 1, pageSize = 10 } = opts ?? {};
@@ -59,9 +78,18 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     });
   };
 
+  const fetchJobs = async (version: string) => {
+    return await fetch("genomics", "/jobs", {
+      body: {
+        version,
+      },
+    });
+  };
+
   return {
     fetchVersions,
     createVersion,
+    fetchJobs,
   };
 };
 
