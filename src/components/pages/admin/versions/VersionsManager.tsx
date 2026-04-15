@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { parseISO, format } from "date-fns";
 
+import { formatBytes } from "@/utils/format";
 import genomicsService, { type VersionItem } from "@/utils/services/genomics";
 import useAsyncData from "@/hooks/useAsyncData";
 import { Icon } from "@/components/ui/icon";
@@ -134,7 +135,7 @@ const VersionsManager: React.FC = () => {
                       {format(parseISO(version.createdAt), "P")}
                     </td>
                     <td className="px-8 py-6 text-slate-500 font-bold text-sm">
-                      {version.totalFileSize}
+                      {formatBytes(version.totalFileSize)}
                     </td>
                     <td className="px-8 py-6 text-right">
                       <div className="flex items-center justify-end gap-1">
