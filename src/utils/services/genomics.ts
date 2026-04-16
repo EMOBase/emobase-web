@@ -48,6 +48,7 @@ type JobItem = {
     | "GENOMIC.FNA"
     | "GENOMIC.GFF"
     | "RNA.FNA"
+    | "CDS.FNA"
     | "PROTEIN.FAA"
     | "ORTHOLOGY.TSV"
     | "SYNONYM";
