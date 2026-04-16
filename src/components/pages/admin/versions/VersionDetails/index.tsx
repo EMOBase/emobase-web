@@ -6,8 +6,14 @@ import useAsyncData from "@/hooks/useAsyncData";
 import genomicsService from "@/utils/services/genomics";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const { fetchJobs, upload } = genomicsService();
+
 const ALLOWED_UPLOAD_FILE_TYPES = new Set([
   "genomic.fna",
   "genomic.gff",
@@ -22,10 +28,11 @@ const ALLOWED_UPLOAD_FILE_TYPES = new Set([
 interface FileStatus {
   name: string;
   category: string;
-  status: "PENDING" | "UPLOADING" | "INDEXING" | "VALIDATING" | "READY";
+  status: "PENDING" | "UPLOADING" | "PROCESSING" | "READY" | "ERROR";
   progress?: number;
   progressTitle?: string;
   size?: string;
+  error?: string;
   icon: string;
   theme?: "orange" | "blue";
 }
@@ -41,13 +48,13 @@ interface SecondaryFile {
 const mockMainFiles: FileStatus[] = [
   {
     name: "genomic.fna",
-    category: "NUCLEOTIDE SEQUENCE",
+    category: "Genome Sequence",
     status: "PENDING",
     icon: "description",
   },
   {
     name: "genomic.gff",
-    category: "UPLOADING",
+    category: "Genome Annotation",
     status: "UPLOADING",
     progress: 65,
     progressTitle: "IN TRANSIT",
@@ -57,17 +64,18 @@ const mockMainFiles: FileStatus[] = [
   },
   {
     name: "rna.fna",
-    category: "PROTEIN SEQUENCE",
-    status: "INDEXING",
+    category: "RNA Sequences",
+    status: "PROCESSING",
     progress: 84,
-    progressTitle: "ALIGNMENT INDEXING",
+    progressTitle: "PROCESSING DATA",
     icon: "science",
     theme: "orange",
   },
   {
     name: "cds.fna",
-    category: "TRANSCRIPTS",
-    status: "VALIDATING",
+    category: "Coding Sequences",
+    status: "ERROR",
+    error: "Invalid file format, cannot parse, please follow ABC format",
     progress: 45,
     progressTitle: "METADATA SYNC",
     size: "1.1 GB",
@@ -76,10 +84,9 @@ const mockMainFiles: FileStatus[] = [
   },
   {
     name: "protein.faa",
-    category: "READY",
+    category: "Protein Sequences",
     status: "READY",
     progress: 100,
-    progressTitle: "STRUCTURAL ANNOTATION",
     size: "150 MB",
     icon: "conversion_path",
     theme: "blue",
@@ -148,9 +155,15 @@ const FileCard = ({
 }) => {
   const isReady = file.status === "READY";
   const isPending = file.status === "PENDING";
+  const isError = file.status === "ERROR";
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex items-center gap-6 relative overflow-hidden group hover:shadow-md transition-shadow">
+    <div
+      className={twMerge(
+        "bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex items-center gap-6 relative overflow-hidden group hover:shadow-md transition-shadow",
+        isError && "bg-[#FFF5F5] border-[#FFE4E4]",
+      )}
+    >
       {/* Left-side indicator */}
       <div
         className={twMerge(
@@ -159,7 +172,9 @@ const FileCard = ({
             ? "bg-neutral-400"
             : isReady
               ? "bg-blue-600"
-              : "bg-[#c2410c]",
+              : isError
+                ? "bg-red-500"
+                : "bg-[#c2410c]",
         )}
       />
 
@@ -171,27 +186,42 @@ const FileCard = ({
             ? "bg-blue-50 text-blue-600"
             : isPending
               ? "bg-slate-50 text-slate-400"
-              : "bg-orange-50 text-orange-600",
+              : isError
+                ? "bg-red-100 text-red-600"
+                : "bg-orange-50 text-orange-600",
         )}
       >
         <Icon
           name={file.icon}
           className="text-3xl"
           weight={500}
-          fill={isReady}
+          fill={isReady || isError}
         />
       </div>
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-center gap-2">
           <h3 className="text-lg font-bold text-slate-900 truncate">
             {file.name}
           </h3>
           {file.size && (
             <span className="text-xs font-medium text-slate-400">
-              {file.size} • {file.status}
+              {file.size}
             </span>
+          )}
+          {isError && file.error && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="flex items-center justify-center p-0.5 rounded-full hover:bg-red-100/50 transition-colors">
+                  <Icon
+                    name="error_outline"
+                    className="text-red-500 text-sm cursor-help"
+                  />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">{file.error}</TooltipContent>
+            </Tooltip>
           )}
         </div>
         <p className="text-[11px] font-bold text-slate-400 tracking-wider uppercase mt-0.5">
@@ -201,7 +231,15 @@ const FileCard = ({
 
       {/* Progress or Button */}
       <div className="w-1/2 flex items-center gap-8">
-        {!isPending && file.progress !== undefined ? (
+        {isError ? (
+          <button
+            onClick={() => onChooseFile(file.name)}
+            className="flex-1 flex items-center justify-center gap-3 border-2 border-dashed border-red-200 rounded-xl py-3 text-red-700 hover:border-red-300 hover:bg-red-100/30 transition-all font-bold text-xs tracking-widest"
+          >
+            <Icon name="refresh" className="text-xl" />
+            RE-UPLOAD
+          </button>
+        ) : !isPending && file.progress !== undefined ? (
           <ProgressBar
             progress={file.progress}
             title={file.progressTitle || ""}
@@ -221,7 +259,6 @@ const FileCard = ({
           </button>
         ) : null}
 
-        {/* Status Badge */}
         <div className="w-24 flex justify-end">
           <span
             className={twMerge(
@@ -230,7 +267,9 @@ const FileCard = ({
                 ? "bg-blue-600 text-white"
                 : isPending
                   ? "bg-slate-100 text-slate-400"
-                  : "bg-orange-100 text-orange-600",
+                  : isError
+                    ? "bg-[#FFE4E4] text-[#D13434]"
+                    : "bg-orange-100 text-orange-600",
             )}
           >
             {file.status}
