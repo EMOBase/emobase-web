@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
 
@@ -45,53 +45,31 @@ interface SecondaryFile {
   actionIcon: "close" | "delete";
 }
 
-const mockMainFiles: FileStatus[] = [
-  {
-    name: "genomic.fna",
+const MAIN_FILE_CONFIGS: Record<
+  string,
+  { category: string; icon: string; theme?: "orange" | "blue" }
+> = {
+  "genomic.fna": {
     category: "Genome Sequence",
-    status: "PENDING",
     icon: "description",
   },
-  {
-    name: "genomic.gff",
+  "genomic.gff": {
     category: "Genome Annotation",
-    status: "UPLOADING",
-    progress: 65,
-    progressTitle: "IN TRANSIT",
-    size: "412 MB",
     icon: "numbers",
-    theme: "orange",
   },
-  {
-    name: "rna.fna",
+  "rna.fna": {
     category: "RNA Sequences",
-    status: "PROCESSING",
-    progress: 84,
-    progressTitle: "PROCESSING DATA",
     icon: "science",
-    theme: "orange",
   },
-  {
-    name: "cds.fna",
+  "cds.fna": {
     category: "Coding Sequences",
-    status: "ERROR",
-    error: "Invalid file format, cannot parse, please follow ABC format",
-    progress: 45,
-    progressTitle: "METADATA SYNC",
-    size: "1.1 GB",
     icon: "data_object",
-    theme: "orange",
   },
-  {
-    name: "protein.faa",
+  "protein.faa": {
     category: "Protein Sequences",
-    status: "READY",
-    progress: 100,
-    size: "150 MB",
     icon: "conversion_path",
-    theme: "blue",
   },
-];
+};
 
 const mockSecondaryFiles: SecondaryFile[] = [
   {
@@ -281,8 +259,21 @@ const FileCard = ({
 };
 
 const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
-  const { data, loading } = useAsyncData(() => fetchJobs(name), [name]);
-  console.log({ data, loading });
+  const [refreshKey, setRefreshKey] = useState(0);
+  const { data } = useAsyncData(() => fetchJobs(name), [name, refreshKey]);
+
+  const refresh = () => setRefreshKey((prev) => prev + 1);
+
+  useEffect(() => {
+    const hasActiveJobs = data?.data?.some(
+      (job) => job.status === "PENDING" || job.status === "RUNNING",
+    );
+
+    if (hasActiveJobs) {
+      const interval = setInterval(refresh, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [data]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedTargetFile, setSelectedTargetFile] = useState<string | null>(
@@ -292,6 +283,51 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     null,
   );
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  const mainFiles = React.useMemo(() => {
+    const jobs = data?.data || [];
+    return Object.entries(MAIN_FILE_CONFIGS).map(([fileName, config]) => {
+      const job = jobs.find(
+        (j) => j.type.toLowerCase() === fileName.toLowerCase(),
+      );
+
+      let status: FileStatus["status"] = "PENDING";
+      let progress = 0;
+      let progressTitle = "";
+      let error = "";
+
+      if (uploadingTargetFile === fileName) {
+        status = "UPLOADING";
+        progress = uploadProgress;
+        progressTitle = "IN TRANSIT";
+      } else if (job) {
+        if (job.status === "DONE") {
+          status = "READY";
+          progress = 100;
+        } else if (job.status === "FAILED") {
+          status = "ERROR";
+          error = job.error || "Processing failed";
+          progress = 100; // Show full red bar or something? Or maybe just keep old progress.
+        } else {
+          // PENDING or RUNNING
+          status = "PROCESSING";
+          progress = job.status === "RUNNING" ? 60 : 20; // Mock progress since BE doesn't provide it
+          progressTitle =
+            job.status === "RUNNING" ? "PROCESSING DATA" : "QUEUED";
+        }
+      }
+
+      return {
+        name: fileName,
+        ...config,
+        status,
+        progress,
+        progressTitle,
+        error,
+        theme: status === "READY" ? "blue" : "orange",
+      } as FileStatus;
+    });
+  }, [data, uploadingTargetFile, uploadProgress]);
 
   const openFilePicker = (fileName: string) => {
     setSelectedTargetFile(fileName);
@@ -325,10 +361,11 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         file,
         version: name,
         fileType: selectedTargetFile,
-        onProgress: (progress) => setUploadProgress(progress),
+        onProgress: (progress) => setUploadProgress(Math.round(progress)),
       });
 
       toast.success(`Uploaded ${file.name}`);
+      refresh();
     } catch (error) {
       console.error("Upload failed:", error);
       toast.error(`Failed to upload ${file.name}`);
@@ -367,7 +404,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
       {/* Main Files Grid */}
       <div className="space-y-4 relative">
-        {mockMainFiles.map((file, idx) => (
+        {mainFiles.map((file, idx) => (
           <FileCard
             key={idx}
             file={file}
