@@ -86,6 +86,15 @@ if (!triboliumGene) {
 }
 ---
 
+<style is:global>
+  #jbrowse-linear-genome-view > div > div {
+    background: transparent;
+  }
+  #jbrowse-linear-genome-view > div > div > div {
+    box-shadow: none;
+  }
+</style>
+
 <Layout>
   {
     triboliumGene ? (
@@ -98,11 +107,14 @@ if (!triboliumGene) {
         homologs={homologs}
         client:load
       >
-        <JBrowseGenomeView
-          slot="jbrowse-genome-view"
-          triboliumGene={triboliumGene}
-          client:only="react"
-        />
+        <div slot="jbrowse-genome-view">
+          <div id="jbrowse-styles-container" transition:persist></div>
+          <JBrowseGenomeView
+            triboliumGene={triboliumGene}
+            client:only="react"
+            transition:persist="jbrowse"
+          />
+        </div>
       </GeneDetails>
     ) : (
       <GeneNotFound />
