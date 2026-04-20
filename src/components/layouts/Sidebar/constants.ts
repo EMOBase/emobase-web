@@ -14,13 +14,6 @@ export const homeItems: NavItem[] = [
     label: "My Genes",
     icon: "star",
   },
-  {
-    id: "ADMIN",
-    label: "Admin Portal",
-    icon: "admin_panel_settings",
-    href: "/admin",
-    requiresAuth: true,
-  },
 ];
 
 export const toolItems: NavItem[] = [
