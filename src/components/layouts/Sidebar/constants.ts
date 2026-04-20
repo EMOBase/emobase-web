@@ -72,6 +72,7 @@ export const resourceItems: NavItem[] = [
     label: "API Docs",
     icon: "api",
     href: getEnv("PUBLIC_UI_PAGE_API_DOC"),
+    disabled: !getEnv("PUBLIC_UI_PAGE_API_DOC"),
     external: true,
   },
   {

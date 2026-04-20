@@ -2,7 +2,12 @@ import React from "react";
 import { useSession } from "@/hooks/session/useSession";
 import { useFavoriteGenes } from "@/states/favoriteGenes";
 import { mainSpecies } from "@/utils/mainSpecies";
-import { homeItems, toolItems, resourceItems, getActiveView } from "./constants";
+import {
+  homeItems,
+  toolItems,
+  resourceItems,
+  getActiveView,
+} from "./constants";
 import type { NavItem, NavItemChild } from "./types";
 
 export const useSidebarSections = (url: string, title?: React.ReactNode) => {
@@ -36,6 +41,7 @@ export const useSidebarSections = (url: string, title?: React.ReactNode) => {
           ),
         };
       }
+
       return item;
     });
 
@@ -49,16 +55,29 @@ export const useSidebarSections = (url: string, title?: React.ReactNode) => {
         })),
       };
     }
+
     return item;
   });
 
-  const finalToolItems =
-    mainSpecies === "Tcas" ? toolItems : toolItemsForNonBeetle;
+  const resourceItemCount = resourceItems.filter(
+    (item) => !item.disabled,
+  ).length;
+
+  const updatedResourceItems = resourceItems.map((item) => {
+    if (item.id === "RESOURCES" && resourceItemCount > 0) {
+      return {
+        ...item,
+        label: "Resouces",
+      };
+    }
+
+    return item;
+  });
 
   return {
     homeItems: homeItemsWithFavorites,
-    toolItems: finalToolItems,
-    resourceItems,
+    toolItems: mainSpecies === "Tcas" ? toolItems : toolItemsForNonBeetle,
+    resourceItems: updatedResourceItems,
     activeView,
     isLoading,
   };
