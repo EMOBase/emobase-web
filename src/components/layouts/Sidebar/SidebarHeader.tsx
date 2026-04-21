@@ -1,6 +1,10 @@
 import React from "react";
 import { twMerge } from "tailwind-merge";
-import { SidebarHeader, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import {
+  SidebarHeader,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import type { SidebarProps } from "./types";
 
 const CustomSidebarHeader: React.FC<SidebarProps> = ({

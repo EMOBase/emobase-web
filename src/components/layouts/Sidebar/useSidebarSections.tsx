@@ -1,11 +1,14 @@
-import React from "react";
 import { useSession } from "@/hooks/session/useSession";
 import { useFavoriteGenes } from "@/states/favoriteGenes";
-import { mainSpecies } from "@/utils/mainSpecies";
-import { homeItems, toolItems, resourceItems, getActiveView } from "./constants";
+import {
+  homeItems,
+  toolItems,
+  resourceItems,
+  getActiveView,
+} from "./constants";
 import type { NavItem, NavItemChild } from "./types";
 
-export const useSidebarSections = (url: string, title?: React.ReactNode) => {
+export const useSidebarSections = (url: string) => {
   const { isLoggedIn } = useSession();
   const { isLoading, getFavoriteGenes, unmarkFavorite } = useFavoriteGenes();
   const favoriteGenes = getFavoriteGenes();
@@ -36,28 +39,13 @@ export const useSidebarSections = (url: string, title?: React.ReactNode) => {
           ),
         };
       }
+
       return item;
     });
 
-  const toolItemsForNonBeetle = toolItems.map((item) => {
-    if (item.id === "BLAST") {
-      return {
-        ...item,
-        children: (item.children ?? []).map((child) => ({
-          ...child,
-          label: child.href === "/blast/" ? <>{title} Blast</> : child.label,
-        })),
-      };
-    }
-    return item;
-  });
-
-  const finalToolItems =
-    mainSpecies === "Tcas" ? toolItems : toolItemsForNonBeetle;
-
   return {
     homeItems: homeItemsWithFavorites,
-    toolItems: finalToolItems,
+    toolItems,
     resourceItems,
     activeView,
     isLoading,

@@ -26,7 +26,7 @@
     "trackId": "tcas5_ncbi.sorted.gff",
     "name": "NCBI",
     "formatDetails": {
-      "feature": "jexl:{dbxref:'<a href=https://www.ncbi.nlm.nih.gov/gene/'+split(feature.dbxref, ':')[1]+'>'+feature.dbxref+'</a>'}"
+      "feature": "jexl:{dbxref: feature.dbxref.split ? '<a href=https://www.ncbi.nlm.nih.gov/gene/'+feature.dbxref.split(':')[1]+'>'+feature.dbxref+'</a>' : feature.dbxref}"
     },
     "assemblyNames": ["Tcas5.2"],
     "description": "Gene prediction from NCBI based on TCAS 5.2",

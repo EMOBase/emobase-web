@@ -7,6 +7,7 @@ const featureEnabled = {
   ontologyViewer: isBeetle,
   searchInstruction: isBeetle,
   helpPages: isBeetle,
+  apiDocs: isBeetle,
 };
 
 export const hasFeature = (feature: keyof typeof featureEnabled) => {

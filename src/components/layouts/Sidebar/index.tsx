@@ -14,9 +14,9 @@ import { useSidebarSections } from "./useSidebarSections";
 import type { SidebarProps } from "./types";
 
 const SidebarInner: React.FC<SidebarProps> = (props) => {
-  const { url, title } = props;
+  const { url } = props;
   const { homeItems, toolItems, resourceItems, activeView } =
-    useSidebarSections(url, title);
+    useSidebarSections(url);
 
   return (
     <Sidebar collapsible="icon">
