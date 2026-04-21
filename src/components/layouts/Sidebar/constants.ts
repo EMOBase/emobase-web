@@ -75,7 +75,7 @@ export const toolItems: NavItem[] = [
       },
 ];
 
-const apiDocsDisabled = !getEnv("PUBLIC_UI_PAGE_API_DOC");
+const apiDocsDisabled = !hasFeature("apiDocs");
 const helpDisabled = !hasFeature("helpPages");
 
 export const resourceItems: NavItem[] = [
