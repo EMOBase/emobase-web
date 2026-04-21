@@ -1,0 +1,27 @@
+---
+import { getSession } from "auth-astro/server";
+
+import BlankLayout from "@/layouts/blank.astro";
+import AdminLogin from "@/components/layouts/AdminLogin";
+import Logo from "@/astros/Logo.astro";
+import SiteTitle from "@/astros/SiteTitle.astro";
+
+const session = await getSession(Astro.request);
+
+if (session) {
+  return Astro.redirect("/admin/review");
+}
+---
+
+<BlankLayout>
+  <AdminLogin client:load>
+    <Logo
+      slot="logo"
+      className="size-16 rounded-2xl"
+      iconClassName="text-3xl"
+    />
+    <SiteTitle slot="title" />
+  </AdminLogin>
+</BlankLayout>
+
+---

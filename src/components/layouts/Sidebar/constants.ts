@@ -104,9 +104,24 @@ export const resourceItems: NavItem[] = [
   },
 ];
 
+export const isPathActive = (
+  currentUrl: string,
+  targetUrl: string,
+): boolean => {
+  if (!targetUrl || targetUrl === "#") return false;
+  if (currentUrl === targetUrl) return true;
+  return currentUrl.startsWith(targetUrl + "/");
+};
+
 export const getActiveView = (url: string): NavItem["id"] | undefined => {
-  return homeItems
-    .concat(toolItems)
-    .concat(resourceItems)
-    .find((item) => item.href === url || item.matchingHref === url)?.id;
+  const allItems = homeItems.concat(toolItems).concat(resourceItems);
+
+  for (const item of allItems) {
+    // Check main item
+    if (item.id && isPathActive(url, item.href || item.matchingHref || "")) {
+      return item.id;
+    }
+  }
+
+  return undefined;
 };
