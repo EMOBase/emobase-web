@@ -61,6 +61,50 @@ type FetchJobResponse = {
   requestId: string;
 };
 
+export type FileJobSummary = {
+  id: number;
+  type: JobItem["type"] | string;
+  description: string;
+  status: "PENDING" | "RUNNING" | "DONE" | "FAILED";
+  payload: any;
+  error?: string | null;
+};
+
+export type FileDetail = {
+  id: string;
+  filePath: string;
+  fileSize: number;
+  uploadStatus: "UPLOADING" | "COMPLETED" | "FAILED";
+  createdAt: string;
+  createdBy: string;
+  completedAt?: string | null;
+  jobs: FileJobSummary[];
+};
+
+export type VersionDetailFiles = {
+  "genomic.fna"?: FileDetail | null;
+  "genomic.gff"?: FileDetail | null;
+  "rna.fna"?: FileDetail | null;
+  "cds.fna"?: FileDetail | null;
+  "protein.faa"?: FileDetail | null;
+  "orthology.tsv"?: FileDetail[];
+};
+
+type FetchVersionDetailResponse = {
+  data: {
+    id: number;
+    name: string;
+    isDefault: boolean;
+    status: "DRAFT" | "PROCESSING" | "READY" | "ERROR";
+    createdAt: string;
+    createdBy: string;
+    updatedAt: string;
+    updatedBy: string;
+    files: VersionDetailFiles;
+  };
+  requestId: string;
+};
+
 type UploadInput = {
   file: File;
   version: string;
@@ -110,6 +154,19 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     });
   };
 
+  const fetchVersionDetail = async (version: string) => {
+    return await fetch<FetchVersionDetailResponse>(
+      "genomics",
+      `/versions/${version}/detail`,
+      {
+        query: {
+          name: version,
+        },
+        authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    );
+  };
+
   const upload = async ({
     file,
     version,
@@ -156,6 +213,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     fetchVersions,
     createVersion,
     fetchJobs,
+    fetchVersionDetail,
     upload,
   };
 };

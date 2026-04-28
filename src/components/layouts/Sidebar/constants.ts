@@ -117,7 +117,6 @@ export const getActiveView = (url: string): NavItem["id"] | undefined => {
   const allItems = homeItems.concat(toolItems).concat(resourceItems);
 
   for (const item of allItems) {
-    // Check main item
     if (item.id && isPathActive(url, item.href || item.matchingHref || "")) {
       return item.id;
     }

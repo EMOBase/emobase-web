@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
 
+import { formatBytes } from "@/utils/format";
 import useAsyncData from "@/hooks/useAsyncData";
 import genomicsService from "@/utils/services/genomics";
 import { Icon } from "@/components/ui/icon";
@@ -11,8 +12,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import type { VersionDetailFiles } from "@/utils/services/genomics";
 
-const { fetchJobs, upload } = genomicsService();
+const { fetchVersionDetail, upload } = genomicsService();
 
 const ALLOWED_UPLOAD_FILE_TYPES = new Set([
   "genomic.fna",
@@ -260,16 +262,19 @@ const FileCard = ({
 
 const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
   const [refreshKey, setRefreshKey] = useState(0);
-  const { data } = useAsyncData(() => fetchJobs(name), [name, refreshKey]);
+
+  const { data } = useAsyncData(
+    () => fetchVersionDetail(name),
+    [name, refreshKey],
+  );
 
   const refresh = () => setRefreshKey((prev) => prev + 1);
 
-  useEffect(() => {
-    const hasActiveJobs = data?.data?.some(
-      (job) => job.status === "PENDING" || job.status === "RUNNING",
-    );
+  const versionData = data?.data;
 
-    if (hasActiveJobs) {
+  useEffect(() => {
+    const status = versionData?.status;
+    if (status === "PROCESSING" || status === "DRAFT") {
       const interval = setInterval(refresh, 5000);
       return () => clearInterval(interval);
     }
@@ -285,35 +290,55 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const mainFiles = React.useMemo(() => {
-    const jobs = data?.data || [];
+    const files = versionData?.files || {};
     return Object.entries(MAIN_FILE_CONFIGS).map(([fileName, config]) => {
-      const job = jobs.find(
-        (j) => j.type.toLowerCase() === fileName.toLowerCase(),
-      );
-
       let status: FileStatus["status"] = "PENDING";
       let progress = 0;
       let progressTitle = "";
       let error = "";
+      let size = "";
+
+      const fileDetail = files[fileName as keyof VersionDetailFiles];
+      const typedFileDetail = Array.isArray(fileDetail)
+        ? fileDetail[0]
+        : fileDetail;
 
       if (uploadingTargetFile === fileName) {
         status = "UPLOADING";
         progress = uploadProgress;
         progressTitle = "IN TRANSIT";
-      } else if (job) {
-        if (job.status === "DONE") {
-          status = "READY";
-          progress = 100;
-        } else if (job.status === "FAILED") {
+      } else if (typedFileDetail) {
+        size = formatBytes(typedFileDetail.fileSize);
+
+        if (typedFileDetail.uploadStatus === "FAILED") {
           status = "ERROR";
-          error = job.error || "Processing failed";
-          progress = 100; // Show full red bar or something? Or maybe just keep old progress.
+          error = "Upload failed";
+          progress = 100;
+        } else if (typedFileDetail.uploadStatus === "UPLOADING") {
+          status = "UPLOADING";
+          progress = 50;
+          progressTitle = "IN TRANSIT";
         } else {
-          // PENDING or RUNNING
-          status = "PROCESSING";
-          progress = job.status === "RUNNING" ? 60 : 20; // Mock progress since BE doesn't provide it
-          progressTitle =
-            job.status === "RUNNING" ? "PROCESSING DATA" : "QUEUED";
+          // COMPLETED upload
+          const jobs = typedFileDetail.jobs || [];
+          const failedJob = jobs.find((j: any) => j.status === "FAILED");
+          const activeJob = jobs.find(
+            (j: any) => j.status === "RUNNING" || j.status === "PENDING",
+          );
+
+          if (failedJob) {
+            status = "ERROR";
+            error = failedJob.error || "Processing failed";
+            progress = 100;
+          } else if (activeJob) {
+            status = "PROCESSING";
+            progress = activeJob.status === "RUNNING" ? 60 : 20;
+            progressTitle =
+              activeJob.status === "RUNNING" ? "PROCESSING DATA" : "QUEUED";
+          } else {
+            status = "READY";
+            progress = 100;
+          }
         }
       }
 
@@ -324,10 +349,11 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         progress,
         progressTitle,
         error,
+        size,
         theme: status === "READY" ? "blue" : "orange",
       } as FileStatus;
     });
-  }, [data, uploadingTargetFile, uploadProgress]);
+  }, [versionData, uploadingTargetFile, uploadProgress]);
 
   const openFilePicker = (fileName: string) => {
     setSelectedTargetFile(fileName);
