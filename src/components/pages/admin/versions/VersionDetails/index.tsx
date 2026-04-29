@@ -332,9 +332,9 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
             progress = 100;
           } else if (activeJob) {
             status = "PROCESSING";
-            progress = activeJob.status === "RUNNING" ? 60 : 20;
-            progressTitle =
-              activeJob.status === "RUNNING" ? "PROCESSING DATA" : "QUEUED";
+            const doneJobsCount = jobs.filter((j: any) => j.status === "DONE").length;
+            progress = Math.min(100, Math.max(10, doneJobsCount * 20));
+            progressTitle = activeJob.description || "PROCESSING DATA";
           } else {
             status = "READY";
             progress = 100;
