@@ -110,7 +110,7 @@ type UploadInput = {
   version: string;
   fileType: string;
   fileName?: string;
-  order?: string;
+  order?: number;
   algorithm?: string;
   onProgress?: (
     percentage: number,
@@ -188,7 +188,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
           fileType,
           fileName: fileName ?? file.name,
           version,
-          ...(order ? { order } : {}),
+          ...(order ? { order: order.toString() } : {}),
           ...(algorithm ? { algorithm } : {}),
         },
         removeFingerprintOnSuccess: true,
@@ -209,12 +209,24 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     });
   };
 
+  const deleteUploadFile = async (id: string) => {
+    return await fetch<{ data: FileJobSummary; requestId: string }>(
+      "genomics",
+      `/upload-files/${id}`,
+      {
+        method: "DELETE",
+        authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    );
+  };
+
   return {
     fetchVersions,
     createVersion,
     fetchJobs,
     fetchVersionDetail,
     upload,
+    deleteUploadFile,
   };
 };
 
