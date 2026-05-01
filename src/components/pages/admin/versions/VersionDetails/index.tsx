@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import type { VersionDetailFiles } from "@/utils/services/genomics";
 import { FileCard, type FileStatus } from "./FileCard";
 
-const { fetchVersionDetail, upload, deleteUploadFile } = genomicsService();
+const { fetchVersionDetail, upload, deleteUploadFile, releaseVersion } =
+  genomicsService();
 
 const ALLOWED_UPLOAD_FILE_TYPES = new Set([
   "genomic.fna",
@@ -50,6 +51,20 @@ const MAIN_FILE_CONFIGS: Record<
 
 const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isReleasing, setIsReleasing] = useState(false);
+
+  const handleRelease = async () => {
+    try {
+      setIsReleasing(true);
+      await releaseVersion(name);
+      toast.success(`Successfully initiated release for version ${name}`);
+      refresh();
+    } catch (err: any) {
+      toast.error(err.message || `Failed to release version ${name}`);
+    } finally {
+      setIsReleasing(false);
+    }
+  };
 
   const { data } = useAsyncData(
     () => fetchVersionDetail(name),
@@ -299,12 +314,33 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
           />
           Back to Data Management
         </a>
-        <h1 className="text-3xl font-bold text-slate-900 font-display tracking-tight">
-          Version {name}
-        </h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-3xl font-bold text-slate-900 font-display tracking-tight">
+              Version {name}
+            </h1>
+            {versionData?.isDefault && (
+              <span className="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-primary-light/20 text-primary-bold">
+                CURRENT
+              </span>
+            )}
+          </div>
+          {versionData?.status === "READY" && !versionData?.isDefault && (
+            <Button
+              onClick={handleRelease}
+              disabled={isReleasing}
+              className="font-bold text-xs px-4 py-2"
+            >
+              <Icon
+                name={isReleasing ? "pending" : "check_circle"}
+                className="text-lg mr-2"
+              />
+              SET AS DEFAULT
+            </Button>
+          )}
+        </div>
       </div>
 
-      {/* Main Files Grid */}
       <div className="space-y-4 relative">
         {mainFiles.map((file, idx) => (
           <FileCard
@@ -317,7 +353,6 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         ))}
       </div>
 
-      {/* Additional Files Section */}
       <div className="bg-slate-50/50 rounded-3xl border border-slate-100 p-8 space-y-8">
         <div className="flex items-center justify-between">
           <div>

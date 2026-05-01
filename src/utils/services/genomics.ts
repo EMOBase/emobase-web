@@ -220,6 +220,17 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     );
   };
 
+  const releaseVersion = async (version: string) => {
+    return await fetch<{ data: any; requestId: string }>(
+      "genomics",
+      `/versions/${version}/release`,
+      {
+        method: "POST",
+        authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    );
+  };
+
   return {
     fetchVersions,
     createVersion,
@@ -227,6 +238,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     fetchVersionDetail,
     upload,
     deleteUploadFile,
+    releaseVersion,
   };
 };
 

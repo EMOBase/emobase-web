@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { parseISO, format } from "date-fns";
+import { toast } from "sonner";
 
 import { formatBytes } from "@/utils/format";
 import genomicsService, { type VersionItem } from "@/utils/services/genomics";
@@ -11,9 +12,15 @@ import BeetleLoading from "@/components/common/BeetleLoading";
 
 import CreateVersionButton from "./CreateVersionButton";
 
-const { fetchVersions } = genomicsService();
+const { fetchVersions, releaseVersion } = genomicsService();
 
-const StatusBadge = ({ status }: { status: VersionItem["status"] }) => {
+const StatusBadge = ({
+  status,
+  isDefault,
+}: {
+  status: VersionItem["status"];
+  isDefault?: boolean;
+}) => {
   const styles = {
     PROCESSING: "bg-amber-50 text-amber-600 border-amber-200/50",
     READY: "bg-emerald-50 text-emerald-600 border-emerald-200/50",
@@ -29,7 +36,7 @@ const StatusBadge = ({ status }: { status: VersionItem["status"] }) => {
           styles[status],
         )}
       >
-        {status}
+        {status === "READY" && isDefault ? "LIVE" : status}
       </span>
     </div>
   );
@@ -38,6 +45,10 @@ const StatusBadge = ({ status }: { status: VersionItem["status"] }) => {
 const VersionsManager: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [releasingVersions, setReleasingVersions] = useState<Set<string>>(
+    new Set(),
+  );
 
   const { data, loading } = useAsyncData(
     () =>
@@ -45,8 +56,27 @@ const VersionsManager: React.FC = () => {
         pageSize: itemsPerPage,
         page,
       }),
-    [itemsPerPage, page],
+    [itemsPerPage, page, refreshKey],
   );
+
+  const handleRelease = async (versionName: string) => {
+    try {
+      setReleasingVersions((prev) => new Set(prev).add(versionName));
+      await releaseVersion(versionName);
+      toast.success(
+        `Successfully initiated release for version ${versionName}`,
+      );
+      setRefreshKey((prev) => prev + 1);
+    } catch (err: any) {
+      toast.error(err.message || `Failed to release version ${versionName}`);
+    } finally {
+      setReleasingVersions((prev) => {
+        const next = new Set(prev);
+        next.delete(versionName);
+        return next;
+      });
+    }
+  };
 
   const versions = data?.data.versions ?? [];
 
@@ -129,7 +159,10 @@ const VersionsManager: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      <StatusBadge status={version.status} />
+                      <StatusBadge
+                        status={version.status}
+                        isDefault={version.isDefault}
+                      />
                     </td>
                     <td className="px-8 py-6 text-slate-500 font-medium text-sm">
                       {format(parseISO(version.createdAt), "P")}
@@ -147,10 +180,31 @@ const VersionsManager: React.FC = () => {
                         ) : (
                           <>
                             {version.isDefault && (
-                              <button className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors">
+                              <button
+                                className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors"
+                                title="Edit Version"
+                              >
                                 <Icon name="edit" className="text-xl" />
                               </button>
                             )}
+                            {version.status === "READY" &&
+                              !version.isDefault && (
+                                <button
+                                  onClick={() => handleRelease(version.name)}
+                                  disabled={releasingVersions.has(version.name)}
+                                  className="p-2 text-slate-300 hover:text-blue-500 rounded-lg transition-colors disabled:opacity-50"
+                                  title="Set as default"
+                                >
+                                  <Icon
+                                    name={
+                                      releasingVersions.has(version.name)
+                                        ? "pending"
+                                        : "check_circle"
+                                    }
+                                    className="text-xl"
+                                  />
+                                </button>
+                              )}
                             <button className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors">
                               <Icon name="download" className="text-xl" />
                             </button>
