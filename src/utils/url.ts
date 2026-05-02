@@ -17,12 +17,13 @@ export const keycloakBaseUrl = getKeyCloakBaseUrl(keycloakIssuerUrl);
 export const resolveBaseUrl = (
   type: "directus" | "keycloak" | "api",
   service?: string,
+  forcePublic?: boolean,
 ): string => {
   const isServer = typeof window === "undefined";
   const isProd = import.meta.env.PROD || process.env.NODE_ENV === "production";
   const isDocker = isProd && getEnv("INTERNAL_API_NETWORKING") === "true";
 
-  if (!isServer || !isDocker)
+  if (forcePublic || !isServer || !isDocker)
     return {
       directus: directusUrl,
       keycloak: keycloakBaseUrl,

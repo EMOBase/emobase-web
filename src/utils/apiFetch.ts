@@ -87,5 +87,5 @@ export const apiFetch = async <T>(
   }
 };
 
-export const getApiBaseUrl = (service: ApiService) =>
-  resolveBaseUrl("api", service);
+export const getApiBaseUrl = (service: ApiService, forcePublic?: boolean) =>
+  resolveBaseUrl("api", service, forcePublic);
