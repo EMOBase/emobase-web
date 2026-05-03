@@ -9,9 +9,9 @@ export interface ImageMetadata {
 const imageService = (fetch: typeof apiFetch = apiFetch) => {
   const imageUrl = (id: string, height?: number) => {
     if (!height) {
-      return `${getApiBaseUrl("imageservice")}/images/${id}`;
+      return `${getApiBaseUrl("imageservice", true)}/images/${id}`;
     }
-    return `${getApiBaseUrl("imageservice")}/images/${id}?h=${height}`;
+    return `${getApiBaseUrl("imageservice", true)}/images/${id}?h=${height}`;
   };
 
   const fetchImage = async (id: string, height?: number) => {
