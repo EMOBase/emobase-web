@@ -1,5 +1,4 @@
 ---
-import "material-symbols/outlined.css";
 import { ClientRouter } from "astro:transitions";
 import LoadingIndicator from "astro-loading-indicator/component";
 import { twMerge } from "tailwind-merge";
@@ -47,9 +46,9 @@ const { className, topbar = true, sidebarCollapsed = false } = Astro.props;
   </head>
   <body class="h-screen w-full overflow-hidden flex flex-col">
     <EnvWarning />
+    <Toaster client:load transition:persist position="bottom-right" />
     <div class="flex-1 flex overflow-hidden">
       <SessionManager client:load transition:persist />
-      <Toaster client:load transition:persist />
       <Sidebar
         url={url}
         forceCollapsed={sidebarCollapsed}
