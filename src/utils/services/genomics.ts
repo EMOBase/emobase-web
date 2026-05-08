@@ -184,6 +184,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
+        chunkSize: 5 * 1024 * 1024, // 5 MB
         metadata: {
           fileType,
           fileName: fileName ?? file.name,
