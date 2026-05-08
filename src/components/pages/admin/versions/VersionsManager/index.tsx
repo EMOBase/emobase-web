@@ -9,10 +9,9 @@ import useAsyncData from "@/hooks/useAsyncData";
 import { Icon } from "@/components/ui/icon";
 import TableFooter from "@/components/common/TableFooter";
 import BeetleLoading from "@/components/common/BeetleLoading";
+import useService from "@/hooks/useService";
 
 import CreateVersionButton from "./CreateVersionButton";
-
-const { fetchVersions, releaseVersion } = genomicsService();
 
 const StatusBadge = ({
   status,
@@ -43,6 +42,8 @@ const StatusBadge = ({
 };
 
 const VersionsManager: React.FC = () => {
+  const { fetchVersions, releaseVersion } = useService(genomicsService);
+
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -56,7 +57,7 @@ const VersionsManager: React.FC = () => {
         pageSize: itemsPerPage,
         page,
       }),
-    [itemsPerPage, page, refreshKey],
+    [itemsPerPage, page, refreshKey, fetchVersions],
   );
 
   const handleRelease = async (versionName: string) => {

@@ -1,24 +1,21 @@
 import { useCallback } from "react";
 
 import { apiFetch } from "@/utils/apiFetch";
-import { useSession } from "@/hooks/session/useSession";
+import { useSessionStore } from "@/states/sessionStore";
 
 /* Api fetch with jwt access token attached */
 const useApiFetch = () => {
-  const { session } = useSession();
+  return useCallback(async <T>(...params: Parameters<typeof apiFetch<T>>) => {
+    const { session: currentSession } = useSessionStore.getState();
 
-  return useCallback(
-    async <T>(...params: Parameters<typeof apiFetch<T>>) => {
-      if (session) {
-        if (!params[2]) params[2] = {};
-        const opts = params[2];
-        opts.authorization = `Bearer ${session.user.accessToken}`;
-      }
+    if (currentSession?.user?.accessToken) {
+      if (!params[2]) params[2] = {};
+      const opts = params[2];
+      opts.authorization = `Bearer ${currentSession.user.accessToken}`;
+    }
 
-      return await apiFetch<T>(...params);
-    },
-    [session],
-  );
+    return await apiFetch<T>(...params);
+  }, []);
 };
 
 export default useApiFetch;

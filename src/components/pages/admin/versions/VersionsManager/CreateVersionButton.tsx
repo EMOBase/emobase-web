@@ -17,8 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAppForm } from "@/hooks/form/useAppForm";
 import genomicsService from "@/utils/services/genomics";
-
-const { createVersion } = genomicsService();
+import useService from "@/hooks/useService";
 
 const versionFormOptions = formOptions({
   defaultValues: {
@@ -32,6 +31,7 @@ const versionFormOptions = formOptions({
 });
 
 const CreateVersionButton = () => {
+  const { createVersion } = useService(genomicsService);
   const [open, setOpen] = React.useState(false);
 
   const form = useAppForm({

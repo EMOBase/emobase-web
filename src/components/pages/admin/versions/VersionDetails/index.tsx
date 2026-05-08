@@ -7,10 +7,8 @@ import genomicsService from "@/utils/services/genomics";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import type { VersionDetailFiles } from "@/utils/services/genomics";
+import useService from "@/hooks/useService";
 import { FileCard, type FileStatus } from "./FileCard";
-
-const { fetchVersionDetail, upload, deleteUploadFile, releaseVersion } =
-  genomicsService();
 
 const ALLOWED_UPLOAD_FILE_TYPES = new Set([
   "genomic.fna",
@@ -50,6 +48,9 @@ const MAIN_FILE_CONFIGS: Record<
 };
 
 const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
+  const { fetchVersionDetail, upload, deleteUploadFile, releaseVersion } =
+    useService(genomicsService);
+
   const [refreshKey, setRefreshKey] = useState(0);
   const [isReleasing, setIsReleasing] = useState(false);
 
@@ -68,7 +69,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
   const { data } = useAsyncData(
     () => fetchVersionDetail(name),
-    [name, refreshKey],
+    [name, refreshKey, fetchVersionDetail],
   );
 
   const refresh = () => setRefreshKey((prev) => prev + 1);
@@ -77,7 +78,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
   useEffect(() => {
     const status = versionData?.status;
-    if (status === "PROCESSING" || status === "DRAFT") {
+    if (status === "PROCESSING") {
       const interval = setInterval(refresh, 5000);
       return () => clearInterval(interval);
     }

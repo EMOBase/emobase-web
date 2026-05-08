@@ -1,10 +1,7 @@
 import { Upload as TusUpload } from "tus-js-client";
 
 import { apiFetch } from "@/utils/apiFetch";
-
-/* Fixed token to test for now, will remove later in favor of useService() that apply token from session automatically */
-const ACCESS_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxvdWxvdWRpIn0.xDl3GuKVz743m9Cmit_ME4dzr91bIaJiC-2ExUNwK0c";
+import { useSessionStore } from "@/states/sessionStore";
 
 export type VersionItem = {
   id: string;
@@ -130,15 +127,12 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     const { page = 1, pageSize = 10 } = opts ?? {};
     const url = `/versions?page=${page}&page_size=${pageSize}`;
 
-    return await fetch<FetchVersionsResponse>("genomics", url, {
-      authorization: `Bearer ${ACCESS_TOKEN}`,
-    });
+    return await fetch<FetchVersionsResponse>("genomics", url);
   };
 
   const createVersion = async (versionInput: CreateVersionInput) => {
     return await fetch<CreateVersionResponse>("genomics", "/versions", {
       method: "POST",
-      authorization: `Bearer ${ACCESS_TOKEN}`,
       body: {
         ...versionInput,
       },
@@ -150,7 +144,6 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
       query: {
         version,
       },
-      authorization: `Bearer ${ACCESS_TOKEN}`,
     });
   };
 
@@ -162,7 +155,6 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
         query: {
           name: version,
         },
-        authorization: `Bearer ${ACCESS_TOKEN}`,
       },
     );
   };
@@ -182,7 +174,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
         endpoint: `${GENOMICS_BASE_URL}/uploads/`,
         retryDelays: [0, 1000, 3000, 5000],
         headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
+          Authorization: `Bearer ${useSessionStore.getState().session?.user?.accessToken}`,
         },
         chunkSize: 5 * 1024 * 1024, // 5 MB
         metadata: {
@@ -216,7 +208,6 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
       `/upload-files/${id}`,
       {
         method: "DELETE",
-        authorization: `Bearer ${ACCESS_TOKEN}`,
       },
     );
   };
@@ -227,7 +218,6 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
       `/versions/${version}/release`,
       {
         method: "POST",
-        authorization: `Bearer ${ACCESS_TOKEN}`,
       },
     );
   };
