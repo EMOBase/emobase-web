@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { useState } from "react";
 
 import {
   Collapsible,
@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
+import { Icon } from "@/components/ui/icon";
 import PenetranceBadge from "@/components/common/PenetranceBadge";
 import ImageHolder from "@/components/common/ImageHolder";
 import type { IBExperiment } from "@/utils/constants/ibeetle";
@@ -19,6 +20,96 @@ import { IBEETLE_TOPICS } from "@/utils/constants/ibeetle";
 type PhenotypeListProps = {
   phenotypes: Phenotype[];
   experiment: IBExperiment;
+};
+
+type PhenotypeItemProps = {
+  p: Phenotype;
+};
+
+const PhenotypeItem: React.FC<PhenotypeItemProps> = ({ p }) => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <div className="group/phenotype px-6 py-4 -mx-6 transition-all duration-200 hover:bg-neutral-50 dark:hover:bg-neutral-800/40 border-b border-transparent hover:border-neutral-100 dark:hover:border-neutral-800">
+        <li className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="size-1.5 rounded-full bg-neutral-600 shrink-0"></span>
+            <div className="flex items-center gap-2 flex-wrap text-sm text-neutral-700 dark:text-neutral-300">
+              {p.description}
+              <span className="inline-flex gap-1">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <PenetranceBadge value={p.penetrance} />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {(p.penetrance ?? 0) * 100 +
+                      "% of 10 injected animals showed this phenotype"}
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded border border-neutral-200 dark:bg-neutral-800 dark:border-neutral-700">
+                      day {p.dayPostInjection}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    The phenotype was observed on day {p.dayPostInjection} after
+                    the injection
+                  </TooltipContent>
+                </Tooltip>
+              </span>
+              {(p.structures ?? []).map(
+                ({ termId }) =>
+                  termId && (
+                    <a
+                      key={termId}
+                      href={`/ontology?id=${termId?.replace(":", "_")}`}
+                      className="text-xs text-primary font-medium hover:underline ml-0.5"
+                    >
+                      {termId}
+                    </a>
+                  ),
+              )}
+            </div>
+          </div>
+
+          {p.images && p.images.length > 0 && (
+            <CollapsibleTrigger asChild>
+              <button className="flex items-center gap-1.5 px-2 py-1 rounded text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 transition-all dark:hover:bg-neutral-800 dark:hover:text-neutral-300 shrink-0">
+                <Icon
+                  name={isOpen ? "visibility_off" : "image"}
+                  className="text-base"
+                />
+
+                <span className="text-[10px] font-bold uppercase tracking-wider">
+                  {isOpen ? "Hide images" : `Show images`}
+                </span>
+              </button>
+            </CollapsibleTrigger>
+          )}
+        </li>
+
+        {p.images && p.images.length > 0 && (
+          <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden">
+            <div className="flex gap-2 mb-1 mt-4">
+              <div className="size-1.5 shrink-0" />
+              <div className="grid grid-cols-2 gap-4 max-w-2xl flex-1">
+                {p.images.map((image) => (
+                  <ImageHolder
+                    key={image.id}
+                    imageId={image.id}
+                    status={image.status}
+                  />
+                ))}
+              </div>
+              <div className="size-1.5 shrink-0" />
+            </div>
+          </CollapsibleContent>
+        )}
+      </div>
+    </Collapsible>
+  );
 };
 
 const PhenotypeList: React.FC<PhenotypeListProps> = ({
@@ -66,71 +157,17 @@ const PhenotypeList: React.FC<PhenotypeListProps> = ({
             key={topic.id}
             className={index === topicsWithData.length - 1 ? "mb-2" : "mb-8"}
           >
-            <h4 className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">
+            <h4 className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-4 px-2">
               {topic.name}
             </h4>
-            <ul className="flex flex-col gap-3 text-sm text-neutral-700 dark:text-neutral-300">
+            <ul className="flex flex-col">
               {phenotypesByTopic[topic.id]
                 .sort(
                   (a, b) =>
                     (a.dayPostInjection || -1) - (b.dayPostInjection || -1),
                 )
                 .map((p) => (
-                  <Fragment key={p.id}>
-                    <li className="flex items-center gap-2">
-                      <span className="size-1.5 rounded-full bg-neutral-600"></span>
-                      {p.description}
-                      <span className="inline-flex gap-1">
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <PenetranceBadge value={p.penetrance} />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {(p.penetrance ?? 0) * 100 +
-                              "% of 10 injected animals showed this phenotype"}
-                          </TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded border border-neutral-200">
-                              day {p.dayPostInjection}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            The phenotype was observed on day{" "}
-                            {p.dayPostInjection} after the injection
-                          </TooltipContent>
-                        </Tooltip>
-                      </span>
-                      {(p.structures ?? []).map(
-                        ({ termId }) =>
-                          termId && (
-                            <a
-                              key={termId}
-                              href={`/ontology?id=${termId?.replace(":", "_")}`}
-                              className="text-xs text-primary font-medium hover:underline ml-0.5"
-                            >
-                              {termId}
-                            </a>
-                          ),
-                      )}
-                    </li>
-                    {p.images && p.images.length > 0 && (
-                      <div className="flex gap-2 mb-1">
-                        <div className="size-1.5" />
-                        <div className="grid grid-cols-2 gap-4 max-w-2xl">
-                          {p.images.map((image) => (
-                            <ImageHolder
-                              key={image.id}
-                              imageId={image.id}
-                              status={image.status}
-                            />
-                          ))}
-                        </div>
-                        <div className="size-1.5" />
-                      </div>
-                    )}
-                  </Fragment>
+                  <PhenotypeItem key={p.id} p={p} />
                 ))}
             </ul>
           </div>
