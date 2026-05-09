@@ -52,7 +52,7 @@ const ResultRow = ({ gene, phenotypes }: GenePhenotypesItem) => {
             <div className="col-span-12 md:col-span-5">
               <div className="flex flex-wrap gap-2">
                 {images.map((image) => {
-                  const imgSrc = imageUrl(image.id);
+                  const imgSrc = imageUrl(image.id, 100);
                   return (
                     <a
                       key={image.id}
