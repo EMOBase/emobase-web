@@ -1,6 +1,6 @@
 import { Upload as TusUpload } from "tus-js-client";
 
-import { apiFetch } from "@/utils/apiFetch";
+import { apiFetch, getApiBaseUrl } from "@/utils/apiFetch";
 import { useSessionStore } from "@/states/sessionStore";
 
 export type VersionItem = {
@@ -120,18 +120,16 @@ export type UploadResponse = {
   uploadUrl?: string;
 };
 
-const GENOMICS_BASE_URL = "http://localhost:8000/api";
-
 const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   const fetchVersions = async (opts?: { page: number; pageSize: number }) => {
     const { page = 1, pageSize = 10 } = opts ?? {};
     const url = `/versions?page=${page}&page_size=${pageSize}`;
 
-    return await fetch<FetchVersionsResponse>("genomics", url);
+    return await fetch<FetchVersionsResponse>("genomicsservice", url);
   };
 
   const createVersion = async (versionInput: CreateVersionInput) => {
-    return await fetch<CreateVersionResponse>("genomics", "/versions", {
+    return await fetch<CreateVersionResponse>("genomicsservice", "/versions", {
       method: "POST",
       body: {
         ...versionInput,
@@ -140,7 +138,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   const fetchJobs = async (version: string) => {
-    return await fetch<FetchJobResponse>("genomics", "/jobs", {
+    return await fetch<FetchJobResponse>("genomicsservice", "/jobs", {
       query: {
         version,
       },
@@ -149,7 +147,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
 
   const fetchVersionDetail = async (version: string) => {
     return await fetch<FetchVersionDetailResponse>(
-      "genomics",
+      "genomicsservice",
       `/versions/${version}/detail`,
       {
         query: {
@@ -171,7 +169,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     return await new Promise((resolve, reject) => {
       const tusUpload = new TusUpload(file, {
         // Trailing slash avoids nginx/tusd redirect on preflight.
-        endpoint: `${GENOMICS_BASE_URL}/uploads/`,
+        endpoint: `${getApiBaseUrl("genomicsservice")}/uploads/`,
         retryDelays: [0, 1000, 3000, 5000],
         headers: {
           Authorization: `Bearer ${useSessionStore.getState().session?.user?.accessToken}`,
@@ -204,7 +202,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
 
   const deleteUploadFile = async (id: string) => {
     return await fetch<{ data: FileJobSummary; requestId: string }>(
-      "genomics",
+      "genomicsservice",
       `/upload-files/${id}`,
       {
         method: "DELETE",
@@ -214,7 +212,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
 
   const releaseVersion = async (version: string) => {
     return await fetch<{ data: any; requestId: string }>(
-      "genomics",
+      "genomicsservice",
       `/versions/${version}/release`,
       {
         method: "POST",

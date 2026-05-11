@@ -25,11 +25,7 @@ export const apiFetch = async <T>(
       ...restOpts
     } = opts ?? {};
 
-    /* Tempolary set fixed base url for genomics service for now, will update later */
-    const baseURL =
-      service === "genomics"
-        ? "http://localhost:8000/api"
-        : resolveBaseUrl("api", service);
+    const baseURL = resolveBaseUrl("api", service);
     // Ensure no double slashes when joining baseURL and request
     const sanitizedBaseURL = baseURL.endsWith("/")
       ? baseURL.slice(0, -1)
