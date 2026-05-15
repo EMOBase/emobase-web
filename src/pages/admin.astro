@@ -13,7 +13,7 @@ const session = await getSession(Astro.request);
 
 <>
   {
-    session ? (
+    session && !session.error ? (
       <Layout>
         <Dashboard client:load />
       </Layout>
