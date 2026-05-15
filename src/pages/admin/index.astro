@@ -8,7 +8,7 @@ import SiteTitle from "@/astros/SiteTitle.astro";
 
 const session = await getSession(Astro.request);
 
-if (session) {
+if (session && !session.error) {
   return Astro.redirect("/admin/review");
 }
 ---
