@@ -1,14 +1,5 @@
 import { create } from "zustand";
-
-export type Session = {
-  user: {
-    name: string;
-    email: string;
-    accessToken: string;
-  };
-  expires: string;
-  error?: string;
-};
+import type { Session } from "@auth/core/types";
 
 interface SessionState {
   session: Session | null;
