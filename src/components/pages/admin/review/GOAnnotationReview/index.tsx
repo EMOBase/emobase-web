@@ -191,7 +191,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
                         </p>
                       </div>
                     </td>
-                    <td className="px-6 py-5 text-sm text-slate-700 font-medium">
+                    <td className="px-6 py-5 text-sm text-slate-700 font-medium text-center">
                       <a
                         href={`/details/${item.gene}`}
                         className="text-primary hover:text-primary-bold font-bold hover:underline decoration-primary decoration-2 underline-offset-2 cursor-pointer"
@@ -199,7 +199,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
                         {item.gene}
                       </a>
                     </td>
-                    <td className="px-6 py-5 text-sm text-slate-600">
+                    <td className="px-6 py-5 text-sm text-slate-600 text-center">
                       {item.date && format(parseISO(item.date), "P")}
                     </td>
                     <td className="px-6 py-5 text-right">

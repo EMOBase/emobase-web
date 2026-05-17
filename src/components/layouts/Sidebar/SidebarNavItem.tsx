@@ -19,28 +19,27 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { isPathActive } from "./constants";
 import type { NavItem } from "./types";
 
 type SidebarNavItemProps = {
   item: NavItem;
   url: string;
   activeView?: string;
-  isLoading?: boolean;
 };
 
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   item,
   url,
   activeView,
-  isLoading,
 }) => {
   if (item.disabled) return null;
 
   const { state } = useSidebar();
   const hasChildren = item.children && item.children.length > 0;
   const isActive = item.id && activeView === item.id;
-  const hasActiveChild = (item?.children ?? []).some(
-    (child) => url === child.href,
+  const hasActiveChild = (item?.children ?? []).some((child) =>
+    isPathActive(url, child.href || ""),
   );
   const isCollapsed = state === "collapsed";
 
@@ -62,7 +61,9 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           weight={isActive ? 500 : 400}
           className="text-xl"
         />
-        <span className="text-sm font-medium flex-1 truncate">{item.label}</span>
+        <span className="text-sm font-medium flex-1 truncate">
+          {item.label}
+        </span>
         {!isCollapsed && hasChildren && (
           <Icon
             name="expand_more"
@@ -78,7 +79,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
 
   if (isCollapsed && hasChildren) {
     return (
-      <SidebarMenuItem key={`${item.id ?? item.label} ${isLoading}`}>
+      <SidebarMenuItem key={`${item.id ?? item.label} ${hasActiveChild}`}>
         <DropdownMenu>
           <DropdownMenuTrigger render={navButton} />
           <DropdownMenuContent
@@ -135,7 +136,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
 
   return (
     <Collapsible
-      key={`${item.id ?? item.label} ${isLoading}`}
+      key={`${item.id ?? item.label} ${hasActiveChild}`}
       asChild
       defaultOpen={hasActiveChild}
     >
@@ -149,7 +150,10 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                   key={child.href}
                   className="group/subitem relative"
                 >
-                  <SidebarMenuSubButton asChild isActive={url === child.href}>
+                  <SidebarMenuSubButton
+                    asChild
+                    isActive={isPathActive(url, child.href || "")}
+                  >
                     <a
                       href={child.href}
                       target={child.external ? "_blank" : "_self"}
