@@ -10,7 +10,7 @@ export interface FileStatus {
   id?: string;
   name: string;
   category: string;
-  status: "PENDING" | "UPLOADING" | "PROCESSING" | "READY" | "ERROR";
+  status: "PENDING" | "UPLOADING" | "PAUSED" | "PROCESSING" | "READY" | "ERROR";
   progress?: number;
   progressTitle?: string;
   size?: string;
@@ -177,6 +177,20 @@ export const FileCard = ({
             />
             RE-UPLOAD
           </button>
+        ) : file.status === "PAUSED" && onChooseFile ? (
+          <button
+            onClick={() => onChooseFile(file.name)}
+            className={twMerge(
+              "flex-1 flex items-center justify-center gap-3 border-2 border-dashed border-orange-200 text-orange-700 hover:border-orange-300 hover:bg-orange-50 transition-all font-bold text-xs tracking-widest",
+              size === "sm" ? "rounded-lg py-2" : "rounded-xl py-3",
+            )}
+          >
+            <Icon
+              name="upload_file"
+              className={size === "sm" ? "text-lg" : "text-xl"}
+            />
+            RESUME UPLOAD
+          </button>
         ) : !isPending && file.progress !== undefined ? (
           <ProgressBar
             progress={file.progress}
@@ -205,7 +219,7 @@ export const FileCard = ({
           </button>
         ) : null}
 
-        {onDeleteFile && file.id && (isReady || isError) && (
+        {onDeleteFile && file.id && (isReady || isError || file.status === "PAUSED" || file.status === "UPLOADING") && (
           <button
             onClick={() => onDeleteFile(file.id!)}
             disabled={isDeleting}

@@ -138,9 +138,9 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
           error = "Upload failed";
           progress = 100;
         } else if (typedFileDetail.uploadStatus === "UPLOADING") {
-          status = "UPLOADING";
+          status = "PAUSED";
           progress = 50;
-          progressTitle = "IN TRANSIT";
+          progressTitle = "INTERRUPTED";
         } else {
           // COMPLETED upload
           const jobs = typedFileDetail.jobs || [];
@@ -196,9 +196,9 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         error = "Upload failed";
         progress = 100;
       } else if (fileDetail.uploadStatus === "UPLOADING") {
-        status = "UPLOADING";
+        status = "PAUSED";
         progress = 50;
-        progressTitle = "IN TRANSIT";
+        progressTitle = "INTERRUPTED";
       } else {
         const jobs = fileDetail.jobs || [];
         const failedJob = jobs.find((j: any) => j.status === "FAILED");
