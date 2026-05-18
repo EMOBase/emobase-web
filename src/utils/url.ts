@@ -27,10 +27,7 @@ export const resolveBaseUrl = (
     return {
       directus: directusUrl,
       keycloak: keycloakBaseUrl,
-      api:
-        service === "genomicsservice"
-          ? `${apiBaseUrl}/${service}`
-          : `${apiBaseUrl}/${service}/v1`,
+      api: `${apiBaseUrl}/${service}/v1`,
     }[type];
 
   if (type === "directus") {
