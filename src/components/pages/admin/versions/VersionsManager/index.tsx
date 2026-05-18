@@ -35,7 +35,7 @@ const StatusBadge = ({
           styles[status],
         )}
       >
-        {status === "READY" && isDefault ? "LIVE" : status}
+        {status === "READY" && isDefault ? "LIVE" : status.replaceAll("_", " ")}
       </span>
     </div>
   );
