@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button";
 import type { VersionDetailFiles } from "@/utils/services/genomics";
 import useService from "@/hooks/useService";
 import { FileCard, type FileStatus } from "./FileCard";
+import { GffMappingDialog } from "./GffMappingDialog";
+import { GffParsingErrorDialog } from "./GffParsingErrorDialog";
+import { useGffFileParse } from "./useGffFileParse";
 
 const ALLOWED_UPLOAD_FILE_TYPES = new Set([
   "genomic.fna",
@@ -93,6 +96,76 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
   );
   const [uploadProgress, setUploadProgress] = useState(0);
   const [deletingFiles, setDeletingFiles] = useState<Set<string>>(new Set());
+
+  // GFF upload flow
+  const [isGffDialogOpen, setIsGffDialogOpen] = useState(false);
+  const [gffFileToUpload, setGffFileToUpload] = useState<File | null>(null);
+
+  const gffParseActive = isGffDialogOpen && gffFileToUpload !== null;
+  const { isParsing, parseError, attributes, subAttributesMap } =
+    useGffFileParse({
+      file: gffFileToUpload,
+      enabled: gffParseActive,
+    });
+
+  const handleGffDialogClose = () => {
+    setIsGffDialogOpen(false);
+    setGffFileToUpload(null);
+    setSelectedTargetFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleGffUploadDifferent = () => {
+    setGffFileToUpload(null);
+    setSelectedTargetFile("genomic.gff");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleGffMappingConfirm = async (mappingData: {
+    geneIDKey: string;
+    trimPrefixChars: number;
+    trimSuffixChars: number;
+    oldGeneIDKeys: string[];
+  }) => {
+    if (!gffFileToUpload) return;
+
+    setIsGffDialogOpen(false);
+
+    try {
+      setUploadingTargetFile("genomic.gff");
+      setUploadProgress(0);
+
+      await upload({
+        file: gffFileToUpload,
+        version: name,
+        fileType: "genomic.gff",
+        geneIDKey: mappingData.geneIDKey,
+        trimPrefixChars: mappingData.trimPrefixChars,
+        trimSuffixChars: mappingData.trimSuffixChars,
+        oldGeneIDKeys: mappingData.oldGeneIDKeys.join(","),
+        onProgress: (progress) => setUploadProgress(Math.round(progress)),
+      });
+
+      toast.success(`Uploaded ${gffFileToUpload.name}`);
+      refresh();
+    } catch (error) {
+      console.error("GFF Upload failed:", error);
+      toast.error(`Failed to upload ${gffFileToUpload.name}`);
+    } finally {
+      setUploadingTargetFile(null);
+      setSelectedTargetFile(null);
+      setGffFileToUpload(null);
+      setUploadProgress(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
 
   const handleDeleteFile = async (id: string) => {
     try {
@@ -268,6 +341,12 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
       return;
     }
 
+    if (selectedTargetFile === "genomic.gff") {
+      setGffFileToUpload(file);
+      setIsGffDialogOpen(true);
+      return;
+    }
+
     try {
       setUploadingTargetFile(selectedTargetFile);
       setUploadProgress(0);
@@ -408,6 +487,20 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
           )}
         </div>
       </div>
+      <GffParsingErrorDialog
+        isOpen={gffParseActive && !!parseError}
+        onClose={handleGffDialogClose}
+        error={parseError ?? ""}
+        onUploadDifferentFile={handleGffUploadDifferent}
+      />
+      <GffMappingDialog
+        isOpen={gffParseActive && !parseError}
+        onClose={handleGffDialogClose}
+        isParsing={isParsing}
+        attributes={attributes}
+        subAttributesMap={subAttributesMap}
+        onConfirm={handleGffMappingConfirm}
+      />
     </div>
   );
 };

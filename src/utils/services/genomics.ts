@@ -109,6 +109,10 @@ type UploadInput = {
   fileName?: string;
   order?: number;
   algorithm?: string;
+  geneIDKey?: string;
+  trimPrefixChars?: number;
+  trimSuffixChars?: number;
+  oldGeneIDKeys?: string;
   onProgress?: (
     percentage: number,
     bytesUploaded: number,
@@ -164,6 +168,10 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     fileName,
     order,
     algorithm,
+    geneIDKey,
+    trimPrefixChars,
+    trimSuffixChars,
+    oldGeneIDKeys,
     onProgress,
   }: UploadInput): Promise<UploadResponse> => {
     return await new Promise((resolve, reject) => {
@@ -181,6 +189,10 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
           version,
           ...(order ? { order: order.toString() } : {}),
           ...(algorithm ? { algorithm } : {}),
+          ...(geneIDKey ? { geneIDKey } : {}),
+          ...(trimPrefixChars !== undefined ? { trimPrefixChars: trimPrefixChars.toString() } : {}),
+          ...(trimSuffixChars !== undefined ? { trimSuffixChars: trimSuffixChars.toString() } : {}),
+          ...(oldGeneIDKeys ? { oldGeneIDKeys } : {}),
         },
         removeFingerprintOnSuccess: true,
         onError: (error) => {
