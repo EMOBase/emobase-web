@@ -84,7 +84,7 @@ const ImageHolder: React.FC<ImageHolderProps> = ({
           href={imageUrl(imageId)}
           target="_blank"
           className={
-            "shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-zoom-in"
+            "block w-full h-full shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-zoom-in"
           }
         >
           <img

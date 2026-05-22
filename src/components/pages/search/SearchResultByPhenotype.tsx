@@ -3,7 +3,6 @@ import { useState, Fragment } from "react";
 import phenotypeService, {
   type PhenotypeSearchResult,
 } from "@/utils/services/phenotypeService";
-import imageService from "@/utils/services/imageService";
 import {
   Select,
   SelectTrigger,
@@ -11,6 +10,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import ImageHolder from "@/components/common/ImageHolder";
 import PenetranceBadge from "@/components/common/PenetranceBadge";
 import BeetleLoading from "@/components/common/BeetleLoading";
 import IBBGeneId from "@/components/common/IBBGeneId";
@@ -19,7 +19,6 @@ import useUpdateEffect from "@/hooks/useUpdateEffect";
 import PercentageRangeInput from "./PercentageRangeInput";
 
 const { search: searchByPhenotypes } = phenotypeService();
-const { imageUrl } = imageService();
 
 type GenePhenotypesItem = PhenotypeSearchResult["data"][number];
 
@@ -52,21 +51,13 @@ const ResultRow = ({ gene, phenotypes }: GenePhenotypesItem) => {
             <div className="col-span-12 md:col-span-5">
               <div className="flex flex-wrap gap-2">
                 {images.map((image) => {
-                  const imgSrc = imageUrl(image.id, 100);
                   return (
-                    <a
-                      key={image.id}
-                      href={imgSrc}
-                      target="_blank"
-                      className="shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-zoom-in"
-                    >
-                      <img
-                        src={imgSrc}
-                        alt="Phenotype evidence"
-                        loading="lazy"
-                        className="h-28 w-auto rounded-lg border border-slate-200"
-                      />
-                    </a>
+                    <ImageHolder
+                      imageId={image.id}
+                      status={image.status}
+                      height={100}
+                      className="w-auto"
+                    />
                   );
                 })}
               </div>
