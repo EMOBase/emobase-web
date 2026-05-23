@@ -9,9 +9,7 @@ import { Button } from "@/components/ui/button";
 import type { VersionDetailFiles } from "@/utils/services/genomics";
 import useService from "@/hooks/useService";
 import { FileCard, type FileStatus } from "./FileCard";
-import { GffMappingDialog } from "./GffMappingDialog";
-import { GffParsingErrorDialog } from "./GffParsingErrorDialog";
-import { useGffFileParse } from "./useGffFileParse";
+import GffUpload, { type GffMappingConfirmData } from "./GffUpload";
 import AddOrthologyDialog from "./AddOrthologyDialog";
 
 const ALLOWED_UPLOAD_FILE_TYPES = new Set([
@@ -137,13 +135,6 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     }
   };
 
-  const gffParseActive = isGffDialogOpen && gffFileToUpload !== null;
-  const { isParsing, parseError, attributes, subAttributesMap } =
-    useGffFileParse({
-      file: gffFileToUpload,
-      enabled: gffParseActive,
-    });
-
   const handleGffDialogClose = () => {
     setIsGffDialogOpen(false);
     setGffFileToUpload(null);
@@ -162,12 +153,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     }
   };
 
-  const handleGffMappingConfirm = async (mappingData: {
-    geneIDKey: string;
-    trimPrefixChars: number;
-    trimSuffixChars: number;
-    oldGeneIDKeys: string[];
-  }) => {
+  const handleGffMappingConfirm = async (mappingData: GffMappingConfirmData) => {
     if (!gffFileToUpload) return;
 
     setIsGffDialogOpen(false);
@@ -523,19 +509,12 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
           )}
         </div>
       </div>
-      <GffParsingErrorDialog
-        isOpen={gffParseActive && !!parseError}
+      <GffUpload
+        isOpen={isGffDialogOpen}
+        file={gffFileToUpload}
         onClose={handleGffDialogClose}
-        error={parseError ?? ""}
-        onUploadDifferentFile={handleGffUploadDifferent}
-      />
-      <GffMappingDialog
-        isOpen={gffParseActive && !parseError}
-        onClose={handleGffDialogClose}
-        isParsing={isParsing}
-        attributes={attributes}
-        subAttributesMap={subAttributesMap}
         onConfirm={handleGffMappingConfirm}
+        onUploadDifferentFile={handleGffUploadDifferent}
       />
       <AddOrthologyDialog
         isOpen={isAddOrthologyOpen}
