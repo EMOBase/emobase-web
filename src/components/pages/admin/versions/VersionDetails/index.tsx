@@ -12,6 +12,7 @@ import { FileCard, type FileStatus } from "./FileCard";
 import { GffMappingDialog } from "./GffMappingDialog";
 import { GffParsingErrorDialog } from "./GffParsingErrorDialog";
 import { useGffFileParse } from "./useGffFileParse";
+import AddOrthologyDialog from "./AddOrthologyDialog";
 
 const ALLOWED_UPLOAD_FILE_TYPES = new Set([
   "genomic.fna",
@@ -100,6 +101,41 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
   // GFF upload flow
   const [isGffDialogOpen, setIsGffDialogOpen] = useState(false);
   const [gffFileToUpload, setGffFileToUpload] = useState<File | null>(null);
+
+  // Orthology upload flow
+  const [isAddOrthologyOpen, setIsAddOrthologyOpen] = useState(false);
+
+  const handleOrthologyUpload = async (
+    file: File,
+    order: number,
+    algorithm: string,
+  ) => {
+    setIsAddOrthologyOpen(false);
+
+    try {
+      setUploadingTargetFile("orthology.tsv");
+      setUploadProgress(0);
+
+      await upload({
+        file,
+        version: name,
+        fileType: "orthology.tsv",
+        order,
+        algorithm,
+        onProgress: (progress) => setUploadProgress(Math.round(progress)),
+      });
+
+      toast.success(`Uploaded ${file.name}`);
+      refresh();
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast.error(`Failed to upload ${file.name}`);
+    } finally {
+      setUploadingTargetFile(null);
+      setSelectedTargetFile(null);
+      setUploadProgress(0);
+    }
+  };
 
   const gffParseActive = isGffDialogOpen && gffFileToUpload !== null;
   const { isParsing, parseError, attributes, subAttributesMap } =
@@ -446,7 +482,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
           <Button
             variant="outline"
             className="font-bold text-xs px-4 py-2"
-            onClick={() => openFilePicker("orthology.tsv")}
+            onClick={() => setIsAddOrthologyOpen(true)}
           >
             <Icon name="add_circle" weight={500} className="text-lg" />
             APPEND DATASET
@@ -500,6 +536,11 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         attributes={attributes}
         subAttributesMap={subAttributesMap}
         onConfirm={handleGffMappingConfirm}
+      />
+      <AddOrthologyDialog
+        isOpen={isAddOrthologyOpen}
+        onClose={() => setIsAddOrthologyOpen(false)}
+        onConfirm={handleOrthologyUpload}
       />
     </div>
   );
