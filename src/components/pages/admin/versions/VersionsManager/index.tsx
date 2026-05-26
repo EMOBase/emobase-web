@@ -42,12 +42,16 @@ const StatusBadge = ({
 };
 
 const VersionsManager: React.FC = () => {
-  const { fetchVersions, releaseVersion } = useService(genomicsService);
+  const { fetchVersions, releaseVersion, deleteVersion } =
+    useService(genomicsService);
 
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [refreshKey, setRefreshKey] = useState(0);
   const [releasingVersions, setReleasingVersions] = useState<Set<string>>(
+    new Set(),
+  );
+  const [deletingVersions, setDeletingVersions] = useState<Set<string>>(
     new Set(),
   );
 
@@ -59,6 +63,23 @@ const VersionsManager: React.FC = () => {
       }),
     [itemsPerPage, page, refreshKey, fetchVersions],
   );
+
+  const handleDelete = async (versionName: string) => {
+    try {
+      setDeletingVersions((prev) => new Set(prev).add(versionName));
+      await deleteVersion(versionName);
+      toast.success(`Version ${versionName} deleted successfully`);
+      setRefreshKey((prev) => prev + 1);
+    } catch (err: any) {
+      toast.error(err.message || `Failed to delete version ${versionName}`);
+    } finally {
+      setDeletingVersions((prev) => {
+        const next = new Set(prev);
+        next.delete(versionName);
+        return next;
+      });
+    }
+  };
 
   const handleRelease = async (versionName: string) => {
     try {
@@ -210,8 +231,20 @@ const VersionsManager: React.FC = () => {
                               <Icon name="download" className="text-xl" />
                             </button>
                             {!version.isDefault && (
-                              <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors">
-                                <Icon name="delete" className="text-xl" />
+                              <button
+                                onClick={() => handleDelete(version.name)}
+                                disabled={deletingVersions.has(version.name)}
+                                className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors disabled:opacity-50"
+                                title="Delete version"
+                              >
+                                <Icon
+                                  name={
+                                    deletingVersions.has(version.name)
+                                      ? "pending"
+                                      : "delete"
+                                  }
+                                  className="text-xl"
+                                />
                               </button>
                             )}
                           </>

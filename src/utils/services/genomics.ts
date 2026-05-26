@@ -222,6 +222,16 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     );
   };
 
+  const deleteVersion = async (version: string) => {
+    return await fetch<undefined>(
+      "genomicsservice",
+      `/versions/${version}`,
+      {
+        method: "DELETE",
+      },
+    );
+  };
+
   const releaseVersion = async (version: string) => {
     return await fetch<{ data: any; requestId: string }>(
       "genomicsservice",
@@ -239,6 +249,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     fetchVersionDetail,
     upload,
     deleteUploadFile,
+    deleteVersion,
     releaseVersion,
   };
 };
