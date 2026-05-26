@@ -88,7 +88,7 @@ export const resourceItems: NavItem[] = [
   },
   {
     id: "RESOURCES",
-    label: apiDocsDisabled && helpDisabled ? "Resouces" : "Other Resources",
+    label: apiDocsDisabled && helpDisabled ? "Resources" : "Other Resources",
     icon: "folder_open",
     href: "/resources",
   },
