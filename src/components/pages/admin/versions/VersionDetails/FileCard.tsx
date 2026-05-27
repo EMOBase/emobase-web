@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 import { Icon } from "@/components/ui/icon";
 import {
@@ -5,6 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import GffUpload, { type GffMappingConfirmData } from "./GffUpload";
 
 export interface FileStatus {
   id?: string;
@@ -18,6 +21,17 @@ export interface FileStatus {
   icon: string;
   theme?: "orange" | "blue";
 }
+
+const ALLOWED_UPLOAD_FILE_TYPES = new Set([
+  "genomic.fna",
+  "genomic.gff",
+  "rna.fna",
+  "cds.fna",
+  "protein.faa",
+  "orthology.tsv",
+  "fb_synonym.tsv",
+  "fbgn_fbtr_fbpp.tsv",
+]);
 
 const ProgressBar = ({
   progress,
@@ -53,24 +67,171 @@ const ProgressBar = ({
 
 export const FileCard = ({
   file,
-  onChooseFile,
-  isUploading = false,
-  uploadProgress = 0,
+  isUploading: isUploadingOverride,
+  uploadProgress: uploadProgressOverride,
+  onUploadFile,
+  onUploadGffFile,
   onDeleteFile,
-  isDeleting = false,
   size = "md",
 }: {
   file: FileStatus;
-  onChooseFile?: (fileName: string) => void;
   isUploading?: boolean;
   uploadProgress?: number;
-  onDeleteFile?: (id: string) => void;
-  isDeleting?: boolean;
+  onUploadFile?: (
+    file: File,
+    onProgress?: (pct: number) => void,
+  ) => Promise<void>;
+  onUploadGffFile?: (
+    file: File,
+    mapping: GffMappingConfirmData,
+    onProgress?: (pct: number) => void,
+  ) => Promise<void>;
+  onDeleteFile?: (id: string) => Promise<void>;
   size?: "sm" | "md";
 }) => {
-  const isReady = file.status === "READY";
-  const isPending = file.status === "PENDING";
-  const isError = file.status === "ERROR";
+  const [internalIsUploading, setInternalIsUploading] = useState(false);
+  const [internalUploadProgress, setInternalUploadProgress] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [isGffDialogOpen, setIsGffDialogOpen] = useState(false);
+  const [gffFileToUpload, setGffFileToUpload] = useState<File | null>(null);
+
+  const isGff = file.name === "genomic.gff";
+
+  const isUploading =
+    isUploadingOverride !== undefined
+      ? isUploadingOverride
+      : internalIsUploading;
+
+  const uploadProgress =
+    isUploadingOverride !== undefined
+      ? (uploadProgressOverride ?? 0)
+      : internalUploadProgress;
+
+  const canUpload = !!(onUploadFile || onUploadGffFile);
+
+  const handleChooseFile = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const selectedFile = event.target.files?.[0];
+    if (!selectedFile) return;
+
+    if (!ALLOWED_UPLOAD_FILE_TYPES.has(file.name)) {
+      toast.error(`Unsupported upload type: ${file.name}`);
+      event.target.value = "";
+      return;
+    }
+
+    if (
+      !selectedFile.name.endsWith(".gz") &&
+      !selectedFile.name.endsWith(".bgz")
+    ) {
+      toast.error("Only .gz or .bgz files are accepted");
+      event.target.value = "";
+      return;
+    }
+
+    if (isGff) {
+      setGffFileToUpload(selectedFile);
+      setIsGffDialogOpen(true);
+      return;
+    }
+
+    setInternalIsUploading(true);
+    setInternalUploadProgress(0);
+
+    try {
+      await onUploadFile?.(selectedFile, (pct: number) => {
+        setInternalUploadProgress(Math.round(pct));
+      });
+      toast.success(`Uploaded ${selectedFile.name}`);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast.error(`Failed to upload ${selectedFile.name}`);
+    } finally {
+      setInternalIsUploading(false);
+      setInternalUploadProgress(0);
+      event.target.value = "";
+    }
+  };
+
+  const handleGffMappingConfirm = async (
+    mappingData: GffMappingConfirmData,
+  ) => {
+    if (!gffFileToUpload || !onUploadGffFile) return;
+
+    setIsGffDialogOpen(false);
+    setInternalIsUploading(true);
+    setInternalUploadProgress(0);
+
+    try {
+      await onUploadGffFile(gffFileToUpload, mappingData, (pct: number) =>
+        setInternalUploadProgress(Math.round(pct)),
+      );
+      toast.success(`Uploaded ${gffFileToUpload.name}`);
+    } catch (error) {
+      console.error("GFF Upload failed:", error);
+      toast.error(`Failed to upload ${gffFileToUpload.name}`);
+    } finally {
+      setInternalIsUploading(false);
+      setInternalUploadProgress(0);
+      setGffFileToUpload(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleGffDialogClose = () => {
+    setIsGffDialogOpen(false);
+    setGffFileToUpload(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleGffUploadDifferent = () => {
+    setIsGffDialogOpen(false);
+    setGffFileToUpload(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!file.id || !onDeleteFile) return;
+
+    setIsDeleting(true);
+
+    try {
+      await onDeleteFile(file.id);
+      toast.success("File deletion initiated");
+    } catch (error: any) {
+      console.error("Delete failed:", error);
+      toast.error(error.message || "Failed to delete file");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const isReady = !isUploading && file.status === "READY";
+  const isPending = !isUploading && file.status === "PENDING";
+  const isError = !isUploading && file.status === "ERROR";
+
+  const effectiveStatus = isUploading ? "UPLOADING" : file.status;
+  const effectiveProgress =
+    isUploading && uploadProgress !== undefined
+      ? uploadProgress
+      : file.progress;
+  const effectiveProgressTitle = isUploading
+    ? "IN TRANSIT"
+    : file.progressTitle;
 
   return (
     <div
@@ -80,11 +241,19 @@ export const FileCard = ({
         isError && "bg-[#FFF5F5] border-[#FFE4E4]",
       )}
     >
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        accept=".gz,.bgz"
+        onChange={handleFileChange}
+      />
+
       {/* Left-side indicator */}
       <div
         className={twMerge(
           "absolute left-0 top-6 bottom-6 w-1 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity",
-          isPending
+          isPending || isUploading
             ? "bg-neutral-400"
             : isReady
               ? "bg-blue-600"
@@ -101,7 +270,7 @@ export const FileCard = ({
           size === "sm" ? "size-10 rounded-lg" : "size-14 rounded-xl",
           isReady
             ? "bg-blue-50 text-blue-600"
-            : isPending
+            : isPending || isUploading
               ? "bg-slate-50 text-slate-400"
               : isError
                 ? "bg-red-100 text-red-600"
@@ -127,7 +296,7 @@ export const FileCard = ({
           >
             {file.name}
           </h3>
-          {file.size && (
+          {file.size && !isUploading && (
             <span
               className={twMerge(
                 "font-medium text-slate-400",
@@ -163,9 +332,16 @@ export const FileCard = ({
 
       {/* Progress or Button */}
       <div className="w-1/2 flex items-center gap-8">
-        {isError && onChooseFile ? (
+        {isUploading ? (
+          <ProgressBar
+            progress={effectiveProgress ?? 0}
+            title={effectiveProgressTitle || ""}
+            theme={file.theme}
+            showComplete={isReady}
+          />
+        ) : isError && canUpload ? (
           <button
-            onClick={() => onChooseFile(file.name)}
+            onClick={handleChooseFile}
             className={twMerge(
               "flex-1 flex items-center justify-center gap-3 border-2 border-dashed border-red-200 text-red-700 hover:border-red-300 hover:bg-red-100/30 transition-all font-bold text-xs tracking-widest",
               size === "sm" ? "rounded-lg py-2" : "rounded-xl py-3",
@@ -177,9 +353,9 @@ export const FileCard = ({
             />
             RE-UPLOAD
           </button>
-        ) : file.status === "PAUSED" && onChooseFile ? (
+        ) : file.status === "PAUSED" && canUpload ? (
           <button
-            onClick={() => onChooseFile(file.name)}
+            onClick={handleChooseFile}
             className={twMerge(
               "flex-1 flex items-center justify-center gap-3 border-2 border-dashed border-orange-200 text-orange-700 hover:border-orange-300 hover:bg-orange-50 transition-all font-bold text-xs tracking-widest",
               size === "sm" ? "rounded-lg py-2" : "rounded-xl py-3",
@@ -191,16 +367,16 @@ export const FileCard = ({
             />
             RESUME UPLOAD
           </button>
-        ) : !isPending && file.progress !== undefined ? (
+        ) : (!isPending || isUploading) && effectiveProgress !== undefined ? (
           <ProgressBar
-            progress={file.progress}
-            title={file.progressTitle || ""}
+            progress={effectiveProgress}
+            title={effectiveProgressTitle || ""}
             theme={file.theme}
             showComplete={isReady}
           />
-        ) : isPending && onChooseFile ? (
+        ) : isPending && canUpload ? (
           <button
-            onClick={() => onChooseFile(file.name)}
+            onClick={handleChooseFile}
             disabled={isUploading}
             className={twMerge(
               "flex-1 flex items-center justify-center gap-3 border-2 border-dashed border-slate-200 text-slate-400 hover:border-slate-300 hover:bg-slate-50 transition-all font-bold disabled:cursor-not-allowed disabled:opacity-70",
@@ -213,25 +389,29 @@ export const FileCard = ({
               name="upload_file"
               className={size === "sm" ? "text-lg" : "text-xl"}
             />
-            {isUploading
-              ? `UPLOADING ${Math.round(uploadProgress)}%`
-              : "CHOOSE FILE"}
+            CHOOSE FILE
           </button>
         ) : null}
 
-        {onDeleteFile && file.id && (isReady || isError || file.status === "PAUSED" || file.status === "UPLOADING") && (
-          <button
-            onClick={() => onDeleteFile(file.id!)}
-            disabled={isDeleting}
-            className="w-10 flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors disabled:opacity-50"
-            title="Delete file"
-          >
-            <Icon
-              name={isDeleting ? "pending" : "delete"}
-              className={size === "sm" ? "text-xl" : "text-2xl"}
-            />
-          </button>
-        )}
+        {onDeleteFile &&
+          file.id &&
+          !isUploading &&
+          (isReady ||
+            isError ||
+            file.status === "PAUSED" ||
+            file.status === "UPLOADING") && (
+            <button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="w-10 flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors disabled:opacity-50"
+              title="Delete file"
+            >
+              <Icon
+                name={isDeleting ? "pending" : "delete"}
+                className={size === "sm" ? "text-xl" : "text-2xl"}
+              />
+            </button>
+          )}
 
         {size !== "sm" && (
           <div className="w-24 flex justify-end">
@@ -247,11 +427,22 @@ export const FileCard = ({
                       : "bg-orange-100 text-orange-600",
               )}
             >
-              {file.status}
+              {effectiveStatus}
             </span>
           </div>
         )}
       </div>
+
+      {/* GFF upload dialog */}
+      {isGff && (
+        <GffUpload
+          isOpen={isGffDialogOpen}
+          file={gffFileToUpload}
+          onClose={handleGffDialogClose}
+          onConfirm={handleGffMappingConfirm}
+          onUploadDifferentFile={handleGffUploadDifferent}
+        />
+      )}
     </div>
   );
 };

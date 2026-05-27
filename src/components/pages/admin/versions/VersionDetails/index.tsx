@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 import { formatBytes } from "@/utils/format";
@@ -9,19 +9,8 @@ import { Button } from "@/components/ui/button";
 import type { VersionDetailFiles } from "@/utils/services/genomics";
 import useService from "@/hooks/useService";
 import { FileCard, type FileStatus } from "./FileCard";
-import GffUpload, { type GffMappingConfirmData } from "./GffUpload";
+import type { GffMappingConfirmData } from "./GffUpload";
 import AddOrthologyDialog from "./AddOrthologyDialog";
-
-const ALLOWED_UPLOAD_FILE_TYPES = new Set([
-  "genomic.fna",
-  "genomic.gff",
-  "rna.fna",
-  "cds.fna",
-  "protein.faa",
-  "orthology.tsv",
-  "fb_synonym.tsv",
-  "fbgn_fbtr_fbpp.tsv",
-]);
 
 const MAIN_FILE_CONFIGS: Record<
   string,
@@ -86,22 +75,10 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     }
   }, [data]);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedTargetFile, setSelectedTargetFile] = useState<string | null>(
-    null,
-  );
-  const [uploadingTargetFile, setUploadingTargetFile] = useState<string | null>(
-    null,
-  );
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [deletingFiles, setDeletingFiles] = useState<Set<string>>(new Set());
-
-  // GFF upload flow
-  const [isGffDialogOpen, setIsGffDialogOpen] = useState(false);
-  const [gffFileToUpload, setGffFileToUpload] = useState<File | null>(null);
-
-  // Orthology upload flow
   const [isAddOrthologyOpen, setIsAddOrthologyOpen] = useState(false);
+
+  const [isOrthologyUploading, setIsOrthologyUploading] = useState(false);
+  const [orthologyUploadProgress, setOrthologyUploadProgress] = useState(0);
 
   const handleOrthologyUpload = async (
     file: File,
@@ -111,8 +88,8 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     setIsAddOrthologyOpen(false);
 
     try {
-      setUploadingTargetFile("orthology.tsv");
-      setUploadProgress(0);
+      setIsOrthologyUploading(true);
+      setOrthologyUploadProgress(0);
 
       await upload({
         file,
@@ -120,7 +97,8 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         fileType: "orthology.tsv",
         order,
         algorithm,
-        onProgress: (progress) => setUploadProgress(Math.round(progress)),
+        onProgress: (progress) =>
+          setOrthologyUploadProgress(Math.round(progress)),
       });
 
       toast.success(`Uploaded ${file.name}`);
@@ -129,83 +107,47 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
       console.error("Upload failed:", error);
       toast.error(`Failed to upload ${file.name}`);
     } finally {
-      setUploadingTargetFile(null);
-      setSelectedTargetFile(null);
-      setUploadProgress(0);
+      setIsOrthologyUploading(false);
+      setOrthologyUploadProgress(0);
     }
   };
 
-  const handleGffDialogClose = () => {
-    setIsGffDialogOpen(false);
-    setGffFileToUpload(null);
-    setSelectedTargetFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+  const deleteFile = React.useCallback(
+    async (id: string) => {
+      await deleteUploadFile(id);
+      refresh();
+    },
+    [deleteUploadFile, refresh],
+  );
 
-  const handleGffUploadDifferent = () => {
-    setGffFileToUpload(null);
-    setSelectedTargetFile("genomic.gff");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-      fileInputRef.current.click();
-    }
-  };
+  const uploadFile = React.useCallback(
+    async (file: File, fileType: string, onProgress?: (pct: number) => void) => {
+      await upload({ file, version: name, fileType, onProgress });
+      refresh();
+    },
+    [name, upload, refresh],
+  );
 
-  const handleGffMappingConfirm = async (mappingData: GffMappingConfirmData) => {
-    if (!gffFileToUpload) return;
-
-    setIsGffDialogOpen(false);
-
-    try {
-      setUploadingTargetFile("genomic.gff");
-      setUploadProgress(0);
-
+  const uploadGffFile = React.useCallback(
+    async (
+      file: File,
+      mapping: GffMappingConfirmData,
+      onProgress?: (pct: number) => void,
+    ) => {
       await upload({
-        file: gffFileToUpload,
+        file,
         version: name,
         fileType: "genomic.gff",
-        geneIDKey: mappingData.geneIDKey,
-        trimPrefixChars: mappingData.trimPrefixChars,
-        trimSuffixChars: mappingData.trimSuffixChars,
-        oldGeneIDKeys: mappingData.oldGeneIDKeys.join(","),
-        onProgress: (progress) => setUploadProgress(Math.round(progress)),
+        geneIDKey: mapping.geneIDKey,
+        trimPrefixChars: mapping.trimPrefixChars,
+        trimSuffixChars: mapping.trimSuffixChars,
+        oldGeneIDKeys: mapping.oldGeneIDKeys.join(","),
+        onProgress,
       });
-
-      toast.success(`Uploaded ${gffFileToUpload.name}`);
       refresh();
-    } catch (error) {
-      console.error("GFF Upload failed:", error);
-      toast.error(`Failed to upload ${gffFileToUpload.name}`);
-    } finally {
-      setUploadingTargetFile(null);
-      setSelectedTargetFile(null);
-      setGffFileToUpload(null);
-      setUploadProgress(0);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
-  };
-
-  const handleDeleteFile = async (id: string) => {
-    try {
-      setDeletingFiles((prev) => new Set(prev).add(id));
-      await deleteUploadFile(id);
-      toast.success("File deletion initiated");
-      refresh();
-    } catch (error: any) {
-      console.error("Delete failed:", error);
-      toast.error(error.message || "Failed to delete file");
-    } finally {
-      setDeletingFiles((prev) => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
-    }
-  };
+    },
+    [name, upload, refresh],
+  );
 
   const mainFiles = React.useMemo(() => {
     const files = versionData?.files || {};
@@ -221,11 +163,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         ? fileDetail[0]
         : fileDetail;
 
-      if (uploadingTargetFile === fileName) {
-        status = "UPLOADING";
-        progress = uploadProgress;
-        progressTitle = "IN TRANSIT";
-      } else if (typedFileDetail) {
+      if (typedFileDetail) {
         size = formatBytes(typedFileDetail.fileSize);
 
         if (typedFileDetail.uploadStatus === "FAILED") {
@@ -237,7 +175,6 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
           progress = 50;
           progressTitle = "INTERRUPTED";
         } else {
-          // COMPLETED upload
           const jobs = typedFileDetail.jobs || [];
           const failedJob = jobs.find((j: any) => j.status === "FAILED");
           const activeJob = jobs.find(
@@ -274,7 +211,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         theme: status === "READY" ? "blue" : "orange",
       } as FileStatus;
     });
-  }, [versionData, uploadingTargetFile, uploadProgress]);
+  }, [versionData]);
 
   const orthologyFiles = React.useMemo(() => {
     const files = versionData?.files?.["orthology.tsv"] || [];
@@ -318,10 +255,6 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         }
       }
 
-      // If it's the currently uploading file (matching by name and UPLOADING state)
-      // we could show precise progress, but API files typically don't have local progress
-      // unless we match the name. The name is usually "orthology.tsv" which is generic.
-
       const fileName = fileDetail.filePath.split("/").pop() || "orthology.tsv";
 
       return {
@@ -339,72 +272,9 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     });
   }, [versionData]);
 
-  const openFilePicker = (fileName: string) => {
-    setSelectedTargetFile(fileName);
-    fileInputRef.current?.click();
-  };
-
-  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (!file || !selectedTargetFile) {
-      return;
-    }
-
-    if (!ALLOWED_UPLOAD_FILE_TYPES.has(selectedTargetFile)) {
-      toast.error(`Unsupported upload type: ${selectedTargetFile}`);
-      event.target.value = "";
-      return;
-    }
-
-    if (!file.name.endsWith(".gz") && !file.name.endsWith(".gzip")) {
-      toast.error("Only .gz or .gzip files are accepted");
-      event.target.value = "";
-      return;
-    }
-
-    if (selectedTargetFile === "genomic.gff") {
-      setGffFileToUpload(file);
-      setIsGffDialogOpen(true);
-      return;
-    }
-
-    try {
-      setUploadingTargetFile(selectedTargetFile);
-      setUploadProgress(0);
-
-      await upload({
-        file,
-        version: name,
-        fileType: selectedTargetFile,
-        order: selectedTargetFile === "orthology.tsv" ? 1 : undefined,
-        algorithm:
-          selectedTargetFile === "orthology.tsv" ? "OrthoFinder" : undefined,
-        onProgress: (progress) => setUploadProgress(Math.round(progress)),
-      });
-
-      toast.success(`Uploaded ${file.name}`);
-      refresh();
-    } catch (error) {
-      console.error("Upload failed:", error);
-      toast.error(`Failed to upload ${file.name}`);
-    } finally {
-      setUploadingTargetFile(null);
-      setSelectedTargetFile(null);
-      setUploadProgress(0);
-      event.target.value = "";
-    }
-  };
-
   return (
     <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <input
-        ref={fileInputRef}
-        type="file"
-        className="hidden"
-        onChange={onFileChange}
-      />
-      {/* Header Info (Mocked from design) */}
+      {/* Header Info */}
       <div className="px-2 space-y-4">
         <a
           href="/admin/versions"
@@ -444,13 +314,19 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
       </div>
 
       <div className="space-y-4 relative">
-        {mainFiles.map((file, idx) => (
+        {mainFiles.map((file) => (
           <FileCard
-            key={idx}
+            key={file.name}
             file={file}
-            onChooseFile={openFilePicker}
-            isUploading={uploadingTargetFile === file.name}
-            uploadProgress={uploadProgress}
+            onUploadFile={
+              file.name !== "genomic.gff"
+                ? (selectedFile, onProgress) =>
+                    uploadFile(selectedFile, file.name, onProgress)
+                : undefined
+            }
+            onUploadGffFile={
+              file.name === "genomic.gff" ? uploadGffFile : undefined
+            }
           />
         ))}
       </div>
@@ -477,12 +353,11 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
         <div className="space-y-4">
           {orthologyFiles.length > 0 ? (
-            orthologyFiles.map((file, idx) => (
+            orthologyFiles.map((file) => (
               <FileCard
-                key={file.id || idx}
+                key={file.id}
                 file={file}
-                onDeleteFile={handleDeleteFile}
-                isDeleting={file.id ? deletingFiles.has(file.id) : false}
+                onDeleteFile={deleteFile}
                 size="sm"
               />
             ))
@@ -492,30 +367,23 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
             </div>
           )}
 
-          {uploadingTargetFile === "orthology.tsv" && (
+          {isOrthologyUploading && (
             <FileCard
               file={{
                 name: "Uploading...",
                 category: "Orthology Mapping",
                 icon: "tsv",
                 status: "UPLOADING",
-                progress: uploadProgress,
+                progress: orthologyUploadProgress,
                 progressTitle: "IN TRANSIT",
               }}
               isUploading={true}
-              uploadProgress={uploadProgress}
+              uploadProgress={orthologyUploadProgress}
               size="sm"
             />
           )}
         </div>
       </div>
-      <GffUpload
-        isOpen={isGffDialogOpen}
-        file={gffFileToUpload}
-        onClose={handleGffDialogClose}
-        onConfirm={handleGffMappingConfirm}
-        onUploadDifferentFile={handleGffUploadDifferent}
-      />
       <AddOrthologyDialog
         isOpen={isAddOrthologyOpen}
         onClose={() => setIsAddOrthologyOpen(false)}
