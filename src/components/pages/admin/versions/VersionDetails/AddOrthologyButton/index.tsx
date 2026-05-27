@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Dialog,
@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -14,22 +15,19 @@ import { useAppForm } from "@/hooks/form/useAppForm";
 import formOptions, { formToApiSchema } from "./formOptions";
 import AddOrthologyForm from "./Form";
 
-type AddOrthologyDialogProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: (file: File, order: number, algorithm: string) => void;
-};
-
-const AddOrthologyDialog: React.FC<AddOrthologyDialogProps> = ({
-  isOpen,
-  onClose,
+const AddOrthologyButton = ({
   onConfirm,
+}: {
+  onConfirm: (file: File, order: number, algorithm: string) => void;
 }) => {
+  const [open, setOpen] = useState(false);
+
   const form = useAppForm({
     ...formOptions,
     onSubmit: async ({ value }) => {
       const { file, order, algorithm } = formToApiSchema.parse(value);
       onConfirm(file, order, algorithm);
+      setOpen(false);
     },
     onSubmitInvalid() {
       const invalidInput = document.querySelector(
@@ -41,13 +39,21 @@ const AddOrthologyDialog: React.FC<AddOrthologyDialogProps> = ({
   });
 
   useEffect(() => {
-    if (isOpen) {
+    if (open) {
       form.reset();
     }
-  }, [isOpen]);
+  }, [open]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger
+        render={
+          <Button variant="outline" className="font-bold text-xs px-4 py-2">
+            <Icon name="add_circle" weight={500} className="text-lg" />
+            APPEND DATASET
+          </Button>
+        }
+      />
       <DialogContent className="max-h-9/10 flex flex-col sm:max-w-lg overflow-hidden">
         <DialogHeader>
           <DialogTitle>Add Orthology Dataset</DialogTitle>
@@ -61,7 +67,7 @@ const AddOrthologyDialog: React.FC<AddOrthologyDialogProps> = ({
           <Button
             type="button"
             variant="outline"
-            onClick={onClose}
+            onClick={() => setOpen(false)}
             className="px-5 py-2.5 text-xs"
           >
             Cancel
@@ -83,4 +89,4 @@ const AddOrthologyDialog: React.FC<AddOrthologyDialogProps> = ({
   );
 };
 
-export default AddOrthologyDialog;
+export default AddOrthologyButton;

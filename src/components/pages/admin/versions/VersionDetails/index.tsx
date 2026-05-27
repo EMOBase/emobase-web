@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import type { VersionDetailFiles } from "@/utils/services/genomics";
 import useService from "@/hooks/useService";
 import { FileCard, GffFileCard, OrthologyFileCard, type FileStatus } from "./FileCard";
-import AddOrthologyDialog from "./AddOrthologyDialog";
+import AddOrthologyButton from "./AddOrthologyButton";
 
 const MAIN_FILE_CONFIGS: Record<
   string,
@@ -74,8 +74,6 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     }
   }, [data]);
 
-  const [isAddOrthologyOpen, setIsAddOrthologyOpen] = useState(false);
-
   const [orthologyUploads, setOrthologyUploads] = useState<Array<{
     id: string;
     file: File;
@@ -89,7 +87,6 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     algorithm: string,
   ) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    setIsAddOrthologyOpen(false);
     setOrthologyUploads((prev) => [...prev, { id, file, order, algorithm }]);
   };
 
@@ -287,14 +284,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
               Supplementary clinical evidence and batch records
             </p>
           </div>
-          <Button
-            variant="outline"
-            className="font-bold text-xs px-4 py-2"
-            onClick={() => setIsAddOrthologyOpen(true)}
-          >
-            <Icon name="add_circle" weight={500} className="text-lg" />
-            APPEND DATASET
-          </Button>
+          <AddOrthologyButton onConfirm={handleOrthologyUpload} />
         </div>
 
         <div className="space-y-4">
@@ -329,11 +319,6 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
           ))}
         </div>
       </div>
-      <AddOrthologyDialog
-        isOpen={isAddOrthologyOpen}
-        onClose={() => setIsAddOrthologyOpen(false)}
-        onConfirm={handleOrthologyUpload}
-      />
     </div>
   );
 };
