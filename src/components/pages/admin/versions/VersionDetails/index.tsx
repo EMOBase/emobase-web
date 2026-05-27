@@ -8,7 +8,12 @@ import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import type { VersionDetailFiles } from "@/utils/services/genomics";
 import useService from "@/hooks/useService";
-import { FileCard, GffFileCard, OrthologyFileCard, type FileStatus } from "./FileCard";
+import {
+  FileCard,
+  GffFileCard,
+  OrthologyFileCard,
+  type FileStatus,
+} from "./FileCard";
 import AddOrthologyButton from "./AddOrthologyButton";
 
 const MAIN_FILE_CONFIGS: Record<
@@ -38,8 +43,7 @@ const MAIN_FILE_CONFIGS: Record<
 };
 
 const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
-  const { fetchVersionDetail, releaseVersion } =
-    useService(genomicsService);
+  const { fetchVersionDetail, releaseVersion } = useService(genomicsService);
 
   const [refreshKey, setRefreshKey] = useState(0);
   const [isReleasing, setIsReleasing] = useState(false);
@@ -74,12 +78,14 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     }
   }, [data]);
 
-  const [orthologyUploads, setOrthologyUploads] = useState<Array<{
-    id: string;
-    file: File;
-    order: number;
-    algorithm: string;
-  }>>([]);
+  const [orthologyUploads, setOrthologyUploads] = useState<
+    Array<{
+      id: string;
+      file: File;
+      order: number;
+      algorithm: string;
+    }>
+  >([]);
 
   const handleOrthologyUpload = (
     file: File,
@@ -260,15 +266,15 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
             <GffFileCard
               key={file.name}
               file={file}
-               versionId={name}
-               onRefresh={refresh}
-             />
-           ) : (
-             <FileCard
-               key={file.name}
-               file={file}
-               versionId={name}
-               onRefresh={refresh}
+              versionId={name}
+              onRefresh={refresh}
+            />
+          ) : (
+            <FileCard
+              key={file.name}
+              file={file}
+              versionId={name}
+              onRefresh={refresh}
             />
           ),
         )}
@@ -281,7 +287,8 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
               ADDITIONAL ORTHOLOGY FILES
             </h2>
             <p className="text-slate-500 text-xs mt-1 font-medium">
-              Supplementary clinical evidence and batch records
+              Mapping relationships between homologous genes across different
+              species.
             </p>
           </div>
           <AddOrthologyButton onConfirm={handleOrthologyUpload} />
@@ -312,7 +319,9 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
               order={item.order}
               algorithm={item.algorithm}
               onComplete={() => {
-                setOrthologyUploads((prev) => prev.filter((u) => u.id !== item.id));
+                setOrthologyUploads((prev) =>
+                  prev.filter((u) => u.id !== item.id),
+                );
                 refresh();
               }}
             />
