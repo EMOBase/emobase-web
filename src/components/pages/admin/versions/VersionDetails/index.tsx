@@ -121,8 +121,13 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
   );
 
   const uploadFile = React.useCallback(
-    async (file: File, fileType: string, onProgress?: (pct: number) => void) => {
-      await upload({ file, version: name, fileType, onProgress });
+    async (
+      file: File,
+      fileType: string,
+      onProgress?: (pct: number) => void,
+      shouldResume?: boolean,
+    ) => {
+      await upload({ file, version: name, fileType, onProgress, shouldResume });
       refresh();
     },
     [name, upload, refresh],
@@ -133,6 +138,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
       file: File,
       mapping: GffMappingConfirmData,
       onProgress?: (pct: number) => void,
+      shouldResume?: boolean,
     ) => {
       await upload({
         file,
@@ -143,6 +149,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         trimSuffixChars: mapping.trimSuffixChars,
         oldGeneIDKeys: mapping.oldGeneIDKeys.join(","),
         onProgress,
+        shouldResume,
       });
       refresh();
     },
@@ -314,21 +321,33 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
       </div>
 
       <div className="space-y-4 relative">
-        {mainFiles.map((file) => (
-          <FileCard
-            key={file.name}
-            file={file}
-            onUploadFile={
-              file.name !== "genomic.gff"
-                ? (selectedFile, onProgress) =>
-                    uploadFile(selectedFile, file.name, onProgress)
-                : undefined
-            }
-            onUploadGffFile={
-              file.name === "genomic.gff" ? uploadGffFile : undefined
-            }
-          />
-        ))}
+        {mainFiles.map((file) => {
+          const shouldResume = file.status === "PAUSED";
+
+          return (
+            <FileCard
+              key={file.name}
+              file={file}
+              onUploadFile={
+                file.name !== "genomic.gff"
+                  ? (selectedFile, onProgress) =>
+                      uploadFile(
+                        selectedFile,
+                        file.name,
+                        onProgress,
+                        shouldResume,
+                      )
+                  : undefined
+              }
+              onUploadGffFile={
+                file.name === "genomic.gff"
+                  ? (gffFile, mapping, onProgress) =>
+                      uploadGffFile(gffFile, mapping, onProgress, shouldResume)
+                  : undefined
+              }
+            />
+          );
+        })}
       </div>
 
       <div className="bg-slate-50/50 rounded-3xl border border-slate-100 p-8 space-y-8">

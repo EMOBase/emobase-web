@@ -118,6 +118,7 @@ type UploadInput = {
     bytesUploaded: number,
     bytesTotal: number,
   ) => void;
+  shouldResume?: boolean;
 };
 
 export type UploadResponse = {
@@ -173,6 +174,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     trimSuffixChars,
     oldGeneIDKeys,
     onProgress,
+    shouldResume = false,
   }: UploadInput): Promise<UploadResponse> => {
     return await new Promise((resolve, reject) => {
       const tusUpload = new TusUpload(file, {
@@ -208,7 +210,20 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
         },
       });
 
-      tusUpload.start();
+      if (shouldResume) {
+        tusUpload.findPreviousUploads()
+          .then((uploads) => {
+            if (uploads.length > 0) {
+              tusUpload.resumeFromPreviousUpload(uploads[0]);
+            }
+            tusUpload.start();
+          })
+          .catch(() => {
+            tusUpload.start();
+          });
+      } else {
+        tusUpload.start();
+      }
     });
   };
 

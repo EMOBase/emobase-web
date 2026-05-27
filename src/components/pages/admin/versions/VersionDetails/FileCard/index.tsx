@@ -7,7 +7,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import GffUpload, { type GffMappingConfirmData } from "./GffUpload";
+import GffUpload, { type GffMappingConfirmData } from "../GffUpload";
+import { ProgressBar } from "./ProgressBar";
 
 export interface FileStatus {
   id?: string;
@@ -32,38 +33,6 @@ const ALLOWED_UPLOAD_FILE_TYPES = new Set([
   "fb_synonym.tsv",
   "fbgn_fbtr_fbpp.tsv",
 ]);
-
-const ProgressBar = ({
-  progress,
-  title,
-  theme = "orange",
-  showComplete = false,
-}: {
-  progress: number;
-  title: string;
-  theme?: "orange" | "blue";
-  showComplete?: boolean;
-}) => {
-  const barColor = theme === "blue" ? "bg-blue-600" : "bg-[#c2410c]";
-  const textColor = theme === "blue" ? "text-blue-600" : "text-[#c2410c]";
-
-  return (
-    <div className="w-full space-y-2">
-      <div className="flex justify-between text-[11px] font-bold tracking-wider uppercase">
-        <span className={textColor}>{title}</span>
-        <span className="text-slate-400">
-          {showComplete && progress === 100 ? "COMPLETE" : `${progress}%`}
-        </span>
-      </div>
-      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-        <div
-          className={twMerge("h-full transition-all duration-500", barColor)}
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-    </div>
-  );
-};
 
 export const FileCard = ({
   file,
@@ -94,7 +63,6 @@ export const FileCard = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [isGffDialogOpen, setIsGffDialogOpen] = useState(false);
   const [gffFileToUpload, setGffFileToUpload] = useState<File | null>(null);
 
   const isGff = file.name === "genomic.gff";
@@ -138,7 +106,6 @@ export const FileCard = ({
 
     if (isGff) {
       setGffFileToUpload(selectedFile);
-      setIsGffDialogOpen(true);
       return;
     }
 
@@ -165,7 +132,6 @@ export const FileCard = ({
   ) => {
     if (!gffFileToUpload || !onUploadGffFile) return;
 
-    setIsGffDialogOpen(false);
     setInternalIsUploading(true);
     setInternalUploadProgress(0);
 
@@ -184,23 +150,6 @@ export const FileCard = ({
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
-    }
-  };
-
-  const handleGffDialogClose = () => {
-    setIsGffDialogOpen(false);
-    setGffFileToUpload(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleGffUploadDifferent = () => {
-    setIsGffDialogOpen(false);
-    setGffFileToUpload(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-      fileInputRef.current.click();
     }
   };
 
@@ -436,11 +385,20 @@ export const FileCard = ({
       {/* GFF upload dialog */}
       {isGff && (
         <GffUpload
-          isOpen={isGffDialogOpen}
           file={gffFileToUpload}
-          onClose={handleGffDialogClose}
+          isOpen={gffFileToUpload !== null}
           onConfirm={handleGffMappingConfirm}
-          onUploadDifferentFile={handleGffUploadDifferent}
+          onClose={() => {
+            setGffFileToUpload(null);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+          }}
+          onUploadDifferentFile={() => {
+            setGffFileToUpload(null);
+            if (fileInputRef.current) {
+              fileInputRef.current.value = "";
+              fileInputRef.current.click();
+            }
+          }}
         />
       )}
     </div>

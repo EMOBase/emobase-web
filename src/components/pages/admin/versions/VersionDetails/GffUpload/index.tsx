@@ -20,23 +20,22 @@ const GffUpload = ({
   onConfirm,
   onUploadDifferentFile,
 }: GffUploadProps) => {
-  const active = isOpen && file !== null;
   const { isParsing, parseError, attributes, subAttributesMap } =
     useGffFileParse({
       file,
-      enabled: active,
+      enabled: file !== null,
     });
 
   return (
     <>
       <GffParsingErrorDialog
-        isOpen={active && !!parseError}
+        isOpen={isOpen && !!parseError}
         onClose={onClose}
         error={parseError ?? ""}
         onUploadDifferentFile={onUploadDifferentFile}
       />
       <GffMappingDialog
-        isOpen={active && !parseError}
+        isOpen={isOpen && !parseError}
         onClose={onClose}
         isParsing={isParsing}
         attributes={attributes}
