@@ -77,28 +77,40 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
   const [isAddOrthologyOpen, setIsAddOrthologyOpen] = useState(false);
 
-  const [isOrthologyUploading, setIsOrthologyUploading] = useState(false);
-  const [orthologyUploadProgress, setOrthologyUploadProgress] = useState(0);
+  const [orthologyUploads, setOrthologyUploads] = useState<Array<{
+    id: string;
+    file: File;
+    order: number;
+    algorithm: string;
+    progress: number;
+  }>>([]);
 
   const handleOrthologyUpload = async (
     file: File,
     order: number,
     algorithm: string,
   ) => {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     setIsAddOrthologyOpen(false);
+    setOrthologyUploads((prev) => [
+      ...prev,
+      { id, file, order, algorithm, progress: 0 },
+    ]);
 
     try {
-      setIsOrthologyUploading(true);
-      setOrthologyUploadProgress(0);
-
       await upload({
         file,
         version: name,
         fileType: "orthology.tsv",
         order,
         algorithm,
-        onProgress: (progress) =>
-          setOrthologyUploadProgress(Math.round(progress)),
+        onProgress: (progress) => {
+          setOrthologyUploads((prev) =>
+            prev.map((u) =>
+              u.id === id ? { ...u, progress: Math.round(progress) } : u,
+            ),
+          );
+        },
       });
 
       toast.success(`Uploaded ${file.name}`);
@@ -107,8 +119,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
       console.error("Upload failed:", error);
       toast.error(`Failed to upload ${file.name}`);
     } finally {
-      setIsOrthologyUploading(false);
-      setOrthologyUploadProgress(0);
+      setOrthologyUploads((prev) => prev.filter((u) => u.id !== id));
     }
   };
 
@@ -386,21 +397,22 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
             </div>
           )}
 
-          {isOrthologyUploading && (
+          {orthologyUploads.map((item) => (
             <FileCard
+              key={item.id}
               file={{
-                name: "Uploading...",
+                name: item.file.name,
                 category: "Orthology Mapping",
                 icon: "tsv",
                 status: "UPLOADING",
-                progress: orthologyUploadProgress,
+                progress: item.progress,
                 progressTitle: "IN TRANSIT",
               }}
               isUploading={true}
-              uploadProgress={orthologyUploadProgress}
+              uploadProgress={item.progress}
               size="sm"
             />
-          )}
+          ))}
         </div>
       </div>
       <AddOrthologyDialog
