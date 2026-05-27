@@ -4,13 +4,9 @@ import useService from "@/hooks/useService";
 import genomicsService from "@/utils/services/genomics";
 import { FileCardBase, ALLOWED_UPLOAD_FILE_TYPES } from "./base";
 import type { FileStatus } from "./base";
+import GffUpload, { type GffMappingConfirmData } from "../GffUpload";
 
-export type { FileStatus };
-
-export { GffFileCard } from "./gff";
-export { OrthologyFileCard } from "./orthology";
-
-export const FileCard = ({
+export const GffFileCard = ({
   file,
   versionId,
   canDelete,
@@ -27,6 +23,7 @@ export const FileCard = ({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [gffFileToUpload, setGffFileToUpload] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChooseFile = () => {
@@ -54,28 +51,41 @@ export const FileCard = ({
       return;
     }
 
-    if (!versionId) return;
+    setGffFileToUpload(selectedFile);
+  };
+
+  const handleGffMappingConfirm = async (
+    mappingData: GffMappingConfirmData,
+  ) => {
+    if (!gffFileToUpload || !versionId) return;
 
     setIsUploading(true);
     setUploadProgress(0);
 
     try {
       await upload({
-        file: selectedFile,
+        file: gffFileToUpload,
         version: versionId,
         fileType: file.name,
+        geneIDKey: mappingData.geneIDKey,
+        trimPrefixChars: mappingData.trimPrefixChars,
+        trimSuffixChars: mappingData.trimSuffixChars,
+        oldGeneIDKeys: mappingData.oldGeneIDKeys.join(","),
         onProgress: (pct) => setUploadProgress(Math.round(pct)),
         shouldResume: file.status === "PAUSED",
       });
-      toast.success(`Uploaded ${selectedFile.name}`);
+      toast.success(`Uploaded ${gffFileToUpload.name}`);
       onRefresh?.();
     } catch (error) {
-      console.error("Upload failed:", error);
-      toast.error(`Failed to upload ${selectedFile.name}`);
+      console.error("GFF Upload failed:", error);
+      toast.error(`Failed to upload ${gffFileToUpload.name}`);
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
-      event.target.value = "";
+      setGffFileToUpload(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -113,6 +123,22 @@ export const FileCard = ({
         className="hidden"
         accept=".gz,.bgz"
         onChange={handleFileChange}
+      />
+      <GffUpload
+        file={gffFileToUpload}
+        isOpen={gffFileToUpload !== null}
+        onConfirm={handleGffMappingConfirm}
+        onClose={() => {
+          setGffFileToUpload(null);
+          if (fileInputRef.current) fileInputRef.current.value = "";
+        }}
+        onUploadDifferentFile={() => {
+          setGffFileToUpload(null);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+            fileInputRef.current.click();
+          }
+        }}
       />
     </FileCardBase>
   );

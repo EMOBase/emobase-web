@@ -8,8 +8,7 @@ import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import type { VersionDetailFiles } from "@/utils/services/genomics";
 import useService from "@/hooks/useService";
-import { FileCard, type FileStatus } from "./FileCard";
-import type { GffMappingConfirmData } from "./GffUpload";
+import { FileCard, GffFileCard, OrthologyFileCard, type FileStatus } from "./FileCard";
 import AddOrthologyDialog from "./AddOrthologyDialog";
 
 const MAIN_FILE_CONFIGS: Record<
@@ -39,7 +38,7 @@ const MAIN_FILE_CONFIGS: Record<
 };
 
 const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
-  const { fetchVersionDetail, upload, deleteUploadFile, releaseVersion } =
+  const { fetchVersionDetail, releaseVersion } =
     useService(genomicsService);
 
   const [refreshKey, setRefreshKey] = useState(0);
@@ -82,90 +81,17 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     file: File;
     order: number;
     algorithm: string;
-    progress: number;
   }>>([]);
 
-  const handleOrthologyUpload = async (
+  const handleOrthologyUpload = (
     file: File,
     order: number,
     algorithm: string,
   ) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     setIsAddOrthologyOpen(false);
-    setOrthologyUploads((prev) => [
-      ...prev,
-      { id, file, order, algorithm, progress: 0 },
-    ]);
-
-    try {
-      await upload({
-        file,
-        version: name,
-        fileType: "orthology.tsv",
-        order,
-        algorithm,
-        onProgress: (progress) => {
-          setOrthologyUploads((prev) =>
-            prev.map((u) =>
-              u.id === id ? { ...u, progress: Math.round(progress) } : u,
-            ),
-          );
-        },
-      });
-
-      toast.success(`Uploaded ${file.name}`);
-      refresh();
-    } catch (error) {
-      console.error("Upload failed:", error);
-      toast.error(`Failed to upload ${file.name}`);
-    } finally {
-      setOrthologyUploads((prev) => prev.filter((u) => u.id !== id));
-    }
+    setOrthologyUploads((prev) => [...prev, { id, file, order, algorithm }]);
   };
-
-  const deleteFile = React.useCallback(
-    async (id: string) => {
-      await deleteUploadFile(id);
-      refresh();
-    },
-    [deleteUploadFile, refresh],
-  );
-
-  const uploadFile = React.useCallback(
-    async (
-      file: File,
-      fileType: string,
-      onProgress?: (pct: number) => void,
-      shouldResume?: boolean,
-    ) => {
-      await upload({ file, version: name, fileType, onProgress, shouldResume });
-      refresh();
-    },
-    [name, upload, refresh],
-  );
-
-  const uploadGffFile = React.useCallback(
-    async (
-      file: File,
-      mapping: GffMappingConfirmData,
-      onProgress?: (pct: number) => void,
-      shouldResume?: boolean,
-    ) => {
-      await upload({
-        file,
-        version: name,
-        fileType: "genomic.gff",
-        geneIDKey: mapping.geneIDKey,
-        trimPrefixChars: mapping.trimPrefixChars,
-        trimSuffixChars: mapping.trimSuffixChars,
-        oldGeneIDKeys: mapping.oldGeneIDKeys.join(","),
-        onProgress,
-        shouldResume,
-      });
-      refresh();
-    },
-    [name, upload, refresh],
-  );
 
   const mainFiles = React.useMemo(() => {
     const files = versionData?.files || {};
@@ -332,33 +258,23 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
       </div>
 
       <div className="space-y-4 relative">
-        {mainFiles.map((file) => {
-          const shouldResume = file.status === "PAUSED";
-
-          return (
-            <FileCard
+        {mainFiles.map((file) =>
+          file.name === "genomic.gff" ? (
+            <GffFileCard
               key={file.name}
               file={file}
-              onUploadFile={
-                file.name !== "genomic.gff"
-                  ? (selectedFile, onProgress) =>
-                      uploadFile(
-                        selectedFile,
-                        file.name,
-                        onProgress,
-                        shouldResume,
-                      )
-                  : undefined
-              }
-              onUploadGffFile={
-                file.name === "genomic.gff"
-                  ? (gffFile, mapping, onProgress) =>
-                      uploadGffFile(gffFile, mapping, onProgress, shouldResume)
-                  : undefined
-              }
+               versionId={name}
+               onRefresh={refresh}
+             />
+           ) : (
+             <FileCard
+               key={file.name}
+               file={file}
+               versionId={name}
+               onRefresh={refresh}
             />
-          );
-        })}
+          ),
+        )}
       </div>
 
       <div className="bg-slate-50/50 rounded-3xl border border-slate-100 p-8 space-y-8">
@@ -387,7 +303,8 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
               <FileCard
                 key={file.id}
                 file={file}
-                onDeleteFile={deleteFile}
+                canDelete={true}
+                onRefresh={refresh}
                 size="sm"
               />
             ))
@@ -398,19 +315,16 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
           )}
 
           {orthologyUploads.map((item) => (
-            <FileCard
+            <OrthologyFileCard
               key={item.id}
-              file={{
-                name: item.file.name,
-                category: "Orthology Mapping",
-                icon: "tsv",
-                status: "UPLOADING",
-                progress: item.progress,
-                progressTitle: "IN TRANSIT",
+              file={item.file}
+              versionId={name}
+              order={item.order}
+              algorithm={item.algorithm}
+              onComplete={() => {
+                setOrthologyUploads((prev) => prev.filter((u) => u.id !== item.id));
+                refresh();
               }}
-              isUploading={true}
-              uploadProgress={item.progress}
-              size="sm"
             />
           ))}
         </div>
