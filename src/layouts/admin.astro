@@ -14,6 +14,7 @@ const session = await getSession(Astro.request);
 {
   session && !session.error ? (
     <Layout>
+      <script is:inline define:vars={{ session }}>window.__SESSION__ = session;</script>
       <slot />
     </Layout>
   ) : (
