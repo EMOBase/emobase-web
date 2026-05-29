@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { parseISO, format } from "date-fns";
 import { toast } from "sonner";
 
+import { getEnv } from "@/utils/env";
 import { formatBytes } from "@/utils/format";
 import genomicsService, { type VersionItem } from "@/utils/services/genomics";
 import useAsyncData from "@/hooks/useAsyncData";
@@ -201,14 +202,6 @@ const VersionsManager: React.FC = () => {
                           </button>
                         ) : (
                           <>
-                            {version.isDefault && (
-                              <button
-                                className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors"
-                                title="Edit Version"
-                              >
-                                <Icon name="edit" className="text-xl" />
-                              </button>
-                            )}
                             {version.status === "READY" &&
                               !version.isDefault && (
                                 <button
@@ -227,9 +220,13 @@ const VersionsManager: React.FC = () => {
                                   />
                                 </button>
                               )}
-                            <button className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors">
+                            <a
+                              href={`${getEnv("PUBLIC_DOWNLOAD_URL")}/emobase-genomics/${version.name}/`}
+                              target="_blank"
+                              className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors"
+                            >
                               <Icon name="download" className="text-xl" />
-                            </button>
+                            </a>
                             {!version.isDefault && (
                               <button
                                 onClick={() => handleDelete(version.name)}
