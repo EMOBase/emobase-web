@@ -103,6 +103,18 @@ server {
 
 ---
 
+## 🎨 Icon Data Regeneration
+
+The `<Icon />` component (`src/components/ui/icon.tsx`) renders Material Symbols from pre-bundled SVG path data. The data is stored in `src/utils/constants/icon.ts`.
+
+Run after updating the `@material-symbols/svg-*` packages:
+
+```bash
+node scripts/generate-icon-data.mjs
+```
+
+This will update `src/utils/constants/icon.ts`, ensuring all icons are available for the `<Icon />` component.
+
 ## 🛠 Directus Schema Synchronization
 
 The project uses TypeScript types derived directly from the Directus data model. When you change the schema in Directus, follow these steps to update the types:
