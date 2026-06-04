@@ -54,6 +54,7 @@ const ResultRow = ({ gene, phenotypes }: GenePhenotypesItem) => {
                 {images.map((image) => {
                   return (
                     <ImageHolder
+                      key={image.id}
                       imageId={image.id}
                       status={image.status}
                       height={100}
