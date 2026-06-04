@@ -50,7 +50,7 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
           </div>
         </div>
         {!forceCollapsed && (
-          <SidebarTrigger className="relative z-1 -right-2 group-data-[collapsible=icon]:right-0" />
+          <SidebarTrigger className="relative z-1 -right-2 group-data-[collapsible=icon]:right-0 group-data-[collapsible=icon]:left-[3px]" />
         )}
       </div>
     </SidebarHeader>
