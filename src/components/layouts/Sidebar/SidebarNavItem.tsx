@@ -59,13 +59,15 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
         <Icon
           name={item.icon}
           fill={isActive}
-          weight={isActive ? 500 : 400}
+          weight={isActive ? 700 : 500}
           className="text-xl"
         />
-        <span className="text-sm font-medium flex-1 truncate">{item.label}</span>
+        <span className="text-sm font-medium flex-1 truncate">
+          {item.label}
+        </span>
         {!isCollapsed && hasChildren && (
           <Icon
-            name="expand_more"
+            name="keyboard_arrow_down"
             className="text-lg text-neutral-500 transition-transform group-data-[state=closed]/collapsible:-rotate-90"
           />
         )}

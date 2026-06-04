@@ -1,3 +1,5 @@
+import { Icon } from "@/components/ui/icon";
+
 const BeetleLoading = ({ title }: { title: string }) => {
   return (
     <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/60 backdrop-blur-[2px] transition-all duration-300 animate-in fade-in">
@@ -5,9 +7,7 @@ const BeetleLoading = ({ title }: { title: string }) => {
         <div className="relative">
           <div className="size-14 border-[3px] border-orange-100 border-t-primary rounded-full animate-spin"></div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="material-symbols-outlined text-primary text-xl animate-pulse">
-              pest_control
-            </span>
+            <Icon name="pest_control" className="text-primary text-xl animate-pulse" />
           </div>
         </div>
         <div className="flex flex-col items-center gap-1">

@@ -8,6 +8,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Icon } from "@/components/ui/icon";
 import { type GOAnnotation } from "@/utils/constants/goannotation";
 
 import type { Homolog } from "./types";
@@ -148,9 +149,7 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({
                       {term.id}
                     </span>
                   </div>
-                  <span className="material-symbols-outlined text-gray-300 group-hover:text-primary text-[18px]">
-                    open_in_new
-                  </span>
+                  <Icon name="open_in_new" className="text-gray-300 group-hover:text-primary text-[18px]" />
                 </a>
               ))}
             </div>

@@ -115,7 +115,7 @@ const ImagesField = withForm({
                           >
                             <Icon
                               name="close"
-                              weight={600}
+                              weight={700}
                               className="text-base"
                             />
                           </button>
@@ -131,9 +131,11 @@ const ImagesField = withForm({
                     type="button"
                     className="aspect-square rounded-lg border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center bg-white hover:bg-neutral-100 transition-colors group"
                   >
-                    <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">
-                      add
-                    </span>
+                    <Icon
+                      name="add"
+                      weight={600}
+                      className="text-primary text-2xl group-hover:scale-110 transition-transform"
+                    />
                     <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter mt-1">
                       Add more
                     </span>
@@ -142,9 +144,11 @@ const ImagesField = withForm({
               ) : (
                 <>
                   <div className="size-12 rounded-full bg-white flex items-center justify-center shadow-sm mb-3 group-hover:scale-110 transition-transform">
-                    <span className="material-symbols-outlined text-primary">
-                      photo_camera
-                    </span>
+                    <Icon
+                      name="photo_camera"
+                      weight={600}
+                      className="text-xl text-primary"
+                    />
                   </div>
                   <p className="text-sm text-neutral-600 font-bold">
                     Add Phenotype Images

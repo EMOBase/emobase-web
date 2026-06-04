@@ -26,7 +26,7 @@ const ResourceLink = ({ link }: { link: Link }) => {
         </span>
         <Icon
           name={link.download ? "download" : "open_in_new"}
-          weight={500}
+          weight={700}
           className="text-lg text-primary/80"
         />
       </a>

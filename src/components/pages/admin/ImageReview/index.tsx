@@ -65,7 +65,7 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
     >
       <div className="p-6 flex items-center justify-between border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <Icon name="image" weight={500} className="text-primary text-2xl" />
+          <Icon name="image" weight={600} className="text-primary text-2xl" />
           <h3 className="text-lg font-bold text-text-primary font-display">
             {title}
           </h3>
@@ -90,7 +90,7 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
               }}
               className="py-2"
             >
-              <Icon name="done_all" weight={500} className="text-lg" />
+              <Icon name="done_all" weight={600} className="text-lg" />
               Accept Selected
             </Button>
             <Button
@@ -100,7 +100,7 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
               }}
               className="bg-slate-100 text-slate-500 py-2 hover:bg-slate-200/90 hover:text-slate-600"
             >
-              <Icon name="delete" weight={500} className="text-lg" />
+              <Icon name="delete" weight={600} className="text-lg" />
               Discard Selected
             </Button>
           </div>
@@ -165,7 +165,7 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
                         }}
                         className="py-2"
                       >
-                        <Icon name="check" weight={500} className="text-lg" />
+                        <Icon name="check" weight={600} className="text-lg" />
                         Accept
                       </Button>
                       <Button
@@ -177,7 +177,7 @@ const ImageReview: React.FC<ImageReviewProps> = ({ id, title }) => {
                         }}
                         className="bg-slate-100 text-slate-500 py-2 hover:bg-slate-200/90 hover:text-slate-600"
                       >
-                        <Icon name="close" weight={500} className="text-lg" />
+                        <Icon name="close" weight={600} className="text-lg" />
                         Discard
                       </Button>
                     </div>

@@ -67,7 +67,7 @@ const ViewDetailsButton: React.FC<ViewDetailsButtonProps> = ({ phenotype }) => {
                     className="gap-2 px-4 py-1.5 text-[10px] font-semibold border-1 rounded uppercase"
                   >
                     Download
-                    <Icon name="download" weight={500} className="text-sm" />
+                    <Icon name="download" weight={600} className="text-sm" />
                   </Button>
                 ) : (
                   "N/A"

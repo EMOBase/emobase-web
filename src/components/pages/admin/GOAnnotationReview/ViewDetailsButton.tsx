@@ -122,7 +122,7 @@ const ViewDetailsButton: React.FC<ViewDetailsButtonProps> = ({
                 <a
                   href={getLinkEvidence(annotation)}
                   target="_blank"
-                  className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-neutral-100 text-[10px] font-bold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-100 text-[10px] font-bold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700"
                 >
                   {annotation.evidence}{" "}
                   <Icon name="open_in_new" className="text-xs" />

@@ -34,7 +34,7 @@ const PublicationCRUD: React.FC<PublicationCRUDProps> = ({
     <div id={id}>
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-2xl font-bold text-neutral-800 dark:text-white flex items-center gap-2">
-          <Icon name="menu_book" weight={500} className="text-primary" />
+          <Icon name="menu_book" weight={600} className="text-primary" />
           {title}
         </h2>
         <AddPublicationButton gene={gene} />

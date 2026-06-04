@@ -32,7 +32,7 @@ const AuthorsField = withForm({
                   >
                     <Icon
                       name="add"
-                      weight={500}
+                      weight={600}
                       className="text-base rounded"
                     />
                     Add
@@ -69,7 +69,7 @@ const AuthorsField = withForm({
                           >
                             <Icon
                               name="remove"
-                              weight={500}
+                              weight={600}
                               className="text-xl"
                             />
                           </Button>

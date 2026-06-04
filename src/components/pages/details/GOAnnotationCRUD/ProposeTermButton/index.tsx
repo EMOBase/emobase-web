@@ -30,7 +30,7 @@ const ProposeTermButton = ({ gene }: { gene: string }) => {
       <DialogTrigger
         render={
           <Button variant="outline" className="px-4 py-2">
-            <Icon name="add" weight={500} className="text-xl" />
+            <Icon name="add" weight={600} className="text-xl" />
             Propose a GO Term
           </Button>
         }

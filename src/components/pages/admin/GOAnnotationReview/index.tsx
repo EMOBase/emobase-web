@@ -85,7 +85,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
           <div className="flex items-center gap-3">
             <Icon
               name="account_tree"
-              weight={500}
+              weight={600}
               className="text-primary text-2xl"
             />
             <h3 className="text-lg font-bold text-text-primary font-display">
@@ -112,7 +112,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
                 }}
                 className="py-2"
               >
-                <Icon name="done_all" weight={500} className="text-lg" />
+                <Icon name="done_all" weight={600} className="text-lg" />
                 Accept Selected
               </Button>
               <Button
@@ -122,7 +122,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
                 }}
                 className="bg-slate-100 text-slate-500 py-2 hover:bg-slate-200/90 hover:text-slate-600"
               >
-                <Icon name="delete" weight={500} className="text-lg" />
+                <Icon name="delete" weight={600} className="text-lg" />
                 Discard Selected
               </Button>
             </div>
@@ -211,7 +211,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
                         >
                           <Icon
                             name="visibility"
-                            weight={500}
+                            weight={600}
                             className="text-lg"
                           />
                         </ViewDetailsButton>
@@ -228,7 +228,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
                             >
                               <Icon
                                 name="check"
-                                weight={500}
+                                weight={600}
                                 className="text-lg"
                               />
                             </Button>
@@ -248,7 +248,7 @@ const GOAnnotationReview: React.FC<GOAnnotationReviewProps> = ({
                             >
                               <Icon
                                 name="close"
-                                weight={500}
+                                weight={600}
                                 className="text-lg"
                               />
                             </Button>
