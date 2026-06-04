@@ -1,5 +1,6 @@
 import { useState, Fragment } from "react";
 
+import { Icon } from "@/components/ui/icon";
 import phenotypeService, {
   type PhenotypeSearchResult,
 } from "@/utils/services/phenotypeService";
@@ -53,6 +54,7 @@ const ResultRow = ({ gene, phenotypes }: GenePhenotypesItem) => {
                 {images.map((image) => {
                   return (
                     <ImageHolder
+                      key={image.id}
                       imageId={image.id}
                       status={image.status}
                       height={100}
@@ -166,36 +168,28 @@ const SearchResultByPhenotype = ({
                 disabled={page === 1}
                 onClick={() => setPage(1)}
               >
-                <span className="material-symbols-outlined text-xl">
-                  first_page
-                </span>
+                <Icon name="first_page" className="text-xl" />
               </button>
               <button
                 className="flex p-1 rounded-md text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
                 disabled={page === 1}
                 onClick={() => setPage((p) => p - 1)}
               >
-                <span className="material-symbols-outlined text-xl">
-                  chevron_left
-                </span>
+                <Icon name="chevron_left" className="text-xl" />
               </button>
               <button
                 className="flex p-1 rounded-md text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
                 disabled={page === totalPage}
                 onClick={() => setPage((p) => p + 1)}
               >
-                <span className="material-symbols-outlined text-xl">
-                  chevron_right
-                </span>
+                <Icon name="chevron_right" className="text-xl" />
               </button>
               <button
                 className="flex p-1 rounded-md text-slate-600 enabled:hover:text-slate-900 enabled:hover:bg-slate-200 transition-colors disabled:opacity-50"
                 disabled={page === totalPage}
                 onClick={() => setPage(totalPage)}
               >
-                <span className="material-symbols-outlined text-xl">
-                  last_page
-                </span>
+                <Icon name="last_page" className="text-xl" />
               </button>
             </div>
           </div>

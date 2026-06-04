@@ -108,9 +108,11 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
                 key={link.label}
                 href={link.template.replace("{gene}", gene)}
                 target="_blank"
-                className="flex items-center gap-2 text-neutral-600 hover:text-primary transition-colors dark:text-neutral-400 dark:hover:text-primary"
+                className="flex items-start gap-2 text-neutral-600 hover:text-primary transition-colors dark:text-neutral-400 dark:hover:text-primary"
               >
-                <Icon name="open_in_new" className="text-base" />
+                <div className="h-5 flex items-center">
+                  <Icon name="open_in_new" className="text-base" />
+                </div>
                 {link.label}
               </a>
             ))}

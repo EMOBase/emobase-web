@@ -147,9 +147,10 @@ const PhenotypeList: React.FC<PhenotypeListProps> = ({
         <span className="font-bold text-neutral-900 dark:text-white">
           {experiment.displayName}
         </span>
-        <span className="material-symbols-outlined text-neutral-500 group-data-[state=open]:rotate-180">
-          expand_less
-        </span>
+        <Icon
+          name="keyboard_arrow_up"
+          className="text-2xl text-neutral-500 group-data-[state=open]:rotate-180"
+        />
       </CollapsibleTrigger>
       <CollapsibleContent className="p-6 bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800">
         {topicsWithData.map((topic, index) => (

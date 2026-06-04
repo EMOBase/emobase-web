@@ -31,9 +31,11 @@ const AdminLogin = ({
             <div className="space-y-4 mb-10">
               <div className="flex justify-center mb-2">
                 <div className="bg-orange-50 text-primary px-4 py-1 rounded-full flex items-center gap-2">
-                  <span className="material-symbols-outlined text-lg">
-                    admin_panel_settings
-                  </span>
+                  <Icon
+                    name="admin_panel_settings"
+                    weight={600}
+                    className="text-lg"
+                  />
                   <span className="text-xs font-bold uppercase tracking-wider">
                     Restricted Access
                   </span>
@@ -55,9 +57,11 @@ const AdminLogin = ({
               <span className="text-sm tracking-wider uppercase">
                 Login with Keycloak
               </span>
-              <span className="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">
-                lock
-              </span>
+              <Icon
+                name="lock"
+                weight={600}
+                className="text-xl group-hover:translate-x-1 transition-transform"
+              />
             </button>
           </div>
         </div>

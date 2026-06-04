@@ -38,7 +38,7 @@ const IBScreen: React.FC<IBScreenProps> = ({
     <div id={id}>
       <div className="flex flex-col gap-2 mb-5">
         <h2 className="font-display text-2xl font-bold text-neutral-800 dark:text-white flex items-center gap-2">
-          <Icon name="biotech" weight={500} className="text-primary" />
+          <Icon name="biotech" weight={600} className="text-primary" />
           {title}
         </h2>
         <WorkflowButtons />

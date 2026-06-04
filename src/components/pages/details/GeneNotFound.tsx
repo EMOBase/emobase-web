@@ -1,3 +1,4 @@
+import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 
 const GeneNotFound = () => {
@@ -6,9 +7,7 @@ const GeneNotFound = () => {
       <div className="max-w-md w-full bg-white rounded-xl shadow-card border border-slate-200 p-12 md:p-16 text-center animate-in fade-in zoom-in duration-300">
         <div className="mb-6 flex justify-center">
           <div className="size-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center">
-            <span className="material-symbols-outlined text-slate-400 text-xl">
-              error_outline
-            </span>
+            <Icon name="error" className="text-slate-400 text-xl" />
           </div>
         </div>
         <div>

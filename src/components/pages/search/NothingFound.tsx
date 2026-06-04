@@ -1,15 +1,11 @@
+import { Icon } from "@/components/ui/icon";
 import { hasFeature } from "@/utils/features";
 
 const NothingFound = ({ term }: { term: string }) => {
   return (
     <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border-2 border-slate-100 border-dashed gap-8 animate-in zoom-in-95 duration-700">
       <div className="size-24 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 shadow-inner text-5xl">
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: "unset" }}
-        >
-          search_off
-        </span>
+        <Icon name="search_off" />
       </div>
 
       <div className="text-center max-w-lg px-6">
@@ -63,9 +59,11 @@ const NothingFound = ({ term }: { term: string }) => {
             href="/"
             className="text-primary text-sm font-bold hover:text-amber-700 transition-all flex items-center justify-center gap-2 group"
           >
-            <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
-              arrow_back
-            </span>
+            <Icon
+              name="arrow_back"
+              weight={600}
+              className="text-lg group-hover:-translate-x-1 transition-transform"
+            />
             Return to Dashboard
           </a>
         </div>

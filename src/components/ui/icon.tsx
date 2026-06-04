@@ -1,4 +1,5 @@
 import { cn } from "@/utils/classname";
+import { iconData } from "@/utils/constants/icon";
 
 type IconProps = {
   name: string;
@@ -7,22 +8,22 @@ type IconProps = {
   className?: string;
 };
 
-const Icon: React.FC<IconProps> = ({ name, fill, weight = 400, className }) => {
-  const fillSetting = fill ? "'FILL' 1" : "'FILL' 0";
-  const weightSetting = `'wght' ${weight}`;
+const Icon: React.FC<IconProps> = ({ name, fill, weight = 500, className }) => {
+  const key = `${name}${fill ? "-fill" : ""}-${weight}`;
+  const data = iconData[key];
+
+  if (!data) return null;
 
   return (
     <span className={cn("inline-flex", className)}>
-      <span
-        className="material-symbols-outlined"
-        style={{
-          fontSize: "unset",
-
-          fontVariationSettings: [fillSetting, weightSetting].join(", "),
-        }}
-      >
-        {name}
-      </span>
+      <svg
+        viewBox={data.viewBox}
+        className="size-[0.9em]"
+        fill="currentColor"
+        focusable="false"
+        aria-hidden="true"
+        dangerouslySetInnerHTML={{ __html: data.paths }}
+      />
     </span>
   );
 };
