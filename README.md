@@ -107,13 +107,15 @@ server {
 
 The `<Icon />` component (`src/components/ui/icon.tsx`) renders Material Symbols from pre-bundled SVG path data. The data is stored in `src/utils/constants/icon.ts`.
 
-Run after updating the `@material-symbols/svg-*` packages:
+Run after updating the `@material-symbols/svg-*` packages or adding a new icon:
 
 ```bash
 node scripts/generate-icon-data.mjs
 ```
 
-This will update `src/utils/constants/icon.ts`, ensuring all icons are available for the `<Icon />` component.
+This updates `src/utils/constants/icon.ts`, ensuring all icons are available for the `<Icon />` component.
+
+**When using a new icon:** add the icon name to `ICON_NAMES` array in `scripts/generate-icon-data.mjs`, then run the command above. The script automatically generates both the outlined and fill variants for all weights — just use the base name (e.g. if `<Icon name="home" />` or `<Icon name="home" fill />`, add `"home"`).
 
 ## 🛠 Directus Schema Synchronization
 
