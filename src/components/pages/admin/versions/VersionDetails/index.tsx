@@ -16,9 +16,11 @@ import {
 } from "./FileCard";
 import AddOrthologyButton from "./AddOrthologyButton";
 
+import type { IconName } from "@/utils/constants/icon";
+
 const MAIN_FILE_CONFIGS: Record<
   string,
-  { category: string; icon: string; theme?: "orange" | "blue" }
+  { category: string; icon: IconName; theme?: "orange" | "blue" }
 > = {
   "genomic.fna": {
     category: "Genome Sequence",

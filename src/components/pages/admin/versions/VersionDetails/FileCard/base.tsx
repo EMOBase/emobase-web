@@ -1,5 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import { Icon } from "@/components/ui/icon";
+import type { IconName } from "@/utils/constants/icon";
 import {
   Tooltip,
   TooltipContent,
@@ -16,7 +17,7 @@ export interface FileStatus {
   progressTitle?: string;
   size?: string;
   error?: string;
-  icon: string;
+  icon: IconName;
   theme?: "orange" | "blue";
 }
 
@@ -132,7 +133,7 @@ export const FileCardBase = ({
               <TooltipTrigger asChild>
                 <button className="flex items-center justify-center p-0.5 rounded-full hover:bg-red-100/50 transition-colors">
                   <Icon
-                    name="error_outline"
+                    name="error"
                     className="text-red-500 text-sm cursor-help"
                   />
                 </button>
