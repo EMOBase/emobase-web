@@ -1,8 +1,8 @@
 import { cn } from "@/utils/classname";
-import { iconData } from "@/utils/constants/icon";
+import { iconData, type IconName } from "@/utils/constants/icon";
 
 type IconProps = {
-  name: string;
+  name: IconName;
   fill?: boolean;
   weight?: 400 | 500 | 600 | 700;
   className?: string;
