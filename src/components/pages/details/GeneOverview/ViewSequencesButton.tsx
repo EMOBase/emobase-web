@@ -10,13 +10,14 @@ import {
 } from "@/components/ui/dialog";
 import CopyButton from "@/components/common/CopyButton";
 import DownloadButton from "@/components/common/DownloadButton";
+import type { IconName } from "@/utils/constants/icon";
 import { type Sequence } from "@/utils/services/geneService";
 
 type ViewSequencesButtonProps = {
   text: string;
   title: string;
   sequences: Sequence[];
-  icon: string;
+  icon: IconName;
 };
 
 const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({

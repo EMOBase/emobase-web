@@ -31,19 +31,19 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
       text: "mRNA sequences",
       title: `${id} mRNAs`,
       sequences: mRNAs,
-      icon: "data_object",
+      icon: "data_object" as const,
     },
     {
       text: "Coding sequences",
       title: `${id} CDS`,
       sequences: CDS,
-      icon: "code",
+      icon: "code" as const,
     },
     {
       text: "Protein sequences",
       title: `${id} Proteins`,
       sequences: proteins,
-      icon: "biotech",
+      icon: "biotech" as const,
     },
   ];
 

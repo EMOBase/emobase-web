@@ -1,7 +1,7 @@
-import React from "react";
+import type { IconName } from "@/utils/constants/icon";
 
 export type NavItemAction = {
-  icon: string;
+  icon: IconName;
   tooltip?: string;
   onClick: (e: React.MouseEvent) => void;
 };
@@ -24,7 +24,7 @@ export type NavItem = {
     | "ONTOLOGY_VIEWER"
     | "RESOURCES";
   label: string;
-  icon: string;
+  icon: IconName;
   href?: string;
   matchingHref?: string;
   external?: boolean;
