@@ -12,9 +12,11 @@ import {
   FileCard,
   GffFileCard,
   OrthologyFileCard,
+  JBrowseTrackFileCard,
   type FileStatus,
 } from "./FileCard";
 import AddOrthologyButton from "./AddOrthologyButton";
+import AddJBrowseTrackButton from "./AddJBrowseTrackButton";
 
 import { hasFeature } from "@/utils/features";
 import type { IconName } from "@/utils/constants/icon";
@@ -95,6 +97,19 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     setOrthologyUploads((prev) => [...prev, { id, file, order, algorithm }]);
   };
 
+  const [jbrowseTrackUploads, setJBrowseTrackUploads] = useState<
+    Array<{
+      id: string;
+      file: File;
+      trackName: string;
+    }>
+  >([]);
+
+  const handleJBrowseTrackUpload = (file: File, trackName: string) => {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    setJBrowseTrackUploads((prev) => [...prev, { id, file, trackName }]);
+  };
+
   const mainFiles = React.useMemo(() => {
     const files = versionData?.files || {};
     return Object.entries(getMainFileConfigs()).map(([fileName, config]) => {
@@ -149,6 +164,65 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         id: typedFileDetail?.id,
         name: fileName,
         ...config,
+        status,
+        progress,
+        progressTitle,
+        error,
+        size,
+        theme: status === "READY" ? "blue" : "orange",
+      } as FileStatus;
+    });
+  }, [versionData]);
+
+  const jbrowseTrackFiles = React.useMemo(() => {
+    const files = versionData?.files?.["jbrowse.track"] || [];
+
+    return files.map((fileDetail) => {
+      let status: FileStatus["status"] = "PENDING";
+      let progress = 0;
+      let progressTitle = "";
+      let error = "";
+      const size = formatBytes(fileDetail.fileSize);
+
+      if (fileDetail.uploadStatus === "FAILED") {
+        status = "ERROR";
+        error = "Upload failed";
+        progress = 100;
+      } else if (fileDetail.uploadStatus === "UPLOADING") {
+        status = "PAUSED";
+        progress = 50;
+        progressTitle = "INTERRUPTED";
+      } else {
+        const jobs = fileDetail.jobs || [];
+        const failedJob = jobs.find((j: any) => j.status === "FAILED");
+        const activeJob = jobs.find(
+          (j: any) => j.status === "RUNNING" || j.status === "PENDING",
+        );
+
+        if (failedJob) {
+          status = "ERROR";
+          error = failedJob.error || "Processing failed";
+          progress = 100;
+        } else if (activeJob) {
+          status = "PROCESSING";
+          const doneJobsCount = jobs.filter(
+            (j: any) => j.status === "DONE",
+          ).length;
+          progress = Math.min(100, Math.max(10, doneJobsCount * 20));
+          progressTitle = activeJob.description || "PROCESSING DATA";
+        } else {
+          status = "READY";
+          progress = 100;
+        }
+      }
+
+      const fileName = fileDetail.filePath.split("/").pop() || "jbrowse.track";
+
+      return {
+        id: fileDetail.id,
+        name: fileName,
+        category: "JBrowse2 Track",
+        icon: "view_timeline" as const,
         status,
         progress,
         progressTitle,
@@ -319,6 +393,53 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
               algorithm={item.algorithm}
               onComplete={() => {
                 setOrthologyUploads((prev) =>
+                  prev.filter((u) => u.id !== item.id),
+                );
+                refresh();
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-slate-50/50 rounded-3xl border border-slate-100 p-8 space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase">
+              JBROWSE2 TRACK FILES
+            </h2>
+            <p className="text-slate-500 text-xs mt-1 font-medium">
+              Visualisation tracks for the JBrowse2 genome browser.
+            </p>
+          </div>
+          <AddJBrowseTrackButton onConfirm={handleJBrowseTrackUpload} />
+        </div>
+
+        <div className="space-y-4">
+          {jbrowseTrackFiles.length > 0 ? (
+            jbrowseTrackFiles.map((file) => (
+              <FileCard
+                key={file.id}
+                file={file}
+                canDelete={true}
+                onRefresh={refresh}
+                size="sm"
+              />
+            ))
+          ) : (
+            <div className="text-center py-8 text-slate-400 text-sm font-medium">
+              No JBrowse2 track files uploaded yet.
+            </div>
+          )}
+
+          {jbrowseTrackUploads.map((item) => (
+            <JBrowseTrackFileCard
+              key={item.id}
+              file={item.file}
+              versionId={name}
+              trackName={item.trackName}
+              onComplete={() => {
+                setJBrowseTrackUploads((prev) =>
                   prev.filter((u) => u.id !== item.id),
                 );
                 refresh();
