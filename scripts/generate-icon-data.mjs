@@ -20,7 +20,7 @@ const ICON_NAMES = [
   "help", "history", "history_edu", "home",
   "image", "info",
   "keyboard_arrow_down", "keyboard_arrow_up", "last_page", "lock", "logout",
-  "menu_book",
+  "menu_book", "microbiology",
   "numbers",
   "open_in_new",
   "pending", "pest_control", "photo_camera", "published_with_changes",

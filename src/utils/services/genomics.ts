@@ -84,6 +84,8 @@ export type VersionDetailFiles = {
   "rna.fna"?: FileDetail | null;
   "cds.fna"?: FileDetail | null;
   "protein.faa"?: FileDetail | null;
+  "dsrna.csv"?: FileDetail | null;
+  "jbrowse.track"?: FileDetail[];
   "orthology.tsv"?: FileDetail[];
 };
 

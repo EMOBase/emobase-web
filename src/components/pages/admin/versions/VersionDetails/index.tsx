@@ -16,32 +16,29 @@ import {
 } from "./FileCard";
 import AddOrthologyButton from "./AddOrthologyButton";
 
+import { hasFeature } from "@/utils/features";
 import type { IconName } from "@/utils/constants/icon";
 
-const MAIN_FILE_CONFIGS: Record<
-  string,
-  { category: string; icon: IconName; theme?: "orange" | "blue" }
-> = {
-  "genomic.fna": {
-    category: "Genome Sequence",
-    icon: "description",
-  },
-  "genomic.gff": {
-    category: "Genome Annotation",
-    icon: "numbers",
-  },
-  "rna.fna": {
-    category: "RNA Sequences",
-    icon: "science",
-  },
-  "cds.fna": {
-    category: "Coding Sequences",
-    icon: "data_object",
-  },
-  "protein.faa": {
-    category: "Protein Sequences",
-    icon: "conversion_path",
-  },
+type MainFileConfig = {
+  category: string;
+  icon: IconName;
+  theme?: "orange" | "blue";
+};
+
+const getMainFileConfigs = (): Record<string, MainFileConfig> => {
+  const configs: Record<string, MainFileConfig> = {
+    "genomic.fna": { category: "Genome Sequence", icon: "description" },
+    "genomic.gff": { category: "Genome Annotation", icon: "numbers" },
+    "rna.fna": { category: "RNA Sequences", icon: "science" },
+    "cds.fna": { category: "Coding Sequences", icon: "data_object" },
+    "protein.faa": { category: "Protein Sequences", icon: "conversion_path" },
+  };
+
+  if (hasFeature("dsrnaUpload")) {
+    configs["dsrna.csv"] = { category: "dsRNA Silencing", icon: "microbiology" };
+  }
+
+  return configs;
 };
 
 const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
@@ -100,7 +97,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
   const mainFiles = React.useMemo(() => {
     const files = versionData?.files || {};
-    return Object.entries(MAIN_FILE_CONFIGS).map(([fileName, config]) => {
+    return Object.entries(getMainFileConfigs()).map(([fileName, config]) => {
       let status: FileStatus["status"] = "PENDING";
       let progress = 0;
       let progressTitle = "";

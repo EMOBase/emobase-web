@@ -27,6 +27,7 @@ export const ALLOWED_UPLOAD_FILE_TYPES = new Set([
   "rna.fna",
   "cds.fna",
   "protein.faa",
+  "dsrna.csv",
   "orthology.tsv",
   "fb_synonym.tsv",
   "fbgn_fbtr_fbpp.tsv",
