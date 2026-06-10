@@ -12,8 +12,7 @@ import {
 import { Icon } from "@/components/ui/icon";
 import { formatBytes } from "@/utils/format";
 
-const isValidFile = (file: File) =>
-  file.name.endsWith(".gz") || file.name.endsWith(".gzip");
+const isValidFile = (file: File) => file.name.endsWith(".bw");
 
 export const SourceFileFieldContent = ({
   field,
@@ -35,7 +34,7 @@ export const SourceFileFieldContent = ({
 
   const setFile = (selectedFile: File) => {
     if (!isValidFile(selectedFile)) {
-      toast.error("Only .gz or .gzip files are accepted");
+      toast.error("Only BigWig files (.bw) are accepted");
       return;
     }
     field.handleChange(selectedFile);
@@ -72,7 +71,7 @@ export const SourceFileFieldContent = ({
               setFile(selectedFile);
             }
           }}
-          accept=".gz,.gzip"
+          accept=".bw"
         />
         <div
           className={twMerge(
@@ -134,7 +133,7 @@ export const SourceFileFieldContent = ({
                 Click to upload or drag and drop
               </p>
               <p className="text-[11px] text-neutral-400 mt-2 text-center max-w-80">
-                Compressed track files (.gz, .gzip)
+                BigWig files (.bw)
               </p>
             </>
           )}

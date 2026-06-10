@@ -22,7 +22,7 @@ const AddJBrowseTrackForm = withForm({
               onFileSelect={(file) => {
                 form.setFieldValue(
                   "trackName",
-                  file.name.replace(/\.(gz|gzip)$/i, "").replace(/\.\w+$/, ""),
+                  file.name.replace(/\.bw$/i, ""),
                 );
               }}
             />
