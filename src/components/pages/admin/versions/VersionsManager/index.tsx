@@ -197,7 +197,7 @@ const VersionsManager: React.FC = () => {
                       <div className="flex items-center justify-end gap-1">
                         {version.status === "DRAFT" ? null : version.status ===
                           "PROCESSING" ? (
-                          <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors">
+                          <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors cursor-pointer">
                             <Icon name="close" className="text-xl" />
                           </button>
                         ) : (
@@ -207,7 +207,7 @@ const VersionsManager: React.FC = () => {
                                 <button
                                   onClick={() => handleRelease(version.name)}
                                   disabled={releasingVersions.has(version.name)}
-                                  className="p-2 text-slate-300 hover:text-blue-500 rounded-lg transition-colors disabled:opacity-50"
+                                  className="p-2 text-slate-300 hover:text-blue-500 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
                                   title="Set as default"
                                 >
                                   <Icon
@@ -231,7 +231,7 @@ const VersionsManager: React.FC = () => {
                               <button
                                 onClick={() => handleDelete(version.name)}
                                 disabled={deletingVersions.has(version.name)}
-                                className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors disabled:opacity-50"
+                                className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
                                 title="Delete version"
                               >
                                 <Icon
