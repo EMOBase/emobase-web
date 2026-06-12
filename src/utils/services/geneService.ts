@@ -1,25 +1,6 @@
 import type { IBDsRNA } from "@/utils/constants/ibeetle";
 import { apiFetch } from "@/utils/apiFetch";
 
-export interface GeneSearchResult {
-  genes?: string[];
-  orthologies?: {
-    source: string;
-    group: string;
-    orthologs: {
-      species: string;
-      genes: {
-        gene: string;
-        synonyms: string[];
-      }[];
-    }[];
-  }[];
-  otherGenes?: {
-    species: string;
-    gene: string;
-  }[];
-}
-
 export interface Sequence {
   id: string;
   seq: string;
@@ -53,20 +34,6 @@ export interface Orthology {
 }
 
 const geneService = (fetch: typeof apiFetch = apiFetch) => {
-  const search = async (query: string) => {
-    return await fetch<GeneSearchResult>(
-      "geneservice",
-      `/search?query=${encodeURIComponent(query)}`,
-    );
-  };
-
-  const suggest = async (query: string) => {
-    return await fetch<string[]>(
-      "geneservice",
-      `/search/_suggest?query=${encodeURIComponent(query)}`,
-    );
-  };
-
   const fetchTriboliumGenes = async (genes: string[]) => {
     if (genes.length === 0) return [];
 
@@ -113,8 +80,6 @@ const geneService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   return {
-    search,
-    suggest,
     fetchTriboliumGenes,
     fetchDrosophilaGenes,
     fetchIBs,

@@ -124,6 +124,25 @@ type UploadInput = {
   shouldResume?: boolean;
 };
 
+export type GeneSearchResult = {
+  genes?: string[];
+  orthologies?: {
+    source: string;
+    group: string;
+    orthologs: {
+      species: string;
+      genes: {
+        gene: string;
+        synonyms: string[];
+      }[];
+    }[];
+  }[];
+  otherGenes?: {
+    species: string;
+    gene: string;
+  }[];
+};
+
 export type UploadResponse = {
   uploadUrl?: string;
 };
@@ -262,6 +281,22 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     );
   };
 
+  const search = async (query: string) => {
+    const res = await fetch<{
+      data: GeneSearchResult;
+      requestId: string;
+    }>("genomicsservice", `/search?query=${encodeURIComponent(query)}`);
+    return res.data;
+  };
+
+  const suggest = async (query: string) => {
+    const res = await fetch<{
+      data: string[];
+      requestId: string;
+    }>("genomicsservice", `/search/_suggest?query=${encodeURIComponent(query)}`);
+    return res.data;
+  };
+
   return {
     fetchVersions,
     createVersion,
@@ -271,6 +306,8 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     deleteUploadFile,
     deleteVersion,
     releaseVersion,
+    search,
+    suggest,
   };
 };
 

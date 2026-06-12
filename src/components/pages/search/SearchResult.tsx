@@ -2,7 +2,7 @@ import React, { useState, Fragment } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FlybaseGeneId from "@/components/common/FlybaseGeneId";
-import { type GeneSearchResult } from "@/utils/services/geneService";
+import { type GeneSearchResult } from "@/utils/services/genomics";
 import { type PhenotypeSearchResult } from "@/utils/services/phenotypeService";
 import { shortName } from "@/utils/mainSpecies";
 

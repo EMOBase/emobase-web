@@ -1,10 +1,10 @@
 ---
 import Layout from "@/layouts/default.astro";
 import SearchResult from "@/components/pages/search/SearchResult";
-import geneService from "@/utils/services/geneService";
+import genomicsService from "@/utils/services/genomics";
 import phenotypeService from "@/utils/services/phenotypeService";
 
-const { search: searchByOrthology } = geneService();
+const { search: searchByOrthology } = genomicsService();
 const { search: searchByPhenotypes } = phenotypeService();
 
 const { term = "" } = Astro.params;

@@ -20,7 +20,7 @@ import {
   InputGroupAddon,
 } from "@/components/ui/input-group";
 import useService from "@/hooks/useService";
-import geneService from "@/utils/services/geneService";
+import genomicsService from "@/utils/services/genomics";
 import { cn } from "@/utils/classname";
 import { hasFeature } from "@/utils/features";
 
@@ -39,7 +39,7 @@ const SearchInput = ({
   className,
   initialValue = "",
 }: SearchInputProps) => {
-  const { suggest } = useService(geneService);
+  const { suggest } = useService(genomicsService);
   const [searchValue, setSearchValue] = useState(initialValue);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
