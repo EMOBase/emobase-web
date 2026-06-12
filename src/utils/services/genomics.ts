@@ -164,6 +164,24 @@ export type GeneSearchResult = {
   }[];
 };
 
+export type OrthologItem = {
+  gene: string;
+  source: string;
+};
+
+export type GeneOrthology = {
+  gene: string;
+  orthologs: OrthologItem[];
+};
+
+export type SilencingSeq = {
+  id: string;
+  geneIds: string[];
+  seq: string;
+  leftPrimer: string;
+  rightPrimer: string;
+};
+
 export type UploadResponse = {
   uploadUrl?: string;
 };
@@ -237,8 +255,12 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
           ...(algorithm ? { algorithm } : {}),
           ...(trackName ? { trackName } : {}),
           ...(geneIDKey ? { geneIDKey } : {}),
-          ...(trimPrefixChars !== undefined ? { trimPrefixChars: trimPrefixChars.toString() } : {}),
-          ...(trimSuffixChars !== undefined ? { trimSuffixChars: trimSuffixChars.toString() } : {}),
+          ...(trimPrefixChars !== undefined
+            ? { trimPrefixChars: trimPrefixChars.toString() }
+            : {}),
+          ...(trimSuffixChars !== undefined
+            ? { trimSuffixChars: trimSuffixChars.toString() }
+            : {}),
           ...(oldGeneIDKeys ? { oldGeneIDKeys } : {}),
         },
         removeFingerprintOnSuccess: true,
@@ -256,7 +278,8 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
       });
 
       if (shouldResume) {
-        tusUpload.findPreviousUploads()
+        tusUpload
+          .findPreviousUploads()
           .then((uploads) => {
             if (uploads.length > 0) {
               tusUpload.resumeFromPreviousUpload(uploads[0]);
@@ -283,13 +306,9 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   const deleteVersion = async (version: string) => {
-    return await fetch<undefined>(
-      "genomicsservice",
-      `/versions/${version}`,
-      {
-        method: "DELETE",
-      },
-    );
+    return await fetch<undefined>("genomicsservice", `/versions/${version}`, {
+      method: "DELETE",
+    });
   };
 
   const releaseVersion = async (version: string) => {
@@ -311,6 +330,22 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     return res.data;
   };
 
+  const fetchIBs = async (gene: string) => {
+    const res = await fetch<{
+      data: SilencingSeq[];
+      requestId: string;
+    }>("genomicsservice", `/silencingseqs?geneIds=${gene}`);
+    return res.data || [];
+  };
+
+  const fetchOrthology = async (gene: string) => {
+    const res = await fetch<{
+      data: GeneOrthology[];
+      requestId: string;
+    }>("genomicsservice", `/orthology/Tcas?genes=${gene}`);
+    return res.data[0] || { gene, orthologs: [] };
+  };
+
   const search = async (query: string) => {
     const res = await fetch<{
       data: GeneSearchResult;
@@ -323,7 +358,10 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     const res = await fetch<{
       data: string[];
       requestId: string;
-    }>("genomicsservice", `/search/_suggest?query=${encodeURIComponent(query)}`);
+    }>(
+      "genomicsservice",
+      `/search/_suggest?query=${encodeURIComponent(query)}`,
+    );
     return res.data;
   };
 
@@ -337,6 +375,8 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     deleteVersion,
     releaseVersion,
     fetchGenes,
+    fetchIBs,
+    fetchOrthology,
     search,
     suggest,
   };
