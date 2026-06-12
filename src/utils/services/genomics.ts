@@ -124,6 +124,27 @@ type UploadInput = {
   shouldResume?: boolean;
 };
 
+export type GeneSequence = {
+  id: string;
+  seq: string;
+};
+
+export type GeneDetail = {
+  id: string;
+  seqname: string;
+  start: number;
+  end: number;
+  strand: string;
+  mRNAs: GeneSequence[];
+  CDS: GeneSequence[];
+  proteins: GeneSequence[];
+  synonyms: {
+    gene: string;
+    type: string;
+    synonym: string;
+  }[];
+};
+
 export type GeneSearchResult = {
   genes?: string[];
   orthologies?: {
@@ -281,6 +302,15 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     );
   };
 
+  const fetchGenes = async (species: string, ids: string[]) => {
+    if (ids.length === 0) return [];
+    const res = await fetch<{
+      data: GeneDetail[];
+      requestId: string;
+    }>("genomicsservice", `/genes/${species}?ids=${ids.join(",")}`);
+    return res.data;
+  };
+
   const search = async (query: string) => {
     const res = await fetch<{
       data: GeneSearchResult;
@@ -306,6 +336,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     deleteUploadFile,
     deleteVersion,
     releaseVersion,
+    fetchGenes,
     search,
     suggest,
   };

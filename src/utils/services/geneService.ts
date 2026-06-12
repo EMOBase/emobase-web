@@ -6,24 +6,6 @@ export interface Sequence {
   seq: string;
 }
 
-export interface TriboliumGene {
-  id: string;
-  seqname: string;
-  start: string;
-  end: string;
-  strand: string;
-  mRNAs: Sequence[];
-  CDS: Sequence[];
-  proteins: Sequence[];
-}
-
-export interface DrosophilaGene {
-  id: string;
-  annotationId: string;
-  fullname: string;
-  symbol: string;
-}
-
 export interface Orthology {
   gene: string;
   orthologs: {
@@ -34,30 +16,6 @@ export interface Orthology {
 }
 
 const geneService = (fetch: typeof apiFetch = apiFetch) => {
-  const fetchTriboliumGenes = async (genes: string[]) => {
-    if (genes.length === 0) return [];
-
-    const concatenatedGenes = genes.join(",");
-    return (
-      (await fetch<TriboliumGene[]>(
-        "geneservice",
-        `/tribolium/genes?ids=${concatenatedGenes}`,
-      )) || []
-    );
-  };
-
-  const fetchDrosophilaGenes = async (genes: string[]) => {
-    if (genes.length === 0) return [];
-
-    const concatenatedGenes = genes.join(",");
-    return (
-      (await fetch<DrosophilaGene[]>(
-        "geneservice",
-        `/drosophila/genes?ids=${concatenatedGenes}`,
-      )) || []
-    );
-  };
-
   const fetchIBs = async (gene: string) => {
     return (
       (await fetch<IBDsRNA[]>(
@@ -80,8 +38,6 @@ const geneService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   return {
-    fetchTriboliumGenes,
-    fetchDrosophilaGenes,
     fetchIBs,
     fetchOrthology,
   };

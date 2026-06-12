@@ -1,7 +1,7 @@
 import { Icon } from "@/components/ui/icon";
 import GeneFavoriteMark from "@/components/common/GeneFavoriteMark";
 import CopyButton from "@/components/common/CopyButton";
-import { type TriboliumGene } from "@/utils/services/geneService";
+import { type GeneDetail } from "@/utils/services/genomics";
 
 import ViewSequencesButton from "./ViewSequencesButton";
 
@@ -13,7 +13,7 @@ export type GeneLinkTemplate = {
 type GeneOverviewProps = {
   id: string;
   gene: string;
-  triboliumGene: TriboliumGene;
+  triboliumGene: GeneDetail;
   linkTemplates: GeneLinkTemplate[];
 };
 

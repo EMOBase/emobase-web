@@ -1,9 +1,7 @@
 import TableOfContents from "@/components/common/TableOfContents";
 import { type IBDsRNA } from "@/utils/constants/ibeetle";
-import type {
-  TriboliumGene,
-  DrosophilaGene,
-} from "@/utils/services/geneService";
+import type { GeneDetail } from "@/utils/services/genomics";
+import type { Homolog } from "@/components/pages/details/OrthologySection/types";
 import { type Phenotype } from "@/utils/constants/phenotype";
 import { stringToURLHash } from "@/utils/stringToURLHash";
 
@@ -19,10 +17,10 @@ import { type ReactNode } from "react";
 type GeneDetailsProps = {
   gene: string;
   linkTemplates: GeneLinkTemplate[];
-  triboliumGene: TriboliumGene;
+  triboliumGene: GeneDetail;
   dsRNAs: IBDsRNA[];
   phenotypes: Phenotype[];
-  homologs: (DrosophilaGene & { source: string[] })[];
+  homologs: Homolog[];
   jbrowseGenomeView?: ReactNode;
 };
 

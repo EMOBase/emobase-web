@@ -3,6 +3,7 @@ import { readItems } from "@directus/sdk";
 
 import Layout from "@/layouts/default.astro";
 import geneService from "@/utils/services/geneService";
+import genomicsService from "@/utils/services/genomics";
 import phenotypeService from "@/utils/services/phenotypeService";
 import goAnnotationService from "@/utils/services/goAnnotationService";
 import ontologyService from "@/utils/services/ontologyService";
@@ -13,15 +14,15 @@ import GeneDetails, {
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
 import JBrowseGenomeView from "@/components/pages/details/GenomeBrowser/JBrowseGenomeView";
 
-const { fetchIBs, fetchTriboliumGenes, fetchOrthology, fetchDrosophilaGenes } =
-  geneService();
+const { fetchIBs, fetchOrthology } = geneService();
+const { fetchGenes } = genomicsService();
 const { fetchByGene: fetchPhenotypesByGene } = phenotypeService();
 const { fetchByGenes: fetchGOByGenes } = goAnnotationService();
 const { fetchByIds: fetchTermsByIds } = ontologyService("GO");
 
 const { gene = "" } = Astro.params;
 
-const triboliumGene = (await fetchTriboliumGenes([gene]))[0];
+const triboliumGene = (await fetchGenes("Tcas", [gene]))[0];
 const dsRNAs = await fetchIBs(gene);
 const phenotypes = await fetchPhenotypesByGene(gene);
 
@@ -60,7 +61,12 @@ const annsById = anns.reduce(
   {} as Record<string, typeof anns>,
 );
 
-const homologs = (await fetchDrosophilaGenes(orthologousGenes)).map((gene) => ({
+const dmelGenes = (await fetchGenes("Dmel", orthologousGenes)).map((g) => ({
+  id: g.id,
+  symbol: g.synonyms?.find((s) => s.type === "SYMBOL")?.synonym ?? "",
+  fullname: g.synonyms?.find((s) => s.type === "NAME")?.synonym ?? "",
+}));
+const homologs = dmelGenes.map((gene) => ({
   ...gene,
   source: orthologySources[gene.id],
   annotations: annsById[gene.id],
@@ -108,7 +114,7 @@ if (!triboliumGene) {
         client:load
       >
         <div slot="jbrowse-genome-view">
-          <div id="jbrowse-styles-container" transition:persist></div>
+          <div id="jbrowse-styles-container" transition:persist />
           <JBrowseGenomeView
             triboliumGene={triboliumGene}
             client:only="react"
