@@ -23,6 +23,7 @@ import useService from "@/hooks/useService";
 import genomicsService from "@/utils/services/genomics";
 import { cn } from "@/utils/classname";
 import { hasFeature } from "@/utils/features";
+import { useVersionStore } from "@/states/versionStore";
 
 import { SearchHelpModal } from "./SearchHelpModal";
 
@@ -40,6 +41,7 @@ const SearchInput = ({
   initialValue = "",
 }: SearchInputProps) => {
   const { suggest } = useService(genomicsService);
+  const { selectedVersion } = useVersionStore();
   const [searchValue, setSearchValue] = useState(initialValue);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,6 +50,8 @@ const SearchInput = ({
 
   const suggestRef = useRef(suggest);
   suggestRef.current = suggest;
+  const versionRef = useRef(selectedVersion);
+  versionRef.current = selectedVersion;
 
   const fetchSuggestions = useDebounceCallback(
     useCallback(async (query: string) => {
@@ -58,7 +62,7 @@ const SearchInput = ({
       }
       setLoading(true);
       try {
-        const results = await suggestRef.current(trimmed);
+        const results = await suggestRef.current(trimmed, versionRef.current ?? undefined);
         setSuggestions(results || []);
       } catch (error) {
         console.error("Failed to fetch suggestions:", error);
@@ -72,7 +76,10 @@ const SearchInput = ({
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (searchValue.trim()) {
-      navigate(`/search/${searchValue.trim()}`);
+      const params = new URLSearchParams();
+      if (versionRef.current) params.set("version", versionRef.current);
+      const qs = params.toString();
+      navigate(`/search/${searchValue.trim()}${qs ? `?${qs}` : ""}`);
     }
   };
 
