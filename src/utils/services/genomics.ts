@@ -112,6 +112,7 @@ type UploadInput = {
   order?: number;
   algorithm?: string;
   trackName?: string;
+  category?: string;
   geneIDKey?: string;
   trimPrefixChars?: number;
   trimSuffixChars?: number;
@@ -231,6 +232,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     order,
     algorithm,
     trackName,
+    category,
     geneIDKey,
     trimPrefixChars,
     trimSuffixChars,
@@ -254,6 +256,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
           ...(order ? { order: order.toString() } : {}),
           ...(algorithm ? { algorithm } : {}),
           ...(trackName ? { trackName } : {}),
+          ...(category ? { category } : {}),
           ...(geneIDKey ? { geneIDKey } : {}),
           ...(trimPrefixChars !== undefined
             ? { trimPrefixChars: trimPrefixChars.toString() }

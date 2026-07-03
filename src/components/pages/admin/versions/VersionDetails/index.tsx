@@ -102,12 +102,17 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
       id: string;
       file: File;
       trackName: string;
+      category?: string;
     }>
   >([]);
 
-  const handleJBrowseTrackUpload = (file: File, trackName: string) => {
+  const handleJBrowseTrackUpload = (
+    file: File,
+    trackName: string,
+    category?: string,
+  ) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    setJBrowseTrackUploads((prev) => [...prev, { id, file, trackName }]);
+    setJBrowseTrackUploads((prev) => [...prev, { id, file, trackName, category }]);
   };
 
   const mainFiles = React.useMemo(() => {
@@ -438,6 +443,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
               file={item.file}
               versionId={name}
               trackName={item.trackName}
+              category={item.category}
               onComplete={() => {
                 setJBrowseTrackUploads((prev) =>
                   prev.filter((u) => u.id !== item.id),

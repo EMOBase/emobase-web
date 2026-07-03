@@ -5,6 +5,7 @@ const formSchema = z
   .object({
     file: z.instanceof(File).optional(),
     trackName: z.string().min(1, "Please enter a track name"),
+    category: z.string().optional(),
   })
   .refine((data) => data.file !== undefined, {
     message: "Please select a file to upload",
@@ -19,6 +20,7 @@ export const formToApiSchema = formSchema.transform((v) => {
   return {
     file: v.file,
     trackName: v.trackName.trim(),
+    category: v.category?.trim() || undefined,
   };
 });
 

@@ -8,12 +8,14 @@ export const JBrowseTrackFileCard = ({
   file,
   versionId,
   trackName,
+  category,
   onComplete,
   size = "sm",
 }: {
   file: File;
   versionId: string;
   trackName: string;
+  category?: string;
   onComplete: () => void;
   size?: "sm";
 }) => {
@@ -30,6 +32,7 @@ export const JBrowseTrackFileCard = ({
       version: versionId,
       fileType: "jbrowse.track",
       trackName,
+      category,
       onProgress: (pct: number) => {
         if (!cancelled) setProgress(Math.round(pct));
       },
