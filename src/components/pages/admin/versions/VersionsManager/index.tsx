@@ -31,6 +31,8 @@ const StatusBadge = ({
     READY: "bg-emerald-50 text-emerald-600 border-emerald-200/50",
     DRAFT: "bg-slate-100 text-slate-500 border-slate-200/50",
     ERROR: "bg-red-50 text-red-600 border-red-200/50",
+    MISSING_REQUIRED_FILE:
+      "bg-slate-100 text-slate-500 border-slate-200/50",
   };
 
   return (
@@ -204,11 +206,35 @@ const VersionsManager: React.FC = () => {
                           "PROCESSING" ? (
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors cursor-pointer">
-                                <Icon name="close" className="text-xl" />
+                              <a
+                                href={`${getEnv("PUBLIC_DOWNLOAD_URL")}/emobase-genomics/${version.name}/`}
+                                target="_blank"
+                                className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors"
+                              >
+                                <Icon name="download" className="text-xl" />
+                              </a>
+                            </TooltipTrigger>
+                            <TooltipContent>Download files</TooltipContent>
+                          </Tooltip>
+                        ) : version.status === "MISSING_REQUIRED_FILE" ? (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={() => handleDelete(version.name)}
+                                disabled={deletingVersions.has(version.name)}
+                                className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+                              >
+                                <Icon
+                                  name={
+                                    deletingVersions.has(version.name)
+                                      ? "pending"
+                                      : "delete"
+                                  }
+                                  className="text-xl"
+                                />
                               </button>
                             </TooltipTrigger>
-                            <TooltipContent>Cancel processing</TooltipContent>
+                            <TooltipContent>Delete version</TooltipContent>
                           </Tooltip>
                         ) : (
                           <>

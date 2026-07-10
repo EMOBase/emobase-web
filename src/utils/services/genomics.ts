@@ -10,7 +10,7 @@ export type VersionItem = {
   createdBy: string;
   updatedAt: string;
   isDefault: boolean;
-  status: "DRAFT" | "PROCESSING" | "ERROR" | "READY";
+  status: "DRAFT" | "PROCESSING" | "ERROR" | "READY" | "MISSING_REQUIRED_FILE";
   totalFileSize: number;
 };
 
