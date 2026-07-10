@@ -8,6 +8,11 @@ import { formatBytes } from "@/utils/format";
 import genomicsService, { type VersionItem } from "@/utils/services/genomics";
 import useAsyncData from "@/hooks/useAsyncData";
 import { Icon } from "@/components/ui/icon";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import TableFooter from "@/components/common/TableFooter";
 import BeetleLoading from "@/components/common/BeetleLoading";
 import useService from "@/hooks/useService";
@@ -197,52 +202,78 @@ const VersionsManager: React.FC = () => {
                       <div className="flex items-center justify-end gap-1">
                         {version.status === "DRAFT" ? null : version.status ===
                           "PROCESSING" ? (
-                          <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors cursor-pointer">
-                            <Icon name="close" className="text-xl" />
-                          </button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors cursor-pointer">
+                                <Icon name="close" className="text-xl" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>Cancel processing</TooltipContent>
+                          </Tooltip>
                         ) : (
                           <>
                             {version.status === "READY" &&
                               !version.isDefault && (
-                                <button
-                                  onClick={() => handleRelease(version.name)}
-                                  disabled={releasingVersions.has(version.name)}
-                                  className="p-2 text-slate-300 hover:text-blue-500 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
-                                  title="Set as default"
-                                >
-                                  <Icon
-                                    name={
-                                      releasingVersions.has(version.name)
-                                        ? "pending"
-                                        : "check_circle"
-                                    }
-                                    className="text-xl"
-                                  />
-                                </button>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      onClick={() =>
+                                        handleRelease(version.name)
+                                      }
+                                      disabled={releasingVersions.has(
+                                        version.name,
+                                      )}
+                                      className="p-2 text-slate-300 hover:text-blue-500 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+                                    >
+                                      <Icon
+                                        name={
+                                          releasingVersions.has(version.name)
+                                            ? "pending"
+                                            : "check_circle"
+                                        }
+                                        className="text-xl"
+                                      />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    Set as default
+                                  </TooltipContent>
+                                </Tooltip>
                               )}
-                            <a
-                              href={`${getEnv("PUBLIC_DOWNLOAD_URL")}/emobase-genomics/${version.name}/`}
-                              target="_blank"
-                              className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors"
-                            >
-                              <Icon name="download" className="text-xl" />
-                            </a>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <a
+                                  href={`${getEnv("PUBLIC_DOWNLOAD_URL")}/emobase-genomics/${version.name}/`}
+                                  target="_blank"
+                                  className="p-2 text-slate-300 hover:text-primary rounded-lg transition-colors"
+                                >
+                                  <Icon name="download" className="text-xl" />
+                                </a>
+                              </TooltipTrigger>
+                              <TooltipContent>Download files</TooltipContent>
+                            </Tooltip>
                             {!version.isDefault && (
-                              <button
-                                onClick={() => handleDelete(version.name)}
-                                disabled={deletingVersions.has(version.name)}
-                                className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
-                                title="Delete version"
-                              >
-                                <Icon
-                                  name={
-                                    deletingVersions.has(version.name)
-                                      ? "pending"
-                                      : "delete"
-                                  }
-                                  className="text-xl"
-                                />
-                              </button>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button
+                                    onClick={() => handleDelete(version.name)}
+                                    disabled={deletingVersions.has(
+                                      version.name,
+                                    )}
+                                    className="p-2 text-slate-300 hover:text-rose-500 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+                                  >
+                                    <Icon
+                                      name={
+                                        deletingVersions.has(version.name)
+                                          ? "pending"
+                                          : "delete"
+                                      }
+                                      className="text-xl"
+                                    />
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent>Delete version</TooltipContent>
+                              </Tooltip>
                             )}
                           </>
                         )}
