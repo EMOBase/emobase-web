@@ -87,6 +87,7 @@ export type VersionDetailFiles = {
   "dsrna.csv"?: FileDetail | null;
   "jbrowse.track"?: FileDetail[];
   "orthology.tsv"?: FileDetail[];
+  "species.synonym"?: FileDetail[];
 };
 
 type FetchVersionDetailResponse = {
@@ -113,6 +114,7 @@ type UploadInput = {
   algorithm?: string;
   trackName?: string;
   category?: string;
+  species?: string;
   geneIDKey?: string;
   trimPrefixChars?: number;
   trimSuffixChars?: number;
@@ -233,6 +235,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     algorithm,
     trackName,
     category,
+    species,
     geneIDKey,
     trimPrefixChars,
     trimSuffixChars,
@@ -257,6 +260,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
           ...(algorithm ? { algorithm } : {}),
           ...(trackName ? { trackName } : {}),
           ...(category ? { category } : {}),
+          ...(species ? { species } : {}),
           ...(geneIDKey ? { geneIDKey } : {}),
           ...(trimPrefixChars !== undefined
             ? { trimPrefixChars: trimPrefixChars.toString() }

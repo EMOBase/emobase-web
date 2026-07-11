@@ -30,6 +30,7 @@ export const ALLOWED_UPLOAD_FILE_TYPES = new Set([
   "dsrna.csv",
   "jbrowse.track",
   "orthology.tsv",
+  "species.synonym",
   "fb_synonym.tsv",
   "fbgn_fbtr_fbpp.tsv",
 ]);
