@@ -10,16 +10,20 @@ export const SynonymFileCard = ({
   versionId,
   onComplete,
   size = "sm",
+  species: speciesProp,
 }: {
   file: File;
   versionId: string;
   onComplete: () => void;
   size?: "sm";
+  species?: string;
 }) => {
   const { upload } = useService(genomicsService);
   const [progress, setProgress] = useState(0);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const speciesValue = speciesProp || mainSpecies;
 
   useEffect(() => {
     let cancelled = false;
@@ -28,7 +32,7 @@ export const SynonymFileCard = ({
       file,
       version: versionId,
       fileType: "species.synonym",
-      species: mainSpecies,
+      species: speciesValue,
       onProgress: (pct: number) => {
         if (!cancelled) setProgress(Math.round(pct));
       },
