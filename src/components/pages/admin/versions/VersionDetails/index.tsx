@@ -192,6 +192,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
             species="Dmel"
             versionData={versionData}
             onRefresh={refresh}
+            enabledFileTypes={new Set(["species.synonym"])}
           />
         </TabsContent>
       </Tabs>

@@ -39,12 +39,18 @@ const getMainFileConfigs = (): Record<string, MainFileConfig> => {
   return configs;
 };
 
+const ALL_FILE_TYPES = new Set([
+  "genomic.fna", "genomic.gff", "rna.fna", "cds.fna", "protein.faa",
+  "dsrna.csv", "jbrowse.track", "species.synonym",
+]);
+
 const SpeciesData: React.FC<{
   name?: string;
   species?: string;
   versionData?: any;
   onRefresh?: () => void;
-}> = ({ name = "", species = mainSpecies, versionData, onRefresh }) => {
+  enabledFileTypes?: Set<string>;
+}> = ({ name = "", species = mainSpecies, versionData, onRefresh, enabledFileTypes = ALL_FILE_TYPES }) => {
   const refresh = onRefresh || (() => {});
 
   const [jbrowseTrackUploads, setJBrowseTrackUploads] = useState<
@@ -80,6 +86,16 @@ const SpeciesData: React.FC<{
   const mainFiles = React.useMemo(() => {
     const files = versionData?.files || {};
     return Object.entries(getMainFileConfigs()).map(([fileName, config]) => {
+      const isEnabled = enabledFileTypes.has(fileName);
+
+      if (!isEnabled) {
+        return {
+          name: fileName,
+          ...config,
+          status: "DISABLED" as const,
+        } as FileStatus;
+      }
+
       let status: FileStatus["status"] = "PENDING";
       let progress = 0;
       let progressTitle = "";
@@ -139,9 +155,11 @@ const SpeciesData: React.FC<{
         theme: status === "READY" ? "blue" : "orange",
       } as FileStatus;
     });
-  }, [versionData]);
+  }, [versionData, enabledFileTypes]);
 
-  const jbrowseTrackFiles = React.useMemo(() => {
+  const jbrowseTrackFiles: FileStatus[] = React.useMemo(() => {
+    if (!enabledFileTypes.has("jbrowse.track")) return [];
+
     const files: FileDetail[] = versionData?.files?.["jbrowse.track"] || [];
 
     return files.map((fileDetail) => {
@@ -198,9 +216,11 @@ const SpeciesData: React.FC<{
         theme: status === "READY" ? "blue" : "orange",
       } as FileStatus;
     });
-  }, [versionData]);
+  }, [versionData, enabledFileTypes]);
 
-  const synonymFiles = React.useMemo(() => {
+  const synonymFiles: FileStatus[] = React.useMemo(() => {
+    if (!enabledFileTypes.has("species.synonym")) return [];
+
     const files: FileDetail[] = versionData?.files?.["species.synonym"] || [];
 
     return files.map((fileDetail) => {
@@ -257,7 +277,7 @@ const SpeciesData: React.FC<{
         theme: status === "READY" ? "blue" : "orange",
       } as FileStatus;
     });
-  }, [versionData]);
+  }, [versionData, enabledFileTypes]);
 
   return (
     <div className="border-l-2 border-slate-100 pl-6 space-y-8">
@@ -291,11 +311,17 @@ const SpeciesData: React.FC<{
               Visualisation tracks for the JBrowse2 genome browser.
             </p>
           </div>
-          <AddJBrowseTrackButton onConfirm={handleJBrowseTrackUpload} />
+          {enabledFileTypes.has("jbrowse.track") && (
+            <AddJBrowseTrackButton onConfirm={handleJBrowseTrackUpload} />
+          )}
         </div>
 
         <div className="space-y-4">
-          {jbrowseTrackFiles.length > 0 ? (
+          {!enabledFileTypes.has("jbrowse.track") ? (
+            <div className="text-center py-8 text-slate-400 text-sm font-medium">
+              Not available for {species}.
+            </div>
+          ) : jbrowseTrackFiles.length > 0 ? (
             jbrowseTrackFiles.map((file) => (
               <FileCard
                 key={file.id}
@@ -311,7 +337,7 @@ const SpeciesData: React.FC<{
             </div>
           )}
 
-          {jbrowseTrackUploads.map((item) => (
+          {enabledFileTypes.has("jbrowse.track") && jbrowseTrackUploads.map((item) => (
             <JBrowseTrackFileCard
               key={item.id}
               file={item.file}
@@ -339,28 +365,34 @@ const SpeciesData: React.FC<{
               Gene synonym files.
             </p>
           </div>
-          <Button variant="outline" className="font-bold text-xs px-4 py-2" asChild>
-            <label>
-              <Icon name="add_circle" weight={500} className="text-lg" />
-              ADD SYNONYM FILE
-              <input
-                type="file"
-                className="hidden"
-                accept=".gz,.bgz"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) {
-                    handleSynonymUpload(f);
-                  }
-                  e.target.value = "";
-                }}
-              />
-            </label>
-          </Button>
+          {enabledFileTypes.has("species.synonym") && (
+            <Button variant="outline" className="font-bold text-xs px-4 py-2" asChild>
+              <label>
+                <Icon name="add_circle" weight={500} className="text-lg" />
+                ADD SYNONYM FILE
+                <input
+                  type="file"
+                  className="hidden"
+                  accept=".gz,.bgz"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) {
+                      handleSynonymUpload(f);
+                    }
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            </Button>
+          )}
         </div>
 
         <div className="space-y-4">
-          {synonymFiles.length > 0 ? (
+          {!enabledFileTypes.has("species.synonym") ? (
+            <div className="text-center py-8 text-slate-400 text-sm font-medium">
+              Not available for {species}.
+            </div>
+          ) : synonymFiles.length > 0 ? (
             synonymFiles.map((file) => (
               <FileCard
                 key={file.id}
@@ -376,7 +408,7 @@ const SpeciesData: React.FC<{
             </div>
           )}
 
-          {synonymUploads.map((item) => (
+          {enabledFileTypes.has("species.synonym") && synonymUploads.map((item) => (
             <SynonymFileCard
               key={item.id}
               file={item.file}
