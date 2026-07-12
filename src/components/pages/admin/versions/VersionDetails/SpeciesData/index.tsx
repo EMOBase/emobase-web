@@ -221,7 +221,10 @@ const SpeciesData: React.FC<{
   const synonymFiles: FileStatus[] = React.useMemo(() => {
     if (!enabledFileTypes.has("species.synonym")) return [];
 
-    const files: FileDetail[] = versionData?.files?.["species.synonym"] || [];
+    const files: FileDetail[] = (versionData?.files?.["species.synonym"] || []).filter((fileDetail: FileDetail) => {
+      const fileSpecies = fileDetail.jobs?.find((j: any) => j.payload?.species)?.payload?.species;
+      return !fileSpecies || fileSpecies === species;
+    });
 
     return files.map((fileDetail) => {
       let status: FileStatus["status"] = "PENDING";
@@ -277,7 +280,7 @@ const SpeciesData: React.FC<{
         theme: status === "READY" ? "blue" : "orange",
       } as FileStatus;
     });
-  }, [versionData, enabledFileTypes]);
+  }, [versionData, enabledFileTypes, species]);
 
   return (
     <div className="border-l-2 border-slate-100 pl-6 space-y-8">
