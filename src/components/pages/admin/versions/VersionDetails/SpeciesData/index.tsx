@@ -336,7 +336,7 @@ const SpeciesData: React.FC<{
               SYNONYMS
             </h2>
             <p className="text-slate-500 text-xs mt-1 font-medium">
-              Gene synonym files for {species}.
+              Gene synonym files.
             </p>
           </div>
           <Button variant="outline" className="font-bold text-xs px-4 py-2" asChild>
