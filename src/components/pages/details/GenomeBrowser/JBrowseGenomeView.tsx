@@ -8,7 +8,7 @@ import defaultSession from "@/utils/config/genomebrowser/default_session.json";
 import configuration from "@/utils/config/genomebrowser/configuration.json";
 
 type JBrowseGenomeViewProps = {
-  triboliumGene: GeneDetail;
+  geneInfo: GeneDetail;
 };
 
 const getJBrowseConfig = (zoomedInLocationStr: string) => {
@@ -98,7 +98,7 @@ const getJBrowseConfig = (zoomedInLocationStr: string) => {
 };
 
 const JBrowseGenomeView: React.FC<JBrowseGenomeViewProps> = ({
-  triboliumGene,
+  geneInfo,
 }) => {
   const [modules, setModules] = useState<any>(null);
 
@@ -130,7 +130,7 @@ const JBrowseGenomeView: React.FC<JBrowseGenomeViewProps> = ({
   const state = useMemo(() => {
     if (!modules?.jb) return null;
 
-    const { seqname, start, end } = triboliumGene;
+    const { seqname, start, end } = geneInfo;
     const halfLength = (end - start) / 2;
     const zoomedInStart = Math.max(0, start - halfLength);
     const zoomedInEnd = end + halfLength;
@@ -139,7 +139,7 @@ const JBrowseGenomeView: React.FC<JBrowseGenomeViewProps> = ({
     const { createViewState } = modules.jb;
 
     return createViewState(getJBrowseConfig(zoomedInLocationStr));
-  }, [modules, triboliumGene]);
+  }, [modules, geneInfo]);
 
   if (!modules || !state) {
     return (

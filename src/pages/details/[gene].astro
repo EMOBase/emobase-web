@@ -7,6 +7,7 @@ import phenotypeService from "@/utils/services/phenotypeService";
 import goAnnotationService from "@/utils/services/goAnnotationService";
 import ontologyService from "@/utils/services/ontologyService";
 import { directus } from "@/utils/directus";
+import { mainSpecies } from "@/utils/mainSpecies";
 import GeneDetails, {
   type GeneLinkTemplate,
 } from "@/components/pages/details/GeneDetails";
@@ -20,7 +21,7 @@ const { fetchByIds: fetchTermsByIds } = ontologyService("GO");
 
 const { gene = "" } = Astro.params;
 
-const triboliumGene = (await fetchGenes("Tcas", [gene]))[0];
+const geneInfo = (await fetchGenes(mainSpecies, [gene]))[0];
 const dsRNAs = await fetchIBs(gene);
 const phenotypes = await fetchPhenotypesByGene(gene);
 
@@ -84,7 +85,7 @@ try {
   console.error(" Error fetching gene link templates:", err);
 }
 
-if (!triboliumGene) {
+if (!geneInfo) {
   Astro.response.status = 404;
   Astro.response.statusText = "Not Found";
 }
@@ -101,11 +102,11 @@ if (!triboliumGene) {
 
 <Layout>
   {
-    triboliumGene ? (
+    geneInfo ? (
       <GeneDetails
         gene={gene}
         linkTemplates={linkTemplates}
-        triboliumGene={triboliumGene}
+        geneInfo={geneInfo}
         dsRNAs={dsRNAs}
         phenotypes={phenotypes}
         homologs={homologs}
@@ -114,7 +115,7 @@ if (!triboliumGene) {
         <div slot="jbrowse-genome-view">
           <div id="jbrowse-styles-container" transition:persist />
           <JBrowseGenomeView
-            triboliumGene={triboliumGene}
+            geneInfo={geneInfo}
             client:only="react"
             transition:persist="jbrowse"
           />

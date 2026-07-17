@@ -17,7 +17,7 @@ import { type ReactNode } from "react";
 type GeneDetailsProps = {
   gene: string;
   linkTemplates: GeneLinkTemplate[];
-  triboliumGene: GeneDetail;
+  geneInfo: GeneDetail;
   dsRNAs: IBDsRNA[];
   phenotypes: Phenotype[];
   homologs: Homolog[];
@@ -27,7 +27,7 @@ type GeneDetailsProps = {
 const GeneDetails: React.FC<GeneDetailsProps> = ({
   gene,
   linkTemplates,
-  triboliumGene,
+  geneInfo,
   dsRNAs,
   phenotypes,
   homologs,
@@ -62,7 +62,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
       props: {
         gene,
         linkTemplates,
-        triboliumGene,
+        geneInfo,
       },
     },
     {
