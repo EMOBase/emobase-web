@@ -22,7 +22,7 @@ const { fetchByIds: fetchTermsByIds } = ontologyService("GO");
 const { gene = "" } = Astro.params;
 
 const geneInfo = (await fetchGenes(mainSpecies, [gene]))[0];
-const dsRNAs = await fetchIBs(gene);
+const dsRNAs = mainSpecies === "Tcas" ? await fetchIBs(gene) : [];
 const phenotypes = await fetchPhenotypesByGene(gene);
 
 const orthology = await fetchOrthology(gene);
