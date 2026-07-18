@@ -131,6 +131,7 @@ const JBrowseGenomeView: React.FC<JBrowseGenomeViewProps> = ({
     if (!modules?.jb) return null;
 
     const { seqname, start, end } = geneInfo;
+    if (!seqname || start == null || end == null) return null;
     const halfLength = (end - start) / 2;
     const zoomedInStart = Math.max(0, start - halfLength);
     const zoomedInEnd = end + halfLength;

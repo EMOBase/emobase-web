@@ -134,18 +134,16 @@ export type GeneSequence = {
 
 export type GeneDetail = {
   id: string;
-  seqname: string;
-  start: number;
-  end: number;
-  strand: string;
-  mRNAs: GeneSequence[];
-  CDS: GeneSequence[];
-  proteins: GeneSequence[];
-  synonyms: {
-    gene: string;
-    type: string;
-    synonym: string;
-  }[];
+  symbol?: string;
+  fullname?: string;
+  annotationId?: string;
+  seqname?: string;
+  start?: number;
+  end?: number;
+  strand?: string;
+  mRNAs?: GeneSequence[];
+  CDS?: GeneSequence[];
+  proteins?: GeneSequence[];
 };
 
 export type GeneSearchResult = {

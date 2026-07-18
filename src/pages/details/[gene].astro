@@ -60,11 +60,8 @@ const annsById = anns.reduce(
   {} as Record<string, typeof anns>,
 );
 
-const dmelGenes = (await fetchGenes("Dmel", orthologousGenes)).map((g) => ({
-  id: g.id,
-  symbol: g.synonyms?.find((s) => s.type === "SYMBOL")?.synonym ?? "",
-  fullname: g.synonyms?.find((s) => s.type === "NAME")?.synonym ?? "",
-}));
+const dmelGenes = await fetchGenes("Dmel", orthologousGenes);
+
 const homologs = dmelGenes.map((gene) => ({
   ...gene,
   source: orthologySources[gene.id],
@@ -89,6 +86,8 @@ if (!geneInfo) {
   Astro.response.status = 404;
   Astro.response.statusText = "Not Found";
 }
+
+console.dir({ orthologousGenes, dmelGenes }, { depth: 5 });
 ---
 
 <style is:global>
