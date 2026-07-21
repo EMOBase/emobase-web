@@ -63,7 +63,9 @@ const annsById = anns.reduce(
 const dmelGenes = await fetchGenes("Dmel", orthologousGenes);
 
 const homologs = dmelGenes.map((gene) => ({
-  ...gene,
+  id: gene.id,
+  symbol: gene.symbol ?? "",
+  fullname: gene.fullname ?? "",
   source: orthologySources[gene.id],
   annotations: annsById[gene.id],
 }));
