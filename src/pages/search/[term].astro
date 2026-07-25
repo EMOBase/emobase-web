@@ -8,12 +8,11 @@ const { search: searchByOrthology } = genomicsService();
 const { search: searchByPhenotypes } = phenotypeService();
 
 const { term = "" } = Astro.params;
-const version = Astro.url.searchParams.get("version") || undefined;
 
 const penetrance = 0.8;
 const itemsPerPage = 10;
 
-const orthologyData = await searchByOrthology(term, version);
+const orthologyData = await searchByOrthology(term);
 const phenotypeData = await searchByPhenotypes(
   term,
   penetrance,

@@ -20,13 +20,12 @@ const { fetchByGenes: fetchGOByGenes } = goAnnotationService();
 const { fetchByIds: fetchTermsByIds } = ontologyService("GO");
 
 const { gene = "" } = Astro.params;
-const version = Astro.url.searchParams.get("version") || undefined;
 
-const geneInfo = (await fetchGenes(mainSpecies, [gene], version))[0];
-const dsRNAs = mainSpecies === "Tcas" ? await fetchIBs(gene, version) : [];
+const geneInfo = (await fetchGenes(mainSpecies, [gene]))[0];
+const dsRNAs = mainSpecies === "Tcas" ? await fetchIBs(gene) : [];
 const phenotypes = await fetchPhenotypesByGene(gene);
 
-const orthology = await fetchOrthology(gene, version);
+const orthology = await fetchOrthology(gene);
 const orthologySources = (orthology.orthologs || []).reduce(
   (acc, o) => {
     if (o.source) {
@@ -61,7 +60,7 @@ const annsById = anns.reduce(
   {} as Record<string, typeof anns>,
 );
 
-const dmelGenes = await fetchGenes("Dmel", orthologousGenes, version);
+const dmelGenes = await fetchGenes("Dmel", orthologousGenes);
 
 const homologs = dmelGenes.map((gene) => ({
   id: gene.id,

@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { SidebarProps } from "./types";
-import genomicsService, { type VersionItem } from "@/utils/services/genomics";
+import genomicsService, { type VersionPublicItem } from "@/utils/services/genomics";
 import { useVersionStore } from "@/states/versionStore";
 
 const CustomSidebarHeader: React.FC<SidebarProps> = ({
@@ -22,9 +22,13 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
   forceCollapsed,
 }) => {
   const { state } = useSidebar();
-  const [readyVersions, setReadyVersions] = useState<VersionItem[]>([]);
+  const [readyVersions, setReadyVersions] = useState<VersionPublicItem[]>([]);
   const [versionsLoading, setVersionsLoading] = useState(true);
-  const { selectedVersion, setSelectedVersion } = useVersionStore();
+  const { selectedVersion, setSelectedVersion, hydrateFromCookie } = useVersionStore();
+
+  useEffect(() => {
+    hydrateFromCookie();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -90,7 +94,7 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
                 >
                   <SelectTrigger
                     size="sm"
-                    className="h-auto border-none bg-transparent px-0 py-0 text-muted text-xs font-normal shadow-none hover:text-foreground transition-colors [&_svg]:hidden"
+                    className="h-auto border-none bg-transparent !px-0 !py-0 text-muted text-xs font-normal shadow-none hover:text-foreground transition-colors [&_svg]:hidden"
                   >
                     <SelectValue placeholder="Select version" />
                   </SelectTrigger>

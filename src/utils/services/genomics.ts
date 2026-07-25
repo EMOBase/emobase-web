@@ -1,7 +1,10 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import { Upload as TusUpload } from "tus-js-client";
 
 import { apiFetch, getApiBaseUrl } from "@/utils/apiFetch";
 import { useSessionStore } from "@/states/sessionStore";
+
+export const versionStorage = new AsyncLocalStorage<{ version?: string }>();
 
 export type VersionItem = {
   id: string;
@@ -21,6 +24,18 @@ type FetchVersionsResponse = {
     total: number;
     versions: VersionItem[];
   };
+  requestId: string;
+};
+
+export type VersionPublicItem = {
+  id: number;
+  name: string;
+  createdAt: string;
+  isDefault: boolean;
+};
+
+type FetchPublicVersionsResponse = {
+  data: VersionPublicItem[];
   requestId: string;
 };
 
@@ -188,6 +203,31 @@ export type UploadResponse = {
 };
 
 const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
+  const fetchReadyVersions = async () => {
+    const res = await fetch<FetchPublicVersionsResponse>(
+      "genomicsservice",
+      "/public/versions",
+    );
+    return res.data;
+  };
+
+  const resolvedVersion = (async (): Promise<string | undefined> => {
+    const store = versionStorage.getStore();
+    if (store) {
+      const { version: cookieVersion } = store;
+      if (!cookieVersion) return undefined;
+      const versions = await fetchReadyVersions();
+      return versions.find((v) => v.name === cookieVersion)
+        ? cookieVersion
+        : undefined;
+    }
+    if (typeof document !== "undefined") {
+      const match = document.cookie.match(/(?:^|; )emobase-version=([^;]*)/);
+      return match ? decodeURIComponent(match[1]) : undefined;
+    }
+    return undefined;
+  })();
+
   const fetchVersions = async (opts?: { page: number; pageSize: number }) => {
     const { page = 1, pageSize = 10 } = opts ?? {};
     const url = `/versions?page=${page}&page_size=${pageSize}`;
@@ -326,15 +366,8 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     );
   };
 
-  const fetchReadyVersions = async () => {
-    const res = await fetch<FetchVersionsResponse>(
-      "genomicsservice",
-      "/versions?page=1&page_size=100",
-    );
-    return res.data.versions.filter((v) => v.status === "READY");
-  };
-
-  const search = async (query: string, version?: string) => {
+  const search = async (query: string) => {
+    const version = await resolvedVersion;
     let url = `/search?query=${encodeURIComponent(query)}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
@@ -344,7 +377,8 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     return res.data;
   };
 
-  const suggest = async (query: string, version?: string) => {
+  const suggest = async (query: string) => {
+    const version = await resolvedVersion;
     let url = `/search/_suggest?query=${encodeURIComponent(query)}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
@@ -354,8 +388,9 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     return res.data;
   };
 
-  const fetchGenes = async (species: string, ids: string[], version?: string) => {
+  const fetchGenes = async (species: string, ids: string[]) => {
     if (ids.length === 0) return [];
+    const version = await resolvedVersion;
     let url = `/genes/${species}?ids=${ids.join(",")}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
@@ -365,7 +400,8 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     return res.data;
   };
 
-  const fetchIBs = async (gene: string, version?: string) => {
+  const fetchIBs = async (gene: string) => {
+    const version = await resolvedVersion;
     let url = `/silencingseqs?geneIds=${gene}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
@@ -375,7 +411,8 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     return res.data || [];
   };
 
-  const fetchOrthology = async (gene: string, version?: string) => {
+  const fetchOrthology = async (gene: string) => {
+    const version = await resolvedVersion;
     let url = `/orthology/Tcas?genes=${gene}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
