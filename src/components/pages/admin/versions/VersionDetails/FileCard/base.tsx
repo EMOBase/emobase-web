@@ -12,7 +12,7 @@ export interface FileStatus {
   id?: string;
   name: string;
   category: string;
-  status: "PENDING" | "UPLOADING" | "PAUSED" | "PROCESSING" | "READY" | "ERROR";
+  status: "PENDING" | "UPLOADING" | "PAUSED" | "PROCESSING" | "READY" | "ERROR" | "DISABLED";
   progress?: number;
   progressTitle?: string;
   size?: string;
@@ -30,6 +30,7 @@ export const ALLOWED_UPLOAD_FILE_TYPES = new Set([
   "dsrna.csv",
   "jbrowse.track",
   "orthology.tsv",
+  "species.synonym",
   "fb_synonym.tsv",
   "fbgn_fbtr_fbpp.tsv",
 ]);
@@ -58,6 +59,7 @@ export const FileCardBase = ({
   const isReady = !isUploading && file.status === "READY";
   const isPending = !isUploading && file.status === "PENDING";
   const isError = !isUploading && file.status === "ERROR";
+  const isDisabled = !isUploading && file.status === "DISABLED";
 
   const effectiveStatus = isUploading ? "UPLOADING" : file.status;
   const effectiveProgress =
@@ -79,7 +81,7 @@ export const FileCardBase = ({
       <div
         className={twMerge(
           "absolute left-0 top-6 bottom-6 w-1 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity",
-          isPending || isUploading
+          isPending || isUploading || isDisabled
             ? "bg-neutral-400"
             : isReady
               ? "bg-blue-600"
@@ -95,7 +97,7 @@ export const FileCardBase = ({
           cardSize === "sm" ? "size-10 rounded-lg" : "size-14 rounded-xl",
           isReady
             ? "bg-blue-50 text-blue-600"
-            : isPending || isUploading
+            : isPending || isUploading || isDisabled
               ? "bg-slate-50 text-slate-400"
               : isError
                 ? "bg-red-100 text-red-600"
@@ -190,6 +192,12 @@ export const FileCardBase = ({
             />
             RESUME UPLOAD
           </button>
+        ) : isDisabled ? (
+          <div className="flex-1 flex items-center justify-end">
+            <span className="px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-slate-100 text-slate-400">
+              DISABLED
+            </span>
+          </div>
         ) : (!isPending || isUploading) && effectiveProgress !== undefined ? (
           <ProgressBar
             progress={effectiveProgress}
@@ -218,6 +226,7 @@ export const FileCardBase = ({
 
         {onDelete &&
           !isUploading &&
+          !isDisabled &&
           (isReady || isError || file.status === "PAUSED" || file.status === "UPLOADING") && (
             <button
               onClick={onDelete}
@@ -232,7 +241,7 @@ export const FileCardBase = ({
             </button>
           )}
 
-        {cardSize !== "sm" && (
+        {cardSize !== "sm" && !isDisabled && (
           <div className="w-24 flex justify-end">
             <span
               className={twMerge(

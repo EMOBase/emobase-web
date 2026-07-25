@@ -10,6 +10,7 @@ export type { FileStatus };
 export { GffFileCard } from "./gff";
 export { OrthologyFileCard } from "./orthology";
 export { JBrowseTrackFileCard } from "./jbrowseTrack";
+export { SynonymFileCard } from "./synonym";
 
 export const FileCard = ({
   file,

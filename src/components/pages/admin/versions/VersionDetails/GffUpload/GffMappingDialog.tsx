@@ -409,22 +409,6 @@ export const GffMappingDialog: React.FC<GffMappingDialogProps> = ({
                     </>
                   )}
                 </div>
-
-                <div className="flex gap-3 bg-blue-50/30 border-l-4 border-blue-500 rounded-r-md p-4">
-                  <Icon
-                    name="info"
-                    className="text-xl text-blue-500 shrink-0 mt-0.5"
-                  />
-                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                    Old gene IDs are indexed in{" "}
-                    <strong className="text-slate-900 font-bold">
-                      Elasticsearch
-                    </strong>{" "}
-                    so users can find genes when searching with legacy
-                    identifiers. Select attribute keys from your parsed GFF
-                    file.
-                  </p>
-                </div>
               </>
             )}
 

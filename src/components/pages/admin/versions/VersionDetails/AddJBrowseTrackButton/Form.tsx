@@ -39,6 +39,18 @@ const AddJBrowseTrackForm = withForm({
             />
           )}
         />
+
+        <form.AppField
+          name="category"
+          children={(field) => (
+            <field.InputField
+              label="Category"
+              optional
+              hint="Tracks with the same category will be grouped together inside JBrowse2"
+              className="bg-white py-2 px-3 text-sm h-10"
+            />
+          )}
+        />
       </form>
     );
   },

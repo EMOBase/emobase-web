@@ -16,14 +16,14 @@ import { type GeneSequence as Sequence } from "@/utils/services/genomics";
 type ViewSequencesButtonProps = {
   text: string;
   title: string;
-  sequences: Sequence[];
+  sequences: Sequence[] | undefined;
   icon: IconName;
 };
 
 const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
   text,
   title,
-  sequences,
+  sequences = [],
   icon,
 }) => {
   const padEvery = (str: string, numChar: number) => {

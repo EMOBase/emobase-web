@@ -18,15 +18,15 @@ import AddJBrowseTrackForm from "./Form";
 const AddJBrowseTrackButton = ({
   onConfirm,
 }: {
-  onConfirm: (file: File, trackName: string) => void;
+  onConfirm: (file: File, trackName: string, category?: string) => void;
 }) => {
   const [open, setOpen] = useState(false);
 
   const form = useAppForm({
     ...formOptions,
     onSubmit: async ({ value }) => {
-      const { file, trackName } = formToApiSchema.parse(value);
-      onConfirm(file, trackName);
+      const { file, trackName, category } = formToApiSchema.parse(value);
+      onConfirm(file, trackName, category);
       setOpen(false);
     },
     onSubmitInvalid() {

@@ -6,42 +6,16 @@ import useAsyncData from "@/hooks/useAsyncData";
 import genomicsService from "@/utils/services/genomics";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
-import type { VersionDetailFiles } from "@/utils/services/genomics";
 import useService from "@/hooks/useService";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   FileCard,
-  GffFileCard,
   OrthologyFileCard,
-  JBrowseTrackFileCard,
   type FileStatus,
 } from "./FileCard";
 import AddOrthologyButton from "./AddOrthologyButton";
-import AddJBrowseTrackButton from "./AddJBrowseTrackButton";
-
-import { hasFeature } from "@/utils/features";
-import type { IconName } from "@/utils/constants/icon";
-
-type MainFileConfig = {
-  category: string;
-  icon: IconName;
-  theme?: "orange" | "blue";
-};
-
-const getMainFileConfigs = (): Record<string, MainFileConfig> => {
-  const configs: Record<string, MainFileConfig> = {
-    "genomic.fna": { category: "Genome Sequence", icon: "description" },
-    "genomic.gff": { category: "Genome Annotation", icon: "numbers" },
-    "rna.fna": { category: "RNA Sequences", icon: "science" },
-    "cds.fna": { category: "Coding Sequences", icon: "data_object" },
-    "protein.faa": { category: "Protein Sequences", icon: "conversion_path" },
-  };
-
-  if (hasFeature("dsrnaUpload")) {
-    configs["dsrna.csv"] = { category: "dsRNA Silencing", icon: "microbiology" };
-  }
-
-  return configs;
-};
+import SpeciesData from "./SpeciesData";
+import type { VersionDetailFiles } from "@/utils/services/genomics";
 
 const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
   const { fetchVersionDetail, releaseVersion } = useService(genomicsService);
@@ -96,142 +70,6 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     setOrthologyUploads((prev) => [...prev, { id, file, order, algorithm }]);
   };
-
-  const [jbrowseTrackUploads, setJBrowseTrackUploads] = useState<
-    Array<{
-      id: string;
-      file: File;
-      trackName: string;
-    }>
-  >([]);
-
-  const handleJBrowseTrackUpload = (file: File, trackName: string) => {
-    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    setJBrowseTrackUploads((prev) => [...prev, { id, file, trackName }]);
-  };
-
-  const mainFiles = React.useMemo(() => {
-    const files = versionData?.files || {};
-    return Object.entries(getMainFileConfigs()).map(([fileName, config]) => {
-      let status: FileStatus["status"] = "PENDING";
-      let progress = 0;
-      let progressTitle = "";
-      let error = "";
-      let size = "";
-
-      const fileDetail = files[fileName as keyof VersionDetailFiles];
-      const typedFileDetail = Array.isArray(fileDetail)
-        ? fileDetail[0]
-        : fileDetail;
-
-      if (typedFileDetail) {
-        size = formatBytes(typedFileDetail.fileSize);
-
-        if (typedFileDetail.uploadStatus === "FAILED") {
-          status = "ERROR";
-          error = "Upload failed";
-          progress = 100;
-        } else if (typedFileDetail.uploadStatus === "UPLOADING") {
-          status = "PAUSED";
-          progress = 50;
-          progressTitle = "INTERRUPTED";
-        } else {
-          const jobs = typedFileDetail.jobs || [];
-          const failedJob = jobs.find((j: any) => j.status === "FAILED");
-          const activeJob = jobs.find(
-            (j: any) => j.status === "RUNNING" || j.status === "PENDING",
-          );
-
-          if (failedJob) {
-            status = "ERROR";
-            error = failedJob.error || "Processing failed";
-            progress = 100;
-          } else if (activeJob) {
-            status = "PROCESSING";
-            const doneJobsCount = jobs.filter(
-              (j: any) => j.status === "DONE",
-            ).length;
-            progress = Math.min(100, Math.max(10, doneJobsCount * 20));
-            progressTitle = activeJob.description || "PROCESSING DATA";
-          } else {
-            status = "READY";
-            progress = 100;
-          }
-        }
-      }
-
-      return {
-        id: typedFileDetail?.id,
-        name: fileName,
-        ...config,
-        status,
-        progress,
-        progressTitle,
-        error,
-        size,
-        theme: status === "READY" ? "blue" : "orange",
-      } as FileStatus;
-    });
-  }, [versionData]);
-
-  const jbrowseTrackFiles = React.useMemo(() => {
-    const files = versionData?.files?.["jbrowse.track"] || [];
-
-    return files.map((fileDetail) => {
-      let status: FileStatus["status"] = "PENDING";
-      let progress = 0;
-      let progressTitle = "";
-      let error = "";
-      const size = formatBytes(fileDetail.fileSize);
-
-      if (fileDetail.uploadStatus === "FAILED") {
-        status = "ERROR";
-        error = "Upload failed";
-        progress = 100;
-      } else if (fileDetail.uploadStatus === "UPLOADING") {
-        status = "PAUSED";
-        progress = 50;
-        progressTitle = "INTERRUPTED";
-      } else {
-        const jobs = fileDetail.jobs || [];
-        const failedJob = jobs.find((j: any) => j.status === "FAILED");
-        const activeJob = jobs.find(
-          (j: any) => j.status === "RUNNING" || j.status === "PENDING",
-        );
-
-        if (failedJob) {
-          status = "ERROR";
-          error = failedJob.error || "Processing failed";
-          progress = 100;
-        } else if (activeJob) {
-          status = "PROCESSING";
-          const doneJobsCount = jobs.filter(
-            (j: any) => j.status === "DONE",
-          ).length;
-          progress = Math.min(100, Math.max(10, doneJobsCount * 20));
-          progressTitle = activeJob.description || "PROCESSING DATA";
-        } else {
-          status = "READY";
-          progress = 100;
-        }
-      }
-
-      const fileName = fileDetail.filePath.split("/").pop() || "jbrowse.track";
-
-      return {
-        id: fileDetail.id,
-        name: fileName,
-        category: "JBrowse2 Track",
-        icon: "view_timeline" as const,
-        status,
-        progress,
-        progressTitle,
-        error,
-        size,
-        theme: status === "READY" ? "blue" : "orange",
-      } as FileStatus;
-    });
-  }, [versionData]);
 
   const orthologyFiles = React.useMemo(() => {
     const files = versionData?.files?.["orthology.tsv"] || [];
@@ -294,7 +132,6 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header Info */}
       <div className="px-2 space-y-4">
         <a
           href="/admin/versions"
@@ -333,27 +170,34 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
         </div>
       </div>
 
-      <div className="space-y-4 relative">
-        {mainFiles.map((file) =>
-          file.name === "genomic.gff" ? (
-            <GffFileCard
-              key={file.name}
-              file={file}
-              versionId={name}
-              onRefresh={refresh}
-            />
-          ) : (
-            <FileCard
-              key={file.name}
-              file={file}
-              versionId={name}
-              onRefresh={refresh}
-            />
-          ),
-        )}
-      </div>
+      <Tabs defaultValue="mainSpecies">
+        <TabsList>
+          <TabsTrigger value="mainSpecies">
+            Main species (Tcas)
+          </TabsTrigger>
+          <TabsTrigger value="fly">
+            Fly (Dmel)
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="mainSpecies">
+          <SpeciesData
+            name={name}
+            versionData={versionData}
+            onRefresh={refresh}
+          />
+        </TabsContent>
+        <TabsContent value="fly">
+          <SpeciesData
+            name={name}
+            species="Dmel"
+            versionData={versionData}
+            onRefresh={refresh}
+            enabledFileTypes={new Set(["species.synonym"])}
+          />
+        </TabsContent>
+      </Tabs>
 
-      <div className="bg-slate-50/50 rounded-3xl border border-slate-100 p-8 space-y-8">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase">
@@ -393,53 +237,6 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
               algorithm={item.algorithm}
               onComplete={() => {
                 setOrthologyUploads((prev) =>
-                  prev.filter((u) => u.id !== item.id),
-                );
-                refresh();
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-slate-50/50 rounded-3xl border border-slate-100 p-8 space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase">
-              JBROWSE2 TRACK FILES
-            </h2>
-            <p className="text-slate-500 text-xs mt-1 font-medium">
-              Visualisation tracks for the JBrowse2 genome browser.
-            </p>
-          </div>
-          <AddJBrowseTrackButton onConfirm={handleJBrowseTrackUpload} />
-        </div>
-
-        <div className="space-y-4">
-          {jbrowseTrackFiles.length > 0 ? (
-            jbrowseTrackFiles.map((file) => (
-              <FileCard
-                key={file.id}
-                file={file}
-                canDelete={true}
-                onRefresh={refresh}
-                size="sm"
-              />
-            ))
-          ) : (
-            <div className="text-center py-8 text-slate-400 text-sm font-medium">
-              No JBrowse2 track files uploaded yet.
-            </div>
-          )}
-
-          {jbrowseTrackUploads.map((item) => (
-            <JBrowseTrackFileCard
-              key={item.id}
-              file={item.file}
-              versionId={name}
-              trackName={item.trackName}
-              onComplete={() => {
-                setJBrowseTrackUploads((prev) =>
                   prev.filter((u) => u.id !== item.id),
                 );
                 refresh();

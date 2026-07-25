@@ -7,6 +7,7 @@ import phenotypeService from "@/utils/services/phenotypeService";
 import goAnnotationService from "@/utils/services/goAnnotationService";
 import ontologyService from "@/utils/services/ontologyService";
 import { directus } from "@/utils/directus";
+import { mainSpecies } from "@/utils/mainSpecies";
 import GeneDetails, {
   type GeneLinkTemplate,
 } from "@/components/pages/details/GeneDetails";
@@ -21,8 +22,8 @@ const { fetchByIds: fetchTermsByIds } = ontologyService("GO");
 const { gene = "" } = Astro.params;
 const version = Astro.url.searchParams.get("version") || undefined;
 
-const triboliumGene = (await fetchGenes("Tcas", [gene], version))[0];
-const dsRNAs = await fetchIBs(gene, version);
+const geneInfo = (await fetchGenes(mainSpecies, [gene], version))[0];
+const dsRNAs = mainSpecies === "Tcas" ? await fetchIBs(gene, version) : [];
 const phenotypes = await fetchPhenotypesByGene(gene);
 
 const orthology = await fetchOrthology(gene, version);
@@ -60,15 +61,12 @@ const annsById = anns.reduce(
   {} as Record<string, typeof anns>,
 );
 
-const dmelGenes = (await fetchGenes("Dmel", orthologousGenes, version)).map(
-  (g) => ({
-    id: g.id,
-    symbol: g.synonyms?.find((s) => s.type === "SYMBOL")?.synonym ?? "",
-    fullname: g.synonyms?.find((s) => s.type === "NAME")?.synonym ?? "",
-  }),
-);
+const dmelGenes = await fetchGenes("Dmel", orthologousGenes, version);
+
 const homologs = dmelGenes.map((gene) => ({
-  ...gene,
+  id: gene.id,
+  symbol: gene.symbol ?? "",
+  fullname: gene.fullname ?? "",
   source: orthologySources[gene.id],
   annotations: annsById[gene.id],
 }));
@@ -87,7 +85,7 @@ try {
   console.error(" Error fetching gene link templates:", err);
 }
 
-if (!triboliumGene) {
+if (!geneInfo) {
   Astro.response.status = 404;
   Astro.response.statusText = "Not Found";
 }
@@ -104,11 +102,11 @@ if (!triboliumGene) {
 
 <Layout>
   {
-    triboliumGene ? (
+    geneInfo ? (
       <GeneDetails
         gene={gene}
         linkTemplates={linkTemplates}
-        triboliumGene={triboliumGene}
+        geneInfo={geneInfo}
         dsRNAs={dsRNAs}
         phenotypes={phenotypes}
         homologs={homologs}
@@ -117,7 +115,7 @@ if (!triboliumGene) {
         <div slot="jbrowse-genome-view">
           <div id="jbrowse-styles-container" transition:persist />
           <JBrowseGenomeView
-            triboliumGene={triboliumGene}
+            geneInfo={geneInfo}
             client:only="react"
             transition:persist="jbrowse"
           />

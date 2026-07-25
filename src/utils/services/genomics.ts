@@ -10,7 +10,7 @@ export type VersionItem = {
   createdBy: string;
   updatedAt: string;
   isDefault: boolean;
-  status: "DRAFT" | "PROCESSING" | "ERROR" | "READY";
+  status: "DRAFT" | "PROCESSING" | "ERROR" | "READY" | "MISSING_REQUIRED_FILE";
   totalFileSize: number;
 };
 
@@ -87,6 +87,7 @@ export type VersionDetailFiles = {
   "dsrna.csv"?: FileDetail | null;
   "jbrowse.track"?: FileDetail[];
   "orthology.tsv"?: FileDetail[];
+  "species.synonym"?: FileDetail[];
 };
 
 type FetchVersionDetailResponse = {
@@ -112,6 +113,8 @@ type UploadInput = {
   order?: number;
   algorithm?: string;
   trackName?: string;
+  category?: string;
+  species?: string;
   geneIDKey?: string;
   trimPrefixChars?: number;
   trimSuffixChars?: number;
@@ -131,18 +134,16 @@ export type GeneSequence = {
 
 export type GeneDetail = {
   id: string;
-  seqname: string;
-  start: number;
-  end: number;
-  strand: string;
-  mRNAs: GeneSequence[];
-  CDS: GeneSequence[];
-  proteins: GeneSequence[];
-  synonyms: {
-    gene: string;
-    type: string;
-    synonym: string;
-  }[];
+  symbol?: string;
+  fullname?: string;
+  annotationId?: string;
+  seqname?: string;
+  start?: number;
+  end?: number;
+  strand?: string;
+  mRNAs?: GeneSequence[];
+  CDS?: GeneSequence[];
+  proteins?: GeneSequence[];
 };
 
 export type GeneSearchResult = {
@@ -231,6 +232,8 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     order,
     algorithm,
     trackName,
+    category,
+    species,
     geneIDKey,
     trimPrefixChars,
     trimSuffixChars,
@@ -254,6 +257,8 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
           ...(order ? { order: order.toString() } : {}),
           ...(algorithm ? { algorithm } : {}),
           ...(trackName ? { trackName } : {}),
+          ...(category ? { category } : {}),
+          ...(species ? { species } : {}),
           ...(geneIDKey ? { geneIDKey } : {}),
           ...(trimPrefixChars !== undefined
             ? { trimPrefixChars: trimPrefixChars.toString() }

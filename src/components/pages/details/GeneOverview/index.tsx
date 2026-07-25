@@ -13,17 +13,17 @@ export type GeneLinkTemplate = {
 type GeneOverviewProps = {
   id: string;
   gene: string;
-  triboliumGene: GeneDetail;
+  geneInfo: GeneDetail;
   linkTemplates: GeneLinkTemplate[];
 };
 
 const GeneOverview: React.FC<GeneOverviewProps> = ({
   id: sectionId,
   gene,
-  triboliumGene,
+  geneInfo,
   linkTemplates,
 }) => {
-  const { seqname, start, end, id, mRNAs, CDS, proteins } = triboliumGene;
+  const { seqname, start, end, id, mRNAs, CDS, proteins } = geneInfo;
   const genomicLocation = `${seqname}:${start}..${end}`;
 
   const sequencesButtons = [

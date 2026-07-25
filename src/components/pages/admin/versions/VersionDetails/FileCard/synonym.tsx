@@ -2,27 +2,28 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useService from "@/hooks/useService";
 import genomicsService from "@/utils/services/genomics";
+import { mainSpecies } from "@/utils/mainSpecies";
 import { FileCardBase } from "./base";
 
-export const JBrowseTrackFileCard = ({
+export const SynonymFileCard = ({
   file,
   versionId,
-  trackName,
-  category,
   onComplete,
   size = "sm",
+  species: speciesProp,
 }: {
   file: File;
   versionId: string;
-  trackName: string;
-  category?: string;
   onComplete: () => void;
   size?: "sm";
+  species?: string;
 }) => {
   const { upload } = useService(genomicsService);
   const [progress, setProgress] = useState(0);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const speciesValue = speciesProp || mainSpecies;
 
   useEffect(() => {
     let cancelled = false;
@@ -30,9 +31,8 @@ export const JBrowseTrackFileCard = ({
     upload({
       file,
       version: versionId,
-      fileType: "jbrowse.track",
-      trackName,
-      category,
+      fileType: "species.synonym",
+      species: speciesValue,
       onProgress: (pct: number) => {
         if (!cancelled) setProgress(Math.round(pct));
       },
@@ -61,8 +61,8 @@ export const JBrowseTrackFileCard = ({
     <FileCardBase
       file={{
         name: file.name,
-        category: trackName,
-        icon: "view_timeline",
+        category: "Synonyms",
+        icon: "menu_book",
         status: hasError ? "ERROR" : "UPLOADING",
         progress,
         progressTitle: "IN TRANSIT",
