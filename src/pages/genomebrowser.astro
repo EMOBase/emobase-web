@@ -2,48 +2,22 @@
 import qs from "qs";
 
 import Layout from "@/layouts/default.astro";
-import { mainSpecies } from "@/utils/mainSpecies";
 import { getEnv } from "@/utils/env";
 
 const loc = Astro.url.searchParams.get("loc");
 const assembly = Astro.url.searchParams.get("assembly");
 const tracks = Astro.url.searchParams.get("tracks");
 const tracklist = Astro.url.searchParams.get("tracklist");
-const config = Astro.url.searchParams.get("config");
 
 const genomebrowserBaseUrl = getEnv("PUBLIC_UI_PAGE_GENOMEBROWSER");
 
-const getDefaultValues = () => {
-  if (!loc)
-    return {
-      config: "data/config.json",
-    };
-
-  if (mainSpecies === "Tcas")
-    return {
-      assembly: "Tcas5.2",
-      tracks: "tcas5_iBeetle.sorted.gff,tcas5_ncbi.sorted.gff,ib.sorted.gff",
-      tracklist: "true",
-      config: "data/config.json",
-    };
-
-  return {
-    assembly: "genomic.fna",
-    tracks: "genomic.sorted.gff",
-    tracklist: "true",
-    config: "data/config.json",
-  };
-};
-
 const getUrl = () => {
-  let defaultValues = getDefaultValues();
-
   return `${genomebrowserBaseUrl}?${qs.stringify({
     loc: loc,
-    assembly: assembly ?? defaultValues.assembly,
-    tracks: tracks ?? defaultValues.tracks,
-    tracklist: tracklist ?? defaultValues.tracklist,
-    config: config ?? defaultValues.config,
+    assembly: assembly,
+    tracks: tracks,
+    tracklist: tracklist,
+    config: "data/config.json",
   })}`;
 };
 ---
