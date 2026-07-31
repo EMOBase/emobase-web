@@ -59,6 +59,7 @@ const SpeciesData: React.FC<{
       file: File;
       trackName: string;
       category?: string;
+      selectInDefaultSession?: boolean;
     }>
   >([]);
 
@@ -66,9 +67,13 @@ const SpeciesData: React.FC<{
     file: File,
     trackName: string,
     category?: string,
+    selectInDefaultSession?: boolean,
   ) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    setJBrowseTrackUploads((prev) => [...prev, { id, file, trackName, category }]);
+    setJBrowseTrackUploads((prev) => [
+      ...prev,
+      { id, file, trackName, category, selectInDefaultSession },
+    ]);
   };
 
   const [synonymUploads, setSynonymUploads] = useState<
@@ -347,6 +352,7 @@ const SpeciesData: React.FC<{
               versionId={name}
               trackName={item.trackName}
               category={item.category}
+              selectInDefaultSession={item.selectInDefaultSession}
               onComplete={() => {
                 setJBrowseTrackUploads((prev) =>
                   prev.filter((u) => u.id !== item.id),

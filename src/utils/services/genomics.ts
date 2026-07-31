@@ -114,6 +114,7 @@ type UploadInput = {
   algorithm?: string;
   trackName?: string;
   category?: string;
+  selectInDefaultSession?: boolean;
   species?: string;
   geneIDKey?: string;
   trimPrefixChars?: number;
@@ -233,6 +234,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     algorithm,
     trackName,
     category,
+    selectInDefaultSession,
     species,
     geneIDKey,
     trimPrefixChars,
@@ -258,6 +260,9 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
           ...(algorithm ? { algorithm } : {}),
           ...(trackName ? { trackName } : {}),
           ...(category ? { category } : {}),
+          ...(selectInDefaultSession !== undefined
+            ? { selectInDefaultSession: selectInDefaultSession.toString() }
+            : {}),
           ...(species ? { species } : {}),
           ...(geneIDKey ? { geneIDKey } : {}),
           ...(trimPrefixChars !== undefined
