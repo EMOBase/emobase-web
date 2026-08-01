@@ -329,7 +329,7 @@ const SpeciesData: React.FC<{
             <div className="text-center py-8 text-slate-400 text-sm font-medium">
               Not available for {species}.
             </div>
-          ) : jbrowseTrackFiles.length > 0 ? (
+          ) : jbrowseTrackFiles.length > 0 || jbrowseTrackUploads.length > 0 ? (
             jbrowseTrackFiles.map((file) => (
               <FileCard
                 key={file.id}
@@ -401,7 +401,7 @@ const SpeciesData: React.FC<{
             <div className="text-center py-8 text-slate-400 text-sm font-medium">
               Not available for {species}.
             </div>
-          ) : synonymFiles.length > 0 ? (
+          ) : synonymFiles.length > 0 || synonymUploads.length > 0 ? (
             synonymFiles.map((file) => (
               <FileCard
                 key={file.id}
