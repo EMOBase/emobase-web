@@ -6,13 +6,10 @@ import useAsyncData from "@/hooks/useAsyncData";
 import genomicsService from "@/utils/services/genomics";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import useService from "@/hooks/useService";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  FileCard,
-  OrthologyFileCard,
-  type FileStatus,
-} from "./FileCard";
+import { FileCard, OrthologyFileCard, type FileStatus } from "./FileCard";
 import AddOrthologyButton from "./AddOrthologyButton";
 import SpeciesData from "./SpeciesData";
 import type { VersionDetailFiles } from "@/utils/services/genomics";
@@ -174,10 +171,11 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
               disabled={isReleasing}
               className="font-bold text-xs px-4 py-2"
             >
-              <Icon
-                name={isReleasing ? "pending" : "check_circle"}
-                className="text-lg mr-2"
-              />
+              {isReleasing ? (
+                <Spinner className="text-lg size-[0.9em] mr-2" />
+              ) : (
+                <Icon name="check_circle" className="text-lg mr-2" />
+              )}
               SET AS DEFAULT
             </Button>
           )}
@@ -187,10 +185,11 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
               disabled={isSyncing}
               className="font-bold text-xs px-4 py-2"
             >
-              <Icon
-                name={isSyncing ? "pending" : "refresh"}
-                className="text-lg mr-2"
-              />
+              {isSyncing ? (
+                <Spinner className="text-lg size-[0.9em] mr-2" />
+              ) : (
+                <Icon name="sync" className="text-lg mr-2" />
+              )}
               SYNC
             </Button>
           )}
@@ -199,12 +198,8 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
       <Tabs defaultValue="mainSpecies">
         <TabsList>
-          <TabsTrigger value="mainSpecies">
-            Main species (Tcas)
-          </TabsTrigger>
-          <TabsTrigger value="fly">
-            Fly (Dmel)
-          </TabsTrigger>
+          <TabsTrigger value="mainSpecies">Main species (Tcas)</TabsTrigger>
+          <TabsTrigger value="fly">Fly (Dmel)</TabsTrigger>
         </TabsList>
         <TabsContent value="mainSpecies">
           <SpeciesData

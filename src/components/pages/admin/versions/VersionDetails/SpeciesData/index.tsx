@@ -276,7 +276,7 @@ const SpeciesData: React.FC<{
         id: fileDetail.id,
         name: fileName,
         category: "Synonyms",
-        icon: "menu_book" as const,
+        icon: "sync_alt" as const,
         status,
         progress,
         progressTitle,

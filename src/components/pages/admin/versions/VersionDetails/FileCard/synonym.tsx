@@ -62,7 +62,7 @@ export const SynonymFileCard = ({
       file={{
         name: file.name,
         category: "Synonyms",
-        icon: "menu_book",
+        icon: "sync_alt",
         status: hasError ? "ERROR" : "UPLOADING",
         progress,
         progressTitle: "IN TRANSIT",
