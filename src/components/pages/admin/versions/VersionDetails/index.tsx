@@ -22,6 +22,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
   const [refreshKey, setRefreshKey] = useState(0);
   const [isReleasing, setIsReleasing] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const handleRelease = async () => {
     try {
@@ -33,6 +34,19 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
       toast.error(err.message || `Failed to release version ${name}`);
     } finally {
       setIsReleasing(false);
+    }
+  };
+
+  const handleSync = async () => {
+    try {
+      setIsSyncing(true);
+      await releaseVersion(name);
+      toast.success(`Successfully initiated sync for version ${name}`);
+      refresh();
+    } catch (err: any) {
+      toast.error(err.message || `Failed to sync version ${name}`);
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -165,6 +179,19 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
                 className="text-lg mr-2"
               />
               SET AS DEFAULT
+            </Button>
+          )}
+          {versionData?.isDefault && (
+            <Button
+              onClick={handleSync}
+              disabled={isSyncing}
+              className="font-bold text-xs px-4 py-2"
+            >
+              <Icon
+                name={isSyncing ? "pending" : "refresh"}
+                className="text-lg mr-2"
+              />
+              SYNC
             </Button>
           )}
         </div>
