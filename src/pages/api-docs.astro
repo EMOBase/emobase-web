@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/default.astro";
+import { getEnv } from "@/utils/env";
+
+const url = getEnv("PUBLIC_UI_PAGE_API_DOC");
+---
+
+<Layout topbar={false} sidebarCollapsed className="p-0 md:p-0">
+  <iframe src={url} width="100%" height="100%" allowfullscreen></iframe>
+</Layout>
