@@ -68,7 +68,11 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
             Gene Identifier
           </span>
           <div className="flex items-center gap-2">
-            <Icon name="fingerprint" className="text-neutral-400 text-xl" />
+            <Icon
+              name="fingerprint"
+              weight={700}
+              className="text-neutral-500 text-xl"
+            />
             <span className="font-mono text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {gene}
             </span>
