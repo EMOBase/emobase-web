@@ -13,6 +13,7 @@ import GeneDetails, {
 } from "@/components/pages/details/GeneDetails";
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
 import JBrowseGenomeView from "@/components/pages/details/GenomeBrowser/JBrowseGenomeView";
+import { getJBrowseLinkParams } from "@/utils/browserLinkParams";
 
 const { fetchGenes, fetchIBs, fetchOrthology } = genomicsService();
 const { fetchByGene: fetchPhenotypesByGene } = phenotypeService();
@@ -84,6 +85,16 @@ try {
   console.error(" Error fetching gene link templates:", err);
 }
 
+let browserLinkParams: Awaited<
+  ReturnType<typeof getJBrowseLinkParams>
+> | undefined;
+
+try {
+  browserLinkParams = await getJBrowseLinkParams();
+} catch (err) {
+  console.error("Error fetching JBrowse config:", err);
+}
+
 if (!geneInfo) {
   Astro.response.status = 404;
   Astro.response.statusText = "Not Found";
@@ -109,6 +120,7 @@ if (!geneInfo) {
         dsRNAs={dsRNAs}
         phenotypes={phenotypes}
         homologs={homologs}
+        browserLinkParams={browserLinkParams}
         client:load
       >
         <div slot="jbrowse-genome-view">

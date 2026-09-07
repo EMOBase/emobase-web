@@ -2,6 +2,7 @@ import { Icon } from "@/components/ui/icon";
 import GeneFavoriteMark from "@/components/common/GeneFavoriteMark";
 import CopyButton from "@/components/common/CopyButton";
 import { type GeneDetail } from "@/utils/services/genomics";
+import { type JBrowseLinkParams } from "@/utils/browserLinkParams";
 
 import ViewSequencesButton from "./ViewSequencesButton";
 
@@ -15,6 +16,7 @@ type GeneOverviewProps = {
   gene: string;
   geneInfo: GeneDetail;
   linkTemplates: GeneLinkTemplate[];
+  browserLinkParams?: JBrowseLinkParams;
 };
 
 const GeneOverview: React.FC<GeneOverviewProps> = ({
@@ -22,9 +24,15 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
   gene,
   geneInfo,
   linkTemplates,
+  browserLinkParams,
 }) => {
   const { seqname, start, end, id, mRNAs, CDS, proteins } = geneInfo;
   const genomicLocation = `${seqname}:${start}..${end}`;
+
+  const genomeBrowserHref =
+    browserLinkParams
+      ? `/genomebrowser/?loc=${genomicLocation}&assembly=${encodeURIComponent(browserLinkParams.assembly)}&tracks=${encodeURIComponent(browserLinkParams.tracks.join(","))}&tracklist=true`
+      : `/genomebrowser/?loc=${genomicLocation}`;
 
   const sequencesButtons = [
     {
@@ -84,7 +92,7 @@ const GeneOverview: React.FC<GeneOverviewProps> = ({
           <div className="flex items-center gap-2">
             <Icon name="dns" className="text-neutral-400 text-xl" />
             <a
-              href={`/genomebrowser/?loc=${genomicLocation}`}
+              href={genomeBrowserHref}
               className="text-neutral-700 dark:text-neutral-300 hover:text-primary font-mono text-sm font-medium"
             >
               {genomicLocation}

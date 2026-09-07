@@ -13,6 +13,7 @@ import PublicationCRUD from "./PublicationCRUD";
 import PhenotypeCRUD from "./PhenotypeCRUD";
 import IBScreen from "./IBScreen";
 import { type ReactNode } from "react";
+import { type JBrowseLinkParams } from "@/utils/browserLinkParams";
 
 type GeneDetailsProps = {
   gene: string;
@@ -22,6 +23,7 @@ type GeneDetailsProps = {
   phenotypes: Phenotype[];
   homologs: Homolog[];
   jbrowseGenomeView?: ReactNode;
+  browserLinkParams?: JBrowseLinkParams;
 };
 
 const GeneDetails: React.FC<GeneDetailsProps> = ({
@@ -32,6 +34,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
   phenotypes,
   homologs,
   jbrowseGenomeView,
+  browserLinkParams,
 }) => {
   const communityPhenotypes =
     phenotypes === undefined
@@ -63,6 +66,7 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
         gene,
         linkTemplates,
         geneInfo,
+        browserLinkParams,
       },
     },
     {
