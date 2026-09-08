@@ -24,6 +24,17 @@ type FetchVersionsResponse = {
   requestId: string;
 };
 
+export type PublicVersionItem = {
+  id: number;
+  name: string;
+  createdAt: string;
+};
+
+type FetchPublicVersionsResponse = {
+  data: PublicVersionItem[];
+  requestId: string;
+};
+
 type CreateVersionInput = {
   name: string;
 };
@@ -189,6 +200,14 @@ export type UploadResponse = {
 };
 
 const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
+  const fetchPublicVersions = async () => {
+    const res = await fetch<FetchPublicVersionsResponse>(
+      "genomicsservice",
+      "/public/versions",
+    );
+    return res.data;
+  };
+
   const fetchVersions = async (opts?: { page: number; pageSize: number }) => {
     const { page = 1, pageSize = 10 } = opts ?? {};
     const url = `/versions?page=${page}&page_size=${pageSize}`;
@@ -376,6 +395,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   return {
+    fetchPublicVersions,
     fetchVersions,
     createVersion,
     fetchJobs,
