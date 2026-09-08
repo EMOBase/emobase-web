@@ -1,5 +1,5 @@
 import genomicsService from "@/utils/services/genomics";
-import { getEnv } from "@/utils/env";
+import { resolveBaseUrl } from "@/utils/url";
 
 const { fetchPublicVersions } = genomicsService();
 
@@ -26,14 +26,14 @@ const toTrackId = (track: string | { configuration?: string }) =>
 const getCurrentVersionName = async (): Promise<string | undefined> => {
   try {
     const versions = await fetchPublicVersions();
-    return versions[0]?.name;
+    return versions.find((v) => v.isDefault)?.name || versions[0]?.name;
   } catch {
     return undefined;
   }
 };
 
 export const getJBrowseLinkParams = async (): Promise<JBrowseLinkParams> => {
-  const baseURL = getEnv("PUBLIC_UI_PAGE_GENOMEBROWSER").replace(/\/+$/, "");
+  const baseURL = resolveBaseUrl("jbrowse").replace(/\/+$/, "");
   const config: JBrowseConfig = await (
     await fetch(`${baseURL}/data/config.json`)
   ).json();

@@ -27,6 +27,7 @@ type FetchVersionsResponse = {
 export type PublicVersionItem = {
   id: number;
   name: string;
+  isDefault: boolean;
   createdAt: string;
 };
 
