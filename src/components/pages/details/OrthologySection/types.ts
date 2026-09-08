@@ -1,7 +1,9 @@
-import { type DrosophilaGene } from "@/utils/services/geneService";
 import { type GOAnnotation } from "@/utils/constants/goannotation";
 
-export type Homolog = DrosophilaGene & {
+export type Homolog = {
+  id: string;
+  symbol: string;
+  fullname: string;
   source: string[];
   annotations: GOAnnotation[];
 };

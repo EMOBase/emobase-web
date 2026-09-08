@@ -1,5 +1,6 @@
 const defaultValues: Record<string, string> = {
   PUBLIC_APIS_BASE_URL: "/ibb/api",
+  PUBLIC_DOWNLOAD_URL: "/download/",
 
   PUBLIC_UI_PAGE_GENOMEBROWSER: "/ibb/jbrowse2/",
   PUBLIC_UI_PAGE_ONTOSCOPE: "/ibb/ontoscope",

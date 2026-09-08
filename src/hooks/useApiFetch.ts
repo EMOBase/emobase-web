@@ -1,24 +1,45 @@
 import { useCallback } from "react";
 
 import { apiFetch } from "@/utils/apiFetch";
-import { useSession } from "@/hooks/session/useSession";
+import { useSessionStore } from "@/states/sessionStore";
 
 /* Api fetch with jwt access token attached */
 const useApiFetch = () => {
-  const { session } = useSession();
+  return useCallback(async <T>(...params: Parameters<typeof apiFetch<T>>) => {
+    const { isFetched } = useSessionStore.getState();
 
-  return useCallback(
-    async <T>(...params: Parameters<typeof apiFetch<T>>) => {
-      if (session) {
-        if (!params[2]) params[2] = {};
-        const opts = params[2];
-        opts.authorization = `Bearer ${session.user.accessToken}`;
-      }
+    /* Safety net: normally the session is already populated from SSR or a prior
+       fetchSession call, so this only runs for non-admin pages or edge cases
+       where the store hasn't been hydrated yet. */
+    if (!isFetched) {
+      await Promise.race([
+        new Promise<void>((resolve) => {
+          const unsub = useSessionStore.subscribe((s) => {
+            if (s.isFetched) {
+              unsub();
+              resolve();
+            }
+          });
+        }),
+        new Promise<void>((_, reject) =>
+          setTimeout(
+            () => reject(new Error("Session fetch timed out")),
+            15_000,
+          ),
+        ),
+      ]);
+    }
 
-      return await apiFetch<T>(...params);
-    },
-    [session],
-  );
+    const { session: currentSession } = useSessionStore.getState();
+
+    if (currentSession?.user?.accessToken) {
+      if (!params[2]) params[2] = {};
+      const opts = params[2];
+      opts.authorization = `Bearer ${currentSession.user.accessToken}`;
+    }
+
+    return await apiFetch<T>(...params);
+  }, []);
 };
 
 export default useApiFetch;

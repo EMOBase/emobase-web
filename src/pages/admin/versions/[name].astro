@@ -1,0 +1,10 @@
+---
+import AdminLayout from "@/layouts/admin.astro";
+import VersionDetails from "@/components/pages/admin/versions/VersionDetails";
+
+const { name } = Astro.params;
+---
+
+<AdminLayout>
+  <VersionDetails name={name} client:load />
+</AdminLayout>

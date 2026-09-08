@@ -2,27 +2,28 @@
 import { readItems } from "@directus/sdk";
 
 import Layout from "@/layouts/default.astro";
-import geneService from "@/utils/services/geneService";
+import genomicsService from "@/utils/services/genomics";
 import phenotypeService from "@/utils/services/phenotypeService";
 import goAnnotationService from "@/utils/services/goAnnotationService";
 import ontologyService from "@/utils/services/ontologyService";
 import { directus } from "@/utils/directus";
+import { mainSpecies } from "@/utils/mainSpecies";
 import GeneDetails, {
   type GeneLinkTemplate,
 } from "@/components/pages/details/GeneDetails";
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
 import JBrowseGenomeView from "@/components/pages/details/GenomeBrowser/JBrowseGenomeView";
+import { getJBrowseLinkParams } from "@/utils/browserLinkParams";
 
-const { fetchIBs, fetchTriboliumGenes, fetchOrthology, fetchDrosophilaGenes } =
-  geneService();
+const { fetchGenes, fetchIBs, fetchOrthology } = genomicsService();
 const { fetchByGene: fetchPhenotypesByGene } = phenotypeService();
 const { fetchByGenes: fetchGOByGenes } = goAnnotationService();
 const { fetchByIds: fetchTermsByIds } = ontologyService("GO");
 
 const { gene = "" } = Astro.params;
 
-const triboliumGene = (await fetchTriboliumGenes([gene]))[0];
-const dsRNAs = await fetchIBs(gene);
+const geneInfo = (await fetchGenes(mainSpecies, [gene]))[0];
+const dsRNAs = mainSpecies === "Tcas" ? await fetchIBs(gene) : [];
 const phenotypes = await fetchPhenotypesByGene(gene);
 
 const orthology = await fetchOrthology(gene);
@@ -60,8 +61,12 @@ const annsById = anns.reduce(
   {} as Record<string, typeof anns>,
 );
 
-const homologs = (await fetchDrosophilaGenes(orthologousGenes)).map((gene) => ({
-  ...gene,
+const dmelGenes = await fetchGenes("Dmel", orthologousGenes);
+
+const homologs = dmelGenes.map((gene) => ({
+  id: gene.id,
+  symbol: gene.symbol ?? "",
+  fullname: gene.fullname ?? "",
   source: orthologySources[gene.id],
   annotations: annsById[gene.id],
 }));
@@ -80,7 +85,17 @@ try {
   console.error(" Error fetching gene link templates:", err);
 }
 
-if (!triboliumGene) {
+let browserLinkParams: Awaited<
+  ReturnType<typeof getJBrowseLinkParams>
+> | undefined;
+
+try {
+  browserLinkParams = await getJBrowseLinkParams();
+} catch (err) {
+  console.error("Error fetching JBrowse config:", err);
+}
+
+if (!geneInfo) {
   Astro.response.status = 404;
   Astro.response.statusText = "Not Found";
 }
@@ -97,20 +112,21 @@ if (!triboliumGene) {
 
 <Layout>
   {
-    triboliumGene ? (
+    geneInfo ? (
       <GeneDetails
         gene={gene}
         linkTemplates={linkTemplates}
-        triboliumGene={triboliumGene}
+        geneInfo={geneInfo}
         dsRNAs={dsRNAs}
         phenotypes={phenotypes}
         homologs={homologs}
+        browserLinkParams={browserLinkParams}
         client:load
       >
         <div slot="jbrowse-genome-view">
-          <div id="jbrowse-styles-container" transition:persist></div>
+          <div id="jbrowse-styles-container" transition:persist />
           <JBrowseGenomeView
-            triboliumGene={triboliumGene}
+            geneInfo={geneInfo}
             client:only="react"
             transition:persist="jbrowse"
           />

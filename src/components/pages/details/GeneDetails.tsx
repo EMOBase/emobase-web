@@ -1,9 +1,7 @@
 import TableOfContents from "@/components/common/TableOfContents";
 import { type IBDsRNA } from "@/utils/constants/ibeetle";
-import type {
-  TriboliumGene,
-  DrosophilaGene,
-} from "@/utils/services/geneService";
+import type { GeneDetail } from "@/utils/services/genomics";
+import type { Homolog } from "@/components/pages/details/OrthologySection/types";
 import { type Phenotype } from "@/utils/constants/phenotype";
 import { stringToURLHash } from "@/utils/stringToURLHash";
 
@@ -15,25 +13,28 @@ import PublicationCRUD from "./PublicationCRUD";
 import PhenotypeCRUD from "./PhenotypeCRUD";
 import IBScreen from "./IBScreen";
 import { type ReactNode } from "react";
+import { type JBrowseLinkParams } from "@/utils/browserLinkParams";
 
 type GeneDetailsProps = {
   gene: string;
   linkTemplates: GeneLinkTemplate[];
-  triboliumGene: TriboliumGene;
+  geneInfo: GeneDetail;
   dsRNAs: IBDsRNA[];
   phenotypes: Phenotype[];
-  homologs: (DrosophilaGene & { source: string[] })[];
+  homologs: Homolog[];
   jbrowseGenomeView?: ReactNode;
+  browserLinkParams?: JBrowseLinkParams;
 };
 
 const GeneDetails: React.FC<GeneDetailsProps> = ({
   gene,
   linkTemplates,
-  triboliumGene,
+  geneInfo,
   dsRNAs,
   phenotypes,
   homologs,
   jbrowseGenomeView,
+  browserLinkParams,
 }) => {
   const communityPhenotypes =
     phenotypes === undefined
@@ -64,7 +65,8 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
       props: {
         gene,
         linkTemplates,
-        triboliumGene,
+        geneInfo,
+        browserLinkParams,
       },
     },
     {

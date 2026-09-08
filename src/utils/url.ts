@@ -3,6 +3,7 @@ import { getEnv } from "./env";
 const directusUrl = getEnv("PUBLIC_DIRECTUS_URL");
 const keycloakIssuerUrl = getEnv("KEYCLOAK_ISSUER");
 const apiBaseUrl = getEnv("PUBLIC_APIS_BASE_URL");
+const jbrowseBaseUrl = getEnv("PUBLIC_UI_PAGE_GENOMEBROWSER");
 
 export const getKeyCloakBaseUrl = (issuerUrl: string) => {
   const ibbIndex = issuerUrl.indexOf("/ibb/keycloak/");
@@ -15,7 +16,7 @@ export const keycloakBaseUrl = getKeyCloakBaseUrl(keycloakIssuerUrl);
  * Resolves base URLs for server-to-server communication within Docker.
  */
 export const resolveBaseUrl = (
-  type: "directus" | "keycloak" | "api",
+  type: "directus" | "keycloak" | "api" | "jbrowse",
   service?: string,
   forcePublic?: boolean,
 ): string => {
@@ -28,6 +29,7 @@ export const resolveBaseUrl = (
       directus: directusUrl,
       keycloak: keycloakBaseUrl,
       api: `${apiBaseUrl}/${service}/v1`,
+      jbrowse: jbrowseBaseUrl,
     }[type];
 
   if (type === "directus") {
@@ -36,6 +38,10 @@ export const resolveBaseUrl = (
 
   if (type === "keycloak") {
     return `http://keycloak:8080`;
+  }
+
+  if (type === "jbrowse") {
+    return jbrowseBaseUrl.replace(/^https?:\/\/[^/]+/, "http://nginx:80");
   }
 
   // Case type == 'api'
