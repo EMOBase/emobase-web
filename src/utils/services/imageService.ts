@@ -1,5 +1,4 @@
-import { apiFetch } from "@/utils/apiFetch";
-import { apiBaseUrl } from "@/utils/url";
+import { apiFetch, getPublicApiBaseUrl } from "@/utils/apiFetch";
 
 export interface ImageMetadata {
   id: string;
@@ -9,7 +8,7 @@ export interface ImageMetadata {
 
 const imageService = (fetch: typeof apiFetch = apiFetch) => {
   const imageUrl = (id: string, height?: number) => {
-    const baseUrl = `${apiBaseUrl}/imageservice/v1`;
+    const baseUrl = getPublicApiBaseUrl("imageservice");
     if (!height) {
       return `${baseUrl}/images/${id}`;
     }

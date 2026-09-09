@@ -1,4 +1,5 @@
 import { getEnv } from "./env";
+import { type ApiService } from "./constants/api";
 
 export const directusUrl = getEnv("PUBLIC_DIRECTUS_URL");
 export const keycloakIssuerUrl = getEnv("KEYCLOAK_ISSUER");
@@ -17,7 +18,7 @@ export const keycloakBaseUrl = getKeyCloakBaseUrl(keycloakIssuerUrl);
  */
 export const resolveBaseUrl = (
   type: "directus" | "keycloak" | "api" | "jbrowse",
-  service?: string,
+  service?: ApiService,
 ): string => {
   const isServer = typeof window === "undefined";
   const isProd = import.meta.env.PROD || process.env.NODE_ENV === "production";
