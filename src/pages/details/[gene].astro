@@ -14,6 +14,10 @@ import GeneDetails, {
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
 import JBrowseGenomeView from "@/components/pages/details/GenomeBrowser/JBrowseGenomeView";
 import { getJBrowseLinkParams } from "@/utils/browserLinkParams";
+import {
+  getJBrowseConfig,
+  getZoomedInLocation,
+} from "@/utils/jbrowseConfig";
 
 const { fetchGenes, fetchIBs, fetchOrthology } = genomicsService();
 const { fetchByGene: fetchPhenotypesByGene } = phenotypeService();
@@ -95,6 +99,17 @@ try {
   console.error("Error fetching JBrowse config:", err);
 }
 
+let jbrowseConfig: Awaited<ReturnType<typeof getJBrowseConfig>> | undefined;
+
+const zoomedInLocation = getZoomedInLocation(geneInfo);
+if (zoomedInLocation) {
+  try {
+    jbrowseConfig = await getJBrowseConfig(zoomedInLocation);
+  } catch (err) {
+    console.error("Error building JBrowse config:", err);
+  }
+}
+
 if (!geneInfo) {
   Astro.response.status = 404;
   Astro.response.statusText = "Not Found";
@@ -127,6 +142,7 @@ if (!geneInfo) {
           <div id="jbrowse-styles-container" transition:persist />
           <JBrowseGenomeView
             geneInfo={geneInfo}
+            config={jbrowseConfig}
             client:only="react"
             transition:persist="jbrowse"
           />
