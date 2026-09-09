@@ -13,7 +13,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { SidebarProps } from "./types";
-import genomicsService, { type VersionPublicItem } from "@/utils/services/genomics";
+import genomicsService, {
+  type PublicVersionItem,
+} from "@/utils/services/genomics";
 import { useVersionStore } from "@/states/versionStore";
 
 const CustomSidebarHeader: React.FC<SidebarProps> = ({
@@ -22,7 +24,7 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
   forceCollapsed,
 }) => {
   const { state } = useSidebar();
-  const [readyVersions, setReadyVersions] = useState<VersionPublicItem[]>([]);
+  const [publicVersions, setPublicVersions] = useState<PublicVersionItem[]>([]);
   const [versionsLoading, setVersionsLoading] = useState(true);
   const { selectedVersion, setSelectedVersion, hydrateFromCookie } = useVersionStore();
 
@@ -34,16 +36,16 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
     let cancelled = false;
     const load = async () => {
       try {
-        const { fetchReadyVersions } = genomicsService();
-        const versions = await fetchReadyVersions();
+        const { fetchPublicVersions } = genomicsService();
+        const versions = await fetchPublicVersions();
         if (cancelled) return;
-        setReadyVersions(versions);
+        setPublicVersions(versions);
         if (!selectedVersion && versions.length > 0) {
           const defaultVer = versions.find((v) => v.isDefault) ?? versions[0];
           setSelectedVersion(defaultVer.name);
         }
       } catch {
-        if (!cancelled) setReadyVersions([]);
+        if (!cancelled) setPublicVersions([]);
       } finally {
         if (!cancelled) setVersionsLoading(false);
       }
@@ -87,7 +89,7 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
             <div className="flex items-center gap-1 min-h-[1.25rem]">
               {versionsLoading ? (
                 <span className="text-muted text-xs font-normal">Loading...</span>
-              ) : readyVersions.length > 0 ? (
+              ) : publicVersions.length > 0 ? (
                 <Select
                   value={selectedVersion ?? undefined}
                   onValueChange={setSelectedVersion}
@@ -99,7 +101,7 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
                     <SelectValue placeholder="Select version" />
                   </SelectTrigger>
                   <SelectContent align="start" sideOffset={4}>
-                    {readyVersions.map((v) => (
+                    {publicVersions.map((v) => (
                       <SelectItem key={v.id} value={v.name} className="text-xs">
                         {v.name}
                         {v.isDefault ? " (default)" : ""}

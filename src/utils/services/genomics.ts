@@ -34,8 +34,6 @@ export type PublicVersionItem = {
   createdAt: string;
 };
 
-export type VersionPublicItem = PublicVersionItem;
-
 type FetchPublicVersionsResponse = {
   data: PublicVersionItem[];
 
@@ -434,7 +432,6 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   return {
     fetchPublicVersions,
     fetchVersions,
-    fetchReadyVersions: fetchPublicVersions,
     createVersion,
     fetchJobs,
     fetchVersionDetail,
