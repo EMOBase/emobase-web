@@ -1,4 +1,3 @@
-import { AsyncLocalStorage } from "node:async_hooks";
 import { Upload as TusUpload } from "tus-js-client";
 
 import { apiFetch, getApiBaseUrl } from "@/utils/apiFetch";
@@ -6,13 +5,16 @@ import { useSessionStore } from "@/states/sessionStore";
 
 type VersionContext = { version?: string };
 
-// `AsyncLocalStorage` is a Node-only API. Guarding the instantiation keeps this
-// module evaluable in the browser bundle, where `node:async_hooks` is replaced
-// with an empty stub (otherwise `new AsyncLocalStorage()` throws at load time).
-export const versionStorage =
-  typeof AsyncLocalStorage === "undefined"
-    ? null
-    : new AsyncLocalStorage<VersionContext>();
+// The server-side version source lives in `versionContext.ts` (server-only,
+// uses `node:async_hooks`). It registers a reader here so this module never
+// imports Node built-ins and stays evaluable in the browser bundle.
+let getVersionContext: (() => VersionContext | undefined) | undefined;
+
+export const registerVersionContext = (
+  reader: () => VersionContext | undefined,
+) => {
+  getVersionContext = reader;
+};
 
 export type VersionItem = {
   id: string;
@@ -222,7 +224,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   const resolvedVersion = (async (): Promise<string | undefined> => {
-    const store = versionStorage?.getStore();
+    const store = getVersionContext?.();
     if (store) {
       const { version: cookieVersion } = store;
       if (!cookieVersion) return undefined;
