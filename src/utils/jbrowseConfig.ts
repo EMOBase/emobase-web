@@ -1,7 +1,18 @@
-import { type GeneDetail } from "@/utils/services/genomics";
+import genomicsService, { type GeneDetail } from "@/utils/services/genomics";
 import configuration from "@/utils/config/genomebrowser/configuration.json";
-import { resolveBaseUrl } from "@/utils/url";
+import { jbrowseBaseUrl, resolveBaseUrl } from "@/utils/url";
 import { isNotNull } from "@/utils/filterFn";
+
+const { fetchPublicVersions } = genomicsService();
+
+const getCurrentVersionName = async (): Promise<string | undefined> => {
+  try {
+    const versions = await fetchPublicVersions();
+    return versions.find((v) => v.isDefault)?.name || versions[0]?.name;
+  } catch {
+    return undefined;
+  }
+};
 
 export type JBrowseConfig = {
   assembly: any;
@@ -109,9 +120,9 @@ export const getZoomedInLocation = (geneInfo: GeneDetail): string | null => {
 export const buildJBrowseConfig = (
   data: any,
   zoomedInLocationStr: string,
+  currentVersionName?: string,
 ): JBrowseConfig => {
-  const baseURL = resolveBaseUrl("jbrowse").replace(/\/+$/, "");
-  const dataBaseURL = `${baseURL}/data`;
+  const dataBaseURL = `${jbrowseBaseUrl.replace(/\/+$/, "")}/data`;
 
   const assemblies: any[] = resolveRelativeUris(
     data.assemblies || [],
@@ -125,7 +136,10 @@ export const buildJBrowseConfig = (
   const view = defaultSession.view || defaultSession.views?.[0] || {};
   const initAssembly = view?.init?.assembly;
   const assembly =
-    assemblies.find((a) => a.name === initAssembly) || assemblies[0];
+    (currentVersionName &&
+      assemblies.find((a) => a.name === currentVersionName)) ||
+    assemblies.find((a) => a.name === initAssembly) ||
+    assemblies[0];
 
   return {
     assembly,
@@ -147,7 +161,10 @@ export const getJBrowseConfig = async (
   zoomedInLocationStr: string,
 ): Promise<JBrowseConfig> => {
   const baseURL = resolveBaseUrl("jbrowse").replace(/\/+$/, "");
-  const res = await fetch(`${baseURL}/data/config.json`);
+  const [res, currentVersionName] = await Promise.all([
+    fetch(`${baseURL}/data/config.json`),
+    getCurrentVersionName(),
+  ]);
   const data = await res.json();
-  return buildJBrowseConfig(data, zoomedInLocationStr);
+  return buildJBrowseConfig(data, zoomedInLocationStr, currentVersionName);
 };
