@@ -13,11 +13,12 @@ import GeneDetails, {
 } from "@/components/pages/details/GeneDetails";
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
 import JBrowseGenomeView from "@/components/pages/details/GenomeBrowser/JBrowseGenomeView";
-import { getJBrowseLinkParams } from "@/utils/browserLinkParams";
+import { getJBrowseLinkParams } from "@/utils/pages/details/browserLinkParams";
 import {
   getJBrowseConfig,
   getZoomedInLocation,
-} from "@/utils/jbrowseConfig";
+} from "@/utils/pages/details/jbrowseConfig";
+import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
 
 const { fetchGenes, fetchIBs, fetchOrthology } = genomicsService();
 const { fetchByGene: fetchPhenotypesByGene } = phenotypeService();
@@ -89,12 +90,14 @@ try {
   console.error(" Error fetching gene link templates:", err);
 }
 
+const currentVersionName = await getCurrentVersionName();
+
 let browserLinkParams: Awaited<
   ReturnType<typeof getJBrowseLinkParams>
 > | undefined;
 
 try {
-  browserLinkParams = await getJBrowseLinkParams();
+  browserLinkParams = await getJBrowseLinkParams(currentVersionName);
 } catch (err) {
   console.error("Error fetching JBrowse config:", err);
 }
@@ -104,7 +107,10 @@ let jbrowseConfig: Awaited<ReturnType<typeof getJBrowseConfig>> | undefined;
 const zoomedInLocation = getZoomedInLocation(geneInfo);
 if (zoomedInLocation) {
   try {
-    jbrowseConfig = await getJBrowseConfig(zoomedInLocation);
+    jbrowseConfig = await getJBrowseConfig(
+      zoomedInLocation,
+      currentVersionName,
+    );
   } catch (err) {
     console.error("Error building JBrowse config:", err);
   }

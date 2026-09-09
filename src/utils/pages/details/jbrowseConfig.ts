@@ -1,18 +1,8 @@
-import genomicsService, { type GeneDetail } from "@/utils/services/genomics";
+import { type GeneDetail } from "@/utils/services/genomics";
 import configuration from "@/utils/config/genomebrowser/configuration.json";
 import { jbrowseBaseUrl, resolveBaseUrl } from "@/utils/url";
 import { isNotNull } from "@/utils/filterFn";
-
-const { fetchPublicVersions } = genomicsService();
-
-const getCurrentVersionName = async (): Promise<string | undefined> => {
-  try {
-    const versions = await fetchPublicVersions();
-    return versions.find((v) => v.isDefault)?.name || versions[0]?.name;
-  } catch {
-    return undefined;
-  }
-};
+import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
 
 export type JBrowseConfig = {
   assembly: any;
@@ -159,12 +149,13 @@ export const buildJBrowseConfig = (
 
 export const getJBrowseConfig = async (
   zoomedInLocationStr: string,
+  currentVersionName?: string,
 ): Promise<JBrowseConfig> => {
   const baseURL = resolveBaseUrl("jbrowse").replace(/\/+$/, "");
-  const [res, currentVersionName] = await Promise.all([
+  const [res, versionName] = await Promise.all([
     fetch(`${baseURL}/data/config.json`),
-    getCurrentVersionName(),
+    currentVersionName ? Promise.resolve(currentVersionName) : getCurrentVersionName(),
   ]);
   const data = await res.json();
-  return buildJBrowseConfig(data, zoomedInLocationStr, currentVersionName);
+  return buildJBrowseConfig(data, zoomedInLocationStr, versionName);
 };

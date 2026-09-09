@@ -13,7 +13,7 @@ import PublicationCRUD from "./PublicationCRUD";
 import PhenotypeCRUD from "./PhenotypeCRUD";
 import IBScreen from "./IBScreen";
 import { type ReactNode } from "react";
-import { type JBrowseLinkParams } from "@/utils/browserLinkParams";
+import { type JBrowseLinkParams } from "@/utils/pages/details/browserLinkParams";
 import QueryProvider from "@/components/common/QueryProvider";
 
 type GeneDetailsProps = {

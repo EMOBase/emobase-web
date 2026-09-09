@@ -1,7 +1,5 @@
-import genomicsService from "@/utils/services/genomics";
 import { resolveBaseUrl } from "@/utils/url";
-
-const { fetchPublicVersions } = genomicsService();
+import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
 
 export type JBrowseLinkParams = {
   assembly: string;
@@ -23,22 +21,16 @@ type JBrowseConfig = {
 const toTrackId = (track: string | { configuration?: string }) =>
   typeof track === "string" ? track : track.configuration;
 
-const getCurrentVersionName = async (): Promise<string | undefined> => {
-  try {
-    const versions = await fetchPublicVersions();
-    return versions.find((v) => v.isDefault)?.name || versions[0]?.name;
-  } catch {
-    return undefined;
-  }
-};
-
-export const getJBrowseLinkParams = async (): Promise<JBrowseLinkParams> => {
+export const getJBrowseLinkParams = async (
+  currentVersionName?: string,
+): Promise<JBrowseLinkParams> => {
   const baseURL = resolveBaseUrl("jbrowse").replace(/\/+$/, "");
   const config: JBrowseConfig = await (
     await fetch(`${baseURL}/data/config.json`)
   ).json();
 
-  const currentVersion = await getCurrentVersionName();
+  const currentVersion =
+    currentVersionName ?? (await getCurrentVersionName());
   const assembly =
     currentVersion ||
     config.defaultSession?.views?.[0]?.init?.assembly ||

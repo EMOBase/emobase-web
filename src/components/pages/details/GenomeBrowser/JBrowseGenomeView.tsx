@@ -10,7 +10,7 @@ import {
   getJBrowseConfig,
   getZoomedInLocation,
   type JBrowseConfig,
-} from "@/utils/jbrowseConfig";
+} from "@/utils/pages/details/jbrowseConfig";
 
 type JBrowseGenomeViewProps = {
   geneInfo: GeneDetail;

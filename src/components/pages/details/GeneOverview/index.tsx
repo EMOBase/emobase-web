@@ -2,7 +2,7 @@ import { Icon } from "@/components/ui/icon";
 import GeneFavoriteMark from "@/components/common/GeneFavoriteMark";
 import CopyButton from "@/components/common/CopyButton";
 import { type GeneDetail } from "@/utils/services/genomics";
-import { type JBrowseLinkParams } from "@/utils/browserLinkParams";
+import { type JBrowseLinkParams } from "@/utils/pages/details/browserLinkParams";
 
 import ViewSequencesButton from "./ViewSequencesButton";
 
