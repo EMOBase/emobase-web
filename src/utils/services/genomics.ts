@@ -4,7 +4,15 @@ import { Upload as TusUpload } from "tus-js-client";
 import { apiFetch, getApiBaseUrl } from "@/utils/apiFetch";
 import { useSessionStore } from "@/states/sessionStore";
 
-export const versionStorage = new AsyncLocalStorage<{ version?: string }>();
+type VersionContext = { version?: string };
+
+// `AsyncLocalStorage` is a Node-only API. Guarding the instantiation keeps this
+// module evaluable in the browser bundle, where `node:async_hooks` is replaced
+// with an empty stub (otherwise `new AsyncLocalStorage()` throws at load time).
+export const versionStorage =
+  typeof AsyncLocalStorage === "undefined"
+    ? null
+    : new AsyncLocalStorage<VersionContext>();
 
 export type VersionItem = {
   id: string;
@@ -214,7 +222,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   const resolvedVersion = (async (): Promise<string | undefined> => {
-    const store = versionStorage.getStore();
+    const store = versionStorage?.getStore();
     if (store) {
       const { version: cookieVersion } = store;
       if (!cookieVersion) return undefined;
