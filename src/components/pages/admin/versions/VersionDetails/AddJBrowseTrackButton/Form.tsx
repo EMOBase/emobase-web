@@ -51,6 +51,16 @@ const AddJBrowseTrackForm = withForm({
             />
           )}
         />
+
+        <form.AppField
+          name="selectInDefaultSession"
+          children={(field) => (
+            <field.CheckboxField
+              label="Select in default session"
+              hint="When enabled, this track will be already visible the first time a user opens the genome browser"
+            />
+          )}
+        />
       </form>
     );
   },

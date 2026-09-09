@@ -59,6 +59,7 @@ const SpeciesData: React.FC<{
       file: File;
       trackName: string;
       category?: string;
+      selectInDefaultSession?: boolean;
     }>
   >([]);
 
@@ -66,9 +67,13 @@ const SpeciesData: React.FC<{
     file: File,
     trackName: string,
     category?: string,
+    selectInDefaultSession?: boolean,
   ) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    setJBrowseTrackUploads((prev) => [...prev, { id, file, trackName, category }]);
+    setJBrowseTrackUploads((prev) => [
+      ...prev,
+      { id, file, trackName, category, selectInDefaultSession },
+    ]);
   };
 
   const [synonymUploads, setSynonymUploads] = useState<
@@ -271,7 +276,7 @@ const SpeciesData: React.FC<{
         id: fileDetail.id,
         name: fileName,
         category: "Synonyms",
-        icon: "menu_book" as const,
+        icon: "sync_alt" as const,
         status,
         progress,
         progressTitle,
@@ -324,7 +329,7 @@ const SpeciesData: React.FC<{
             <div className="text-center py-8 text-slate-400 text-sm font-medium">
               Not available for {species}.
             </div>
-          ) : jbrowseTrackFiles.length > 0 ? (
+          ) : jbrowseTrackFiles.length > 0 || jbrowseTrackUploads.length > 0 ? (
             jbrowseTrackFiles.map((file) => (
               <FileCard
                 key={file.id}
@@ -347,6 +352,7 @@ const SpeciesData: React.FC<{
               versionId={name}
               trackName={item.trackName}
               category={item.category}
+              selectInDefaultSession={item.selectInDefaultSession}
               onComplete={() => {
                 setJBrowseTrackUploads((prev) =>
                   prev.filter((u) => u.id !== item.id),
@@ -395,7 +401,7 @@ const SpeciesData: React.FC<{
             <div className="text-center py-8 text-slate-400 text-sm font-medium">
               Not available for {species}.
             </div>
-          ) : synonymFiles.length > 0 ? (
+          ) : synonymFiles.length > 0 || synonymUploads.length > 0 ? (
             synonymFiles.map((file) => (
               <FileCard
                 key={file.id}

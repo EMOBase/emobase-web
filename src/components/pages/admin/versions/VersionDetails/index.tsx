@@ -6,13 +6,10 @@ import useAsyncData from "@/hooks/useAsyncData";
 import genomicsService from "@/utils/services/genomics";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import useService from "@/hooks/useService";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  FileCard,
-  OrthologyFileCard,
-  type FileStatus,
-} from "./FileCard";
+import { FileCard, OrthologyFileCard, type FileStatus } from "./FileCard";
 import AddOrthologyButton from "./AddOrthologyButton";
 import SpeciesData from "./SpeciesData";
 import type { VersionDetailFiles } from "@/utils/services/genomics";
@@ -22,6 +19,7 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
   const [refreshKey, setRefreshKey] = useState(0);
   const [isReleasing, setIsReleasing] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const handleRelease = async () => {
     try {
@@ -33,6 +31,19 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
       toast.error(err.message || `Failed to release version ${name}`);
     } finally {
       setIsReleasing(false);
+    }
+  };
+
+  const handleSync = async () => {
+    try {
+      setIsSyncing(true);
+      await releaseVersion(name);
+      toast.success(`Successfully initiated sync for version ${name}`);
+      refresh();
+    } catch (err: any) {
+      toast.error(err.message || `Failed to sync version ${name}`);
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -160,11 +171,26 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
               disabled={isReleasing}
               className="font-bold text-xs px-4 py-2"
             >
-              <Icon
-                name={isReleasing ? "pending" : "check_circle"}
-                className="text-lg mr-2"
-              />
+              {isReleasing ? (
+                <Spinner className="text-lg size-[0.9em] mr-2" />
+              ) : (
+                <Icon name="check_circle" className="text-lg mr-2" />
+              )}
               SET AS DEFAULT
+            </Button>
+          )}
+          {versionData?.isDefault && (
+            <Button
+              onClick={handleSync}
+              disabled={isSyncing}
+              className="font-bold text-xs px-4 py-2"
+            >
+              {isSyncing ? (
+                <Spinner className="text-lg size-[0.9em] mr-2" />
+              ) : (
+                <Icon name="sync" className="text-lg mr-2" />
+              )}
+              SYNC
             </Button>
           )}
         </div>
@@ -172,12 +198,8 @@ const VersionDetails: React.FC<{ name?: string }> = ({ name = "" }) => {
 
       <Tabs defaultValue="mainSpecies">
         <TabsList>
-          <TabsTrigger value="mainSpecies">
-            Main species (Tcas)
-          </TabsTrigger>
-          <TabsTrigger value="fly">
-            Fly (Dmel)
-          </TabsTrigger>
+          <TabsTrigger value="mainSpecies">Main species (Tcas)</TabsTrigger>
+          <TabsTrigger value="fly">Fly (Dmel)</TabsTrigger>
         </TabsList>
         <TabsContent value="mainSpecies">
           <SpeciesData

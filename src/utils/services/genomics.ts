@@ -27,15 +27,18 @@ type FetchVersionsResponse = {
   requestId: string;
 };
 
-export type VersionPublicItem = {
+export type PublicVersionItem = {
   id: number;
   name: string;
-  createdAt: string;
   isDefault: boolean;
+  createdAt: string;
 };
 
+export type VersionPublicItem = PublicVersionItem;
+
 type FetchPublicVersionsResponse = {
-  data: VersionPublicItem[];
+  data: PublicVersionItem[];
+
   requestId: string;
 };
 
@@ -129,6 +132,7 @@ type UploadInput = {
   algorithm?: string;
   trackName?: string;
   category?: string;
+  selectInDefaultSession?: boolean;
   species?: string;
   geneIDKey?: string;
   trimPrefixChars?: number;
@@ -203,7 +207,7 @@ export type UploadResponse = {
 };
 
 const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
-  const fetchReadyVersions = async () => {
+  const fetchPublicVersions = async () => {
     const res = await fetch<FetchPublicVersionsResponse>(
       "genomicsservice",
       "/public/versions",
@@ -216,7 +220,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     if (store) {
       const { version: cookieVersion } = store;
       if (!cookieVersion) return undefined;
-      const versions = await fetchReadyVersions();
+      const versions = await fetchPublicVersions();
       return versions.find((v) => v.name === cookieVersion)
         ? cookieVersion
         : undefined;
@@ -227,6 +231,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     }
     return undefined;
   })();
+
 
   const fetchVersions = async (opts?: { page: number; pageSize: number }) => {
     const { page = 1, pageSize = 10 } = opts ?? {};
@@ -273,6 +278,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     algorithm,
     trackName,
     category,
+    selectInDefaultSession,
     species,
     geneIDKey,
     trimPrefixChars,
@@ -298,6 +304,9 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
           ...(algorithm ? { algorithm } : {}),
           ...(trackName ? { trackName } : {}),
           ...(category ? { category } : {}),
+          ...(selectInDefaultSession !== undefined
+            ? { selectInDefaultSession: selectInDefaultSession.toString() }
+            : {}),
           ...(species ? { species } : {}),
           ...(geneIDKey ? { geneIDKey } : {}),
           ...(trimPrefixChars !== undefined
@@ -423,8 +432,9 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   return {
+    fetchPublicVersions,
     fetchVersions,
-    fetchReadyVersions,
+    fetchReadyVersions: fetchPublicVersions,
     createVersion,
     fetchJobs,
     fetchVersionDetail,
