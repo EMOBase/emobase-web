@@ -146,12 +146,26 @@ if (!geneInfo) {
       >
         <div slot="jbrowse-genome-view">
           <div id="jbrowse-styles-container" transition:persist />
-          <JBrowseGenomeView
-            geneInfo={geneInfo}
-            config={jbrowseConfig}
-            client:only="react"
-            transition:persist="jbrowse"
-          />
+          {jbrowseConfig ? (
+            <JBrowseGenomeView
+              config={jbrowseConfig}
+              client:only="react"
+              transition:persist="jbrowse"
+            >
+              <div
+                slot="fallback"
+                class="w-full h-[300px] flex items-center justify-center text-neutral-400 italic bg-neutral-50 rounded-lg border border-dashed border-neutral-200"
+              >
+                Loading Genome Browser...
+              </div>
+            </JBrowseGenomeView>
+          ) : (
+            <div class="w-full h-[300px] flex items-center justify-center text-neutral-400 italic bg-neutral-50 rounded-lg border border-dashed border-neutral-200">
+              {zoomedInLocation
+                ? "Failed to load the genome browser"
+                : "Genome browser unavailable for this gene"}
+            </div>
+          )}
         </div>
       </GeneDetails>
     ) : (
