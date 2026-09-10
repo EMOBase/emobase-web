@@ -13,9 +13,9 @@ export function useSession() {
     fetchSession(true);
   };
 
-  const login = () => signIn("keycloak");
+  const login = () => signIn("keycloak", { callbackUrl: "/admin" });
 
-  const logout = () => signOut();
+  const logout = () => signOut({ callbackUrl: "/" });
 
   return {
     session,
