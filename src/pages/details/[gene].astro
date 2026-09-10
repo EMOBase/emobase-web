@@ -18,7 +18,7 @@ import {
   getJBrowseConfig,
   getZoomedInLocation,
 } from "@/utils/pages/details/jbrowseConfig";
-import { getSelectedVersionName } from "@/utils/pages/details/currentVersion";
+import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
 
 const { fetchGenes, fetchIBs, fetchOrthology } = genomicsService();
 const { fetchByGene: fetchPhenotypesByGene } = phenotypeService();
@@ -90,7 +90,7 @@ try {
   console.error(" Error fetching gene link templates:", err);
 }
 
-const currentVersionName = await getSelectedVersionName();
+const currentVersionName = await getCurrentVersionName();
 
 let browserLinkParams: Awaited<
   ReturnType<typeof getJBrowseLinkParams>
