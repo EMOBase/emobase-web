@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import useService from "@/hooks/useService";
+import useUpload from "@/hooks/useUpload";
 import genomicsService from "@/utils/services/genomics";
 import { FileCardBase, ALLOWED_UPLOAD_FILE_TYPES } from "./base";
 import type { FileStatus } from "./base";
@@ -25,9 +26,8 @@ export const FileCard = ({
   onRefresh?: () => void;
   size?: "sm" | "md";
 }) => {
-  const { upload, deleteUploadFile } = useService(genomicsService);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const { deleteUploadFile } = useService(genomicsService);
+  const { upload, progress: uploadProgress, isUploading } = useUpload();
   const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -58,15 +58,11 @@ export const FileCard = ({
 
     if (!versionId) return;
 
-    setIsUploading(true);
-    setUploadProgress(0);
-
     try {
       await upload({
         file: selectedFile,
         version: versionId,
         fileType: file.name,
-        onProgress: (pct) => setUploadProgress(Math.round(pct)),
         shouldResume: file.status === "PAUSED",
       });
       toast.success(`Uploaded ${selectedFile.name}`);
@@ -75,8 +71,6 @@ export const FileCard = ({
       console.error("Upload failed:", error);
       toast.error(`Failed to upload ${selectedFile.name}`);
     } finally {
-      setIsUploading(false);
-      setUploadProgress(0);
       event.target.value = "";
     }
   };
