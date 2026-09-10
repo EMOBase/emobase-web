@@ -15,12 +15,7 @@ export function useSession() {
 
   const login = () => signIn("keycloak");
 
-  const logout = () =>
-    signOut().then(() => {
-      if (window.location.pathname.startsWith("/admin")) {
-        window.location.href = "/";
-      }
-    });
+  const logout = () => signOut();
 
   return {
     session,
