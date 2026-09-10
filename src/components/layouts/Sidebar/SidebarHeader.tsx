@@ -32,6 +32,11 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
     hydrateFromCookie();
   }, []);
 
+  const handleVersionChange = (version: string) => {
+    setSelectedVersion(version);
+    window.location.assign(window.location.pathname + window.location.search);
+  };
+
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
@@ -40,7 +45,7 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
         const versions = await fetchPublicVersions();
         if (cancelled) return;
         setPublicVersions(versions);
-        if (!selectedVersion && versions.length > 0) {
+        if (!useVersionStore.getState().selectedVersion && versions.length > 0) {
           const defaultVer = versions.find((v) => v.isDefault) ?? versions[0];
           setSelectedVersion(defaultVer.name);
         }
@@ -92,7 +97,7 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
               ) : publicVersions.length > 0 ? (
                 <Select
                   value={selectedVersion ?? undefined}
-                  onValueChange={setSelectedVersion}
+                  onValueChange={handleVersionChange}
                 >
                   <SelectTrigger
                     size="sm"
