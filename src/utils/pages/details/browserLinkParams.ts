@@ -1,5 +1,5 @@
 import { resolveBaseUrl } from "@/utils/url";
-import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
+import { getSelectedVersionName } from "@/utils/pages/details/currentVersion";
 
 export type JBrowseLinkParams = {
   assembly: string;
@@ -30,7 +30,7 @@ export const getJBrowseLinkParams = async (
   ).json();
 
   const currentVersion =
-    currentVersionName ?? (await getCurrentVersionName());
+    currentVersionName ?? (await getSelectedVersionName());
   const assembly =
     currentVersion ||
     config.defaultSession?.views?.[0]?.init?.assembly ||

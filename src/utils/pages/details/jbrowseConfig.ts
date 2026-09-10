@@ -2,7 +2,7 @@ import { type GeneDetail } from "@/utils/services/genomics";
 import configuration from "@/utils/config/genomebrowser/configuration.json";
 import { jbrowseBaseUrl, resolveBaseUrl } from "@/utils/url";
 import { isNotNull } from "@/utils/filterFn";
-import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
+import { getSelectedVersionName } from "@/utils/pages/details/currentVersion";
 
 export type JBrowseConfig = {
   assembly: any;
@@ -130,6 +130,12 @@ export const buildJBrowseConfig = (
       assemblies.find((a) => a.name === currentVersionName)) ||
     assemblies.find((a) => a.name === initAssembly) ||
     assemblies[0];
+  const matchingView =
+    (assembly &&
+      defaultSession.views?.find(
+        (v: any) => v.init?.assembly === assembly.name,
+      )) ||
+    view;
 
   return {
     assembly,
@@ -138,7 +144,7 @@ export const buildJBrowseConfig = (
       name: "default",
       view: {
         type: "LinearGenomeView",
-        tracks: buildViewTracks(view?.init?.tracks || [], tracks),
+        tracks: buildViewTracks(matchingView?.init?.tracks || [], tracks),
         ...VIEW_SETTINGS,
       },
     },
@@ -154,7 +160,7 @@ export const getJBrowseConfig = async (
   const baseURL = resolveBaseUrl("jbrowse").replace(/\/+$/, "");
   const [res, versionName] = await Promise.all([
     fetch(`${baseURL}/data/config.json`),
-    currentVersionName ? Promise.resolve(currentVersionName) : getCurrentVersionName(),
+    currentVersionName ? Promise.resolve(currentVersionName) : getSelectedVersionName(),
   ]);
   const data = await res.json();
   return buildJBrowseConfig(data, zoomedInLocationStr, versionName);

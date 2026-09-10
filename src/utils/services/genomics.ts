@@ -453,6 +453,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
 
   return {
     fetchPublicVersions,
+    resolveVersion,
     fetchVersions,
     createVersion,
     fetchJobs,
