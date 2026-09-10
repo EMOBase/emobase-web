@@ -1,17 +1,5 @@
 import { apiFetch } from "@/utils/apiFetch";
-
-type VersionContext = { version?: string };
-
-// The server-side version source lives in `versionContext.ts` (server-only,
-// uses `node:async_hooks`). It registers a reader here so this module never
-// imports Node built-ins and stays evaluable in the browser bundle.
-let getVersionContext: (() => VersionContext | undefined) | undefined;
-
-export const registerVersionContext = (
-  reader: () => VersionContext | undefined,
-) => {
-  getVersionContext = reader;
-};
+import { createVersionResolver } from "@/utils/version";
 
 export type VersionItem = {
   id: string;
@@ -197,31 +185,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     return res.data;
   };
 
-  const resolveVersion = (() => {
-    let resolvedVersion: Promise<string | undefined> | undefined;
-    return (): Promise<string | undefined> => {
-      if (!resolvedVersion) {
-        resolvedVersion = (async (): Promise<string | undefined> => {
-          const store = getVersionContext?.();
-          if (store) {
-            const { version: cookieVersion } = store;
-            if (!cookieVersion) return undefined;
-            const versions = await fetchPublicVersions();
-            return versions.find((v) => v.name === cookieVersion)
-              ? cookieVersion
-              : undefined;
-          }
-          if (typeof document !== "undefined") {
-            const match = document.cookie.match(/(?:^|; )emobase-version=([^;]*)/);
-            return match ? decodeURIComponent(match[1]) : undefined;
-          }
-          return undefined;
-        })();
-      }
-      return resolvedVersion;
-    };
-  })();
-
+  const resolveVersion = createVersionResolver(fetchPublicVersions);
 
   const fetchVersions = async (opts?: { page: number; pageSize: number }) => {
     const { page = 1, pageSize = 10 } = opts ?? {};
@@ -343,7 +307,6 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
 
   return {
     fetchPublicVersions,
-    resolveVersion,
     fetchVersions,
     createVersion,
     fetchJobs,

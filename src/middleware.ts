@@ -1,11 +1,11 @@
 import { defineMiddleware } from "astro/middleware";
 
 import { parseCookies } from "@/utils/cookie";
-import { versionStorage } from "@/utils/services/versionContext";
+import { runWithVersionContext } from "@/utils/version";
 
 export const onRequest = defineMiddleware((ctx, next) => {
   const cookies = parseCookies(ctx.request.headers.get("Cookie"));
   const version = cookies["emobase-version"];
 
-  return versionStorage.run({ version }, () => next());
+  return runWithVersionContext(version, () => next());
 });
