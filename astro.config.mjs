@@ -13,6 +13,10 @@ export default defineConfig({
   output: "server",
   integrations: [react(), authAstro({ configFile: "./auth.config.mjs" })],
 
+  security: {
+    checkOrigin: false,
+  },
+
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
