@@ -223,21 +223,29 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     return res.data;
   };
 
-  const resolvedVersion = (async (): Promise<string | undefined> => {
-    const store = getVersionContext?.();
-    if (store) {
-      const { version: cookieVersion } = store;
-      if (!cookieVersion) return undefined;
-      const versions = await fetchPublicVersions();
-      return versions.find((v) => v.name === cookieVersion)
-        ? cookieVersion
-        : undefined;
-    }
-    if (typeof document !== "undefined") {
-      const match = document.cookie.match(/(?:^|; )emobase-version=([^;]*)/);
-      return match ? decodeURIComponent(match[1]) : undefined;
-    }
-    return undefined;
+  const resolveVersion = (() => {
+    let resolvedVersion: Promise<string | undefined> | undefined;
+    return (): Promise<string | undefined> => {
+      if (!resolvedVersion) {
+        resolvedVersion = (async (): Promise<string | undefined> => {
+          const store = getVersionContext?.();
+          if (store) {
+            const { version: cookieVersion } = store;
+            if (!cookieVersion) return undefined;
+            const versions = await fetchPublicVersions();
+            return versions.find((v) => v.name === cookieVersion)
+              ? cookieVersion
+              : undefined;
+          }
+          if (typeof document !== "undefined") {
+            const match = document.cookie.match(/(?:^|; )emobase-version=([^;]*)/);
+            return match ? decodeURIComponent(match[1]) : undefined;
+          }
+          return undefined;
+        })();
+      }
+      return resolvedVersion;
+    };
   })();
 
 
@@ -384,7 +392,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   const search = async (query: string) => {
-    const version = await resolvedVersion;
+    const version = await resolveVersion();
     let url = `/search?query=${encodeURIComponent(query)}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
@@ -395,7 +403,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   const suggest = async (query: string) => {
-    const version = await resolvedVersion;
+    const version = await resolveVersion();
     let url = `/search/_suggest?query=${encodeURIComponent(query)}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
@@ -407,7 +415,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
 
   const fetchGenes = async (species: string, ids: string[]) => {
     if (ids.length === 0) return [];
-    const version = await resolvedVersion;
+    const version = await resolveVersion();
     let url = `/genes/${species}?ids=${ids.join(",")}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
@@ -418,7 +426,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   const fetchIBs = async (gene: string) => {
-    const version = await resolvedVersion;
+    const version = await resolveVersion();
     let url = `/silencingseqs?geneIds=${gene}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
@@ -429,7 +437,7 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
   };
 
   const fetchOrthology = async (gene: string) => {
-    const version = await resolvedVersion;
+    const version = await resolveVersion();
     let url = `/orthology/Tcas?genes=${gene}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
