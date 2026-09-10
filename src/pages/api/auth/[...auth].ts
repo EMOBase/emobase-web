@@ -3,14 +3,24 @@ import { decode } from "@auth/core/jwt";
 import authConfig from "../../../../auth.config.mjs";
 import { getEnv } from "@/utils/env";
 
-const SESSION_COOKIE = "__Secure-authjs.session-token";
+const SESSION_COOKIES = ["__Secure-authjs.session-token", "authjs.session-token"];
 const SIGNOUT_PATH = "/api/auth/signout";
+
+const isLocalhost = (hostname: string) =>
+  ["localhost", "127.0.0.1", "::1"].includes(hostname);
 
 const handler = async ({ request }: { request: Request }) => {
   const url = new URL(request.url);
-  url.protocol = "https:";
 
-  if (url.pathname === SIGNOUT_PATH && request.method === "POST") {
+  // Astro's node adapter builds http:// request URLs even when the public
+  // endpoint is behind a TLS proxy. Rewrite to https on deployed hosts only;
+  // local dev servers are plain http and must keep their original scheme.
+  const behindTlsProxy = !isLocalhost(url.hostname);
+  if (behindTlsProxy) {
+    url.protocol = "https:";
+  }
+
+  if (behindTlsProxy && url.pathname === SIGNOUT_PATH && request.method === "POST") {
     const idToken = await getIdToken(request);
     const response = await Auth(new Request(url, request), authConfig);
 
@@ -38,24 +48,28 @@ const handler = async ({ request }: { request: Request }) => {
 
 async function getIdToken(request: Request): Promise<string | null> {
   const cookie = request.headers.get("cookie") ?? "";
-  const value = cookie
-    .split(";")
-    .map((c) => c.trim())
-    .find((c) => c.startsWith(`${SESSION_COOKIE}=`))
-    ?.slice(SESSION_COOKIE.length + 1);
+  const parts = cookie.split(";").map((c) => c.trim());
 
-  if (!value) return null;
+  for (const name of SESSION_COOKIES) {
+    const value = parts
+      .find((c) => c.startsWith(`${name}=`))
+      ?.slice(name.length + 1);
 
-  try {
-    const token = await decode({
-      token: value,
-      secret: authConfig.secret as string,
-      salt: SESSION_COOKIE,
-    });
-    return typeof token?.idToken === "string" ? token.idToken : null;
-  } catch {
-    return null;
+    if (!value) continue;
+
+    try {
+      const token = await decode({
+        token: value,
+        secret: authConfig.secret as string,
+        salt: name,
+      });
+      return typeof token?.idToken === "string" ? token.idToken : null;
+    } catch {
+      return null;
+    }
   }
+
+  return null;
 }
 
 export const GET = handler;
