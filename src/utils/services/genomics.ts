@@ -41,6 +41,7 @@ export type PublicVersionItem = {
   id: number;
   name: string;
   isDefault: boolean;
+  status: "DRAFT" | "PROCESSING" | "ERROR" | "READY" | "MISSING_REQUIRED_FILE";
   createdAt: string;
 };
 
@@ -219,6 +220,9 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     const res = await fetch<FetchPublicVersionsResponse>(
       "genomicsservice",
       "/public/versions",
+      {
+        query: { status: "READY" },
+      },
     );
     return res.data;
   };
