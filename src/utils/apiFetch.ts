@@ -1,9 +1,8 @@
 import qs from "qs";
 
-import { API_SERVICE_ENVS, type ApiService } from "./constants/api";
+import { type ApiService } from "./constants/api";
 
-import { apiBaseUrl, resolveBaseUrl } from "./url";
-import { getEnv } from "./env";
+import { resolveBaseUrl } from "./url";
 
 export const apiFetch = async <T>(
   service: ApiService,
@@ -26,7 +25,7 @@ export const apiFetch = async <T>(
       ...restOpts
     } = opts ?? {};
 
-    const baseURL = getApiBaseUrl(service);
+    const baseURL = resolveBaseUrl("api", service);
     // Ensure no double slashes when joining baseURL and request
     const sanitizedBaseURL = baseURL.endsWith("/")
       ? baseURL.slice(0, -1)
@@ -88,11 +87,5 @@ export const apiFetch = async <T>(
   }
 };
 
-const getServiceEnvOverride = (service: ApiService) =>
-  getEnv(API_SERVICE_ENVS[service]);
-
-export const getApiBaseUrl = (service: ApiService) =>
-  getServiceEnvOverride(service) || resolveBaseUrl("api", service);
-
-export const getPublicApiBaseUrl = (service: ApiService) =>
-  getServiceEnvOverride(service) || `${apiBaseUrl}/${service}/v1`;
+export const getApiBaseUrl = (service: ApiService, forcePublic?: boolean) =>
+  resolveBaseUrl("api", service, forcePublic);

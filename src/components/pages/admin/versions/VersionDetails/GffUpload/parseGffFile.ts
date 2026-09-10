@@ -3,7 +3,7 @@ export type GffParseResult = {
   subAttributesMap: Record<string, string[]>;
 };
 
-export async function parseAllGeneLinesFromGffGz(
+export async function parseFirstGeneLineFromGffGz(
   file: File,
 ): Promise<GffParseResult | null> {
   if (typeof DecompressionStream === "undefined") {
@@ -18,7 +18,7 @@ export async function parseAllGeneLinesFromGffGz(
   const decoder = new TextDecoder("utf-8");
 
   let buffer = "";
-  const geneLines: string[] = [];
+  let geneLine: string | null = null;
 
   try {
     while (true) {
@@ -35,11 +35,12 @@ export async function parseAllGeneLinesFromGffGz(
           }
           const cols = trimmed.split("\t");
           if (cols.length >= 9 && cols[2].toLowerCase() === "gene") {
-            geneLines.push(trimmed);
+            geneLine = trimmed;
+            break;
           }
         }
       }
-      if (done) {
+      if (done || geneLine) {
         break;
       }
     }
@@ -51,35 +52,24 @@ export async function parseAllGeneLinesFromGffGz(
     }
   }
 
-  if (geneLines.length === 0) {
+  if (!geneLine) {
     return null;
   }
 
+  const cols = geneLine.split("\t");
+  const attributesStr = cols[8];
+
   const attributes: Record<string, string[]> = {};
-
-  for (const geneLine of geneLines) {
-    const cols = geneLine.split("\t");
-    const attributesStr = cols[8];
-
-    const attrPairs = attributesStr.split(";");
-    for (const pair of attrPairs) {
-      const trimmedPair = pair.trim();
-      if (!trimmedPair) continue;
-      const eqIdx = trimmedPair.indexOf("=");
-      if (eqIdx !== -1) {
-        const key = trimmedPair.substring(0, eqIdx).trim();
-        const valStr = trimmedPair.substring(eqIdx + 1).trim();
-        const values = valStr.split(",").map((v) => v.trim());
-        if (attributes[key]) {
-          for (const val of values) {
-            if (!attributes[key].includes(val)) {
-              attributes[key].push(val);
-            }
-          }
-        } else {
-          attributes[key] = values;
-        }
-      }
+  const attrPairs = attributesStr.split(";");
+  for (const pair of attrPairs) {
+    const trimmedPair = pair.trim();
+    if (!trimmedPair) continue;
+    const eqIdx = trimmedPair.indexOf("=");
+    if (eqIdx !== -1) {
+      const key = trimmedPair.substring(0, eqIdx).trim();
+      const valStr = trimmedPair.substring(eqIdx + 1).trim();
+      const values = valStr.split(",").map((v) => v.trim());
+      attributes[key] = values;
     }
   }
 
@@ -90,7 +80,8 @@ export async function parseAllGeneLinesFromGffGz(
       const colonIdx = val.indexOf(":");
       if (colonIdx !== -1) {
         const subName = val.substring(0, colonIdx).trim();
-        if (subName && !subs.includes(subName)) {
+        const subVal = val.substring(colonIdx + 1).trim();
+        if (subName && subVal && !subs.includes(subName)) {
           subs.push(subName);
         }
       }

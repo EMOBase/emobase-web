@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import {
   GFF_NO_GENE_ERROR,
-  parseAllGeneLinesFromGffGz,
+  parseFirstGeneLineFromGffGz,
   type GffParseResult,
 } from "./parseGffFile";
 
@@ -45,7 +45,7 @@ export function useGffFileParse({
     setParseError(null);
     setParseResult(emptyParseResult);
 
-    parseAllGeneLinesFromGffGz(file)
+    parseFirstGeneLineFromGffGz(file)
       .then((result) => {
         if (cancelled) return;
         if (result) {

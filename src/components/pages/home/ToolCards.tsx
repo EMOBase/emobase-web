@@ -32,6 +32,7 @@ const ToolCard: React.FC<ToolCardProps> = ({
 }) => (
   <div
     onClick={() => {
+      console.log("zo onClick");
       navigate(href);
     }}
     className={twMerge(

@@ -37,9 +37,11 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
       ids,
     )
       .then((result) => {
+        console.log("submit then", { result });
         setResult(result);
       })
       .catch((error) => {
+        console.log("submit catch", { error });
         setError(error.message);
       })
       .finally(() => {

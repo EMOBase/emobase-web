@@ -13,12 +13,6 @@ import GeneDetails, {
 } from "@/components/pages/details/GeneDetails";
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
 import JBrowseGenomeView from "@/components/pages/details/GenomeBrowser/JBrowseGenomeView";
-import { getJBrowseLinkParams } from "@/utils/pages/details/browserLinkParams";
-import {
-  getJBrowseConfig,
-  getZoomedInLocation,
-} from "@/utils/pages/details/jbrowseConfig";
-import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
 
 const { fetchGenes, fetchIBs, fetchOrthology } = genomicsService();
 const { fetchByGene: fetchPhenotypesByGene } = phenotypeService();
@@ -90,32 +84,6 @@ try {
   console.error(" Error fetching gene link templates:", err);
 }
 
-const currentVersionName = await getCurrentVersionName();
-
-let browserLinkParams: Awaited<
-  ReturnType<typeof getJBrowseLinkParams>
-> | undefined;
-
-try {
-  browserLinkParams = await getJBrowseLinkParams(currentVersionName);
-} catch (err) {
-  console.error("Error fetching JBrowse config:", err);
-}
-
-let jbrowseConfig: Awaited<ReturnType<typeof getJBrowseConfig>> | undefined;
-
-const zoomedInLocation = getZoomedInLocation(geneInfo);
-if (zoomedInLocation) {
-  try {
-    jbrowseConfig = await getJBrowseConfig(
-      zoomedInLocation,
-      currentVersionName,
-    );
-  } catch (err) {
-    console.error("Error building JBrowse config:", err);
-  }
-}
-
 if (!geneInfo) {
   Astro.response.status = 404;
   Astro.response.statusText = "Not Found";
@@ -141,31 +109,15 @@ if (!geneInfo) {
         dsRNAs={dsRNAs}
         phenotypes={phenotypes}
         homologs={homologs}
-        browserLinkParams={browserLinkParams}
         client:load
       >
         <div slot="jbrowse-genome-view">
           <div id="jbrowse-styles-container" transition:persist />
-          {jbrowseConfig ? (
-            <JBrowseGenomeView
-              config={jbrowseConfig}
-              client:only="react"
-              transition:persist="jbrowse"
-            >
-              <div
-                slot="fallback"
-                class="w-full h-[300px] flex items-center justify-center text-neutral-400 italic bg-neutral-50 rounded-lg border border-dashed border-neutral-200"
-              >
-                Loading Genome Browser...
-              </div>
-            </JBrowseGenomeView>
-          ) : (
-            <div class="w-full h-[300px] flex items-center justify-center text-neutral-400 italic bg-neutral-50 rounded-lg border border-dashed border-neutral-200">
-              {zoomedInLocation
-                ? "Failed to load the genome browser"
-                : "Genome browser unavailable for this gene"}
-            </div>
-          )}
+          <JBrowseGenomeView
+            geneInfo={geneInfo}
+            client:only="react"
+            transition:persist="jbrowse"
+          />
         </div>
       </GeneDetails>
     ) : (

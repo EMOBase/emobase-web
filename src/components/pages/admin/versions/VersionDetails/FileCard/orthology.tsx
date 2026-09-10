@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import useUpload from "@/hooks/useUpload";
+import useService from "@/hooks/useService";
+import genomicsService from "@/utils/services/genomics";
 import { FileCardBase } from "./base";
 
 export const OrthologyFileCard = ({
@@ -18,7 +19,10 @@ export const OrthologyFileCard = ({
   onComplete: () => void;
   size?: "sm";
 }) => {
-  const { upload, progress, isUploading, error } = useUpload();
+  const { upload } = useService(genomicsService);
+  const [progress, setProgress] = useState(0);
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -29,6 +33,9 @@ export const OrthologyFileCard = ({
       fileType: "orthology.tsv",
       order,
       algorithm,
+      onProgress: (pct: number) => {
+        if (!cancelled) setProgress(Math.round(pct));
+      },
     })
       .then(() => {
         if (!cancelled) {
@@ -39,6 +46,8 @@ export const OrthologyFileCard = ({
       .catch((err: any) => {
         if (!cancelled) {
           console.error("Upload failed:", err);
+          setHasError(true);
+          setErrorMessage(err.message || "Upload failed");
           toast.error(`Failed to upload ${file.name}`);
         }
       });
@@ -54,12 +63,12 @@ export const OrthologyFileCard = ({
         name: file.name,
         category: "Orthology Mapping",
         icon: "tsv",
-        status: error ? "ERROR" : "UPLOADING",
+        status: hasError ? "ERROR" : "UPLOADING",
         progress,
         progressTitle: "IN TRANSIT",
-        error: error ?? "",
+        error: errorMessage,
       }}
-      isUploading={isUploading}
+      isUploading={!hasError}
       uploadProgress={progress}
       cardSize={size}
     />
