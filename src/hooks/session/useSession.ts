@@ -1,4 +1,4 @@
-import { signIn, signOut } from "auth-astro/client";
+import { signIn, signOut } from "@zitadel/astro-auth/client";
 
 import { useSessionStore } from "@/states/sessionStore";
 

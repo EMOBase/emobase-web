@@ -1,5 +1,5 @@
 import Keycloak from "@auth/core/providers/keycloak";
-import { defineConfig } from "auth-astro";
+import { defineConfig } from "@zitadel/astro-auth";
 import { getEnv } from "./src/utils/env";
 
 import { resolveBaseUrl } from "./src/utils/url";
