@@ -32,7 +32,7 @@ To learn more about the folder structure of an Astro project, refer to [our guid
 
 Instructions for setting up and running the project locally on your machine:
 
-1. **Prerequisites**: Ensure you have [Node.js 20+](https://nodejs.org/) installed.
+1. **Prerequisites**: Ensure you have [Node.js 22+](https://nodejs.org/) installed.
 2. **Install Dependencies**:
    ```bash
    npm install
@@ -99,7 +99,7 @@ server {
 ### 3. Technical Details
 - **Adapter**: `@astrojs/node` in `standalone` mode.
 - **Ports**: Listens on port `8080` by default.
-- **Base Image**: `node:20` (Build) / `node:20-slim` (Runtime).
+- **Base Image**: `node:22` (Build) / `node:22-slim` (Runtime).
 
 ---
 

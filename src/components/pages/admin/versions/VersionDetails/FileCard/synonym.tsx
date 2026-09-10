@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
-import useService from "@/hooks/useService";
-import genomicsService from "@/utils/services/genomics";
+import useUpload from "@/hooks/useUpload";
 import { mainSpecies } from "@/utils/mainSpecies";
 import { FileCardBase } from "./base";
 
@@ -18,10 +17,7 @@ export const SynonymFileCard = ({
   size?: "sm";
   species?: string;
 }) => {
-  const { upload } = useService(genomicsService);
-  const [progress, setProgress] = useState(0);
-  const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const { upload, progress, isUploading, error } = useUpload();
 
   const speciesValue = speciesProp || mainSpecies;
 
@@ -33,9 +29,6 @@ export const SynonymFileCard = ({
       version: versionId,
       fileType: "species.synonym",
       species: speciesValue,
-      onProgress: (pct: number) => {
-        if (!cancelled) setProgress(Math.round(pct));
-      },
     })
       .then(() => {
         if (!cancelled) {
@@ -46,8 +39,6 @@ export const SynonymFileCard = ({
       .catch((err: any) => {
         if (!cancelled) {
           console.error("Upload failed:", err);
-          setHasError(true);
-          setErrorMessage(err.message || "Upload failed");
           toast.error(`Failed to upload ${file.name}`);
         }
       });
@@ -63,12 +54,12 @@ export const SynonymFileCard = ({
         name: file.name,
         category: "Synonyms",
         icon: "sync_alt",
-        status: hasError ? "ERROR" : "UPLOADING",
+        status: error ? "ERROR" : "UPLOADING",
         progress,
         progressTitle: "IN TRANSIT",
-        error: errorMessage,
+        error: error ?? "",
       }}
-      isUploading={!hasError}
+      isUploading={isUploading}
       uploadProgress={progress}
       cardSize={size}
     />
