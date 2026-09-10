@@ -157,10 +157,8 @@ export const getJBrowseConfig = async (
   currentVersionName: string | undefined,
 ): Promise<JBrowseConfig> => {
   const baseURL = resolveBaseUrl("jbrowse").replace(/\/+$/, "");
-  const [res, versionName] = await Promise.all([
-    fetch(`${baseURL}/data/config.json`),
-    Promise.resolve(currentVersionName),
-  ]);
-  const data = await res.json();
-  return buildJBrowseConfig(data, zoomedInLocationStr, versionName);
+  const data = await (
+    await fetch(`${baseURL}/data/config.json`)
+  ).json();
+  return buildJBrowseConfig(data, zoomedInLocationStr, currentVersionName);
 };
