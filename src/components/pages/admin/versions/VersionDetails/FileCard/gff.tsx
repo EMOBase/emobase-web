@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import useService from "@/hooks/useService";
+import useUpload from "@/hooks/useUpload";
 import genomicsService from "@/utils/services/genomics";
 import { FileCardBase, ALLOWED_UPLOAD_FILE_TYPES } from "./base";
 import type { FileStatus } from "./base";
@@ -19,9 +20,8 @@ export const GffFileCard = ({
   onRefresh?: () => void;
   size?: "sm" | "md";
 }) => {
-  const { upload, deleteUploadFile } = useService(genomicsService);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const { deleteUploadFile } = useService(genomicsService);
+  const { upload, progress: uploadProgress, isUploading } = useUpload();
   const [isDeleting, setIsDeleting] = useState(false);
   const [gffFileToUpload, setGffFileToUpload] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,9 +59,6 @@ export const GffFileCard = ({
   ) => {
     if (!gffFileToUpload || !versionId) return;
 
-    setIsUploading(true);
-    setUploadProgress(0);
-
     try {
       await upload({
         file: gffFileToUpload,
@@ -71,7 +68,6 @@ export const GffFileCard = ({
         trimPrefixChars: mappingData.trimPrefixChars,
         trimSuffixChars: mappingData.trimSuffixChars,
         oldGeneIDKeys: mappingData.oldGeneIDKeys.join(","),
-        onProgress: (pct) => setUploadProgress(Math.round(pct)),
         shouldResume: file.status === "PAUSED",
       });
       toast.success(`Uploaded ${gffFileToUpload.name}`);
@@ -80,8 +76,6 @@ export const GffFileCard = ({
       console.error("GFF Upload failed:", error);
       toast.error(`Failed to upload ${gffFileToUpload.name}`);
     } finally {
-      setIsUploading(false);
-      setUploadProgress(0);
       setGffFileToUpload(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
