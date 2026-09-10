@@ -11,7 +11,10 @@ import node from "@astrojs/node";
 // https://astro.build/config
 export default defineConfig({
   output: "server",
-  integrations: [react(), authAstro({ configFile: "./auth.config.mjs" })],
+  integrations: [
+    react(),
+    authAstro({ configFile: "./auth.config.mjs", injectEndpoints: false }),
+  ],
 
   security: {
     checkOrigin: false,
