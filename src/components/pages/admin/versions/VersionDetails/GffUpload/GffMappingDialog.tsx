@@ -105,7 +105,7 @@ export const GffMappingDialog: React.FC<GffMappingDialogProps> = ({
       return { original: `"${primaryKey}="`, result: "" };
     }
 
-    let originalStr = `${primaryKey}=${values.join(",")}`;
+    let originalStr = `${primaryKey}=${values[0]}`;
     let extractedVal = values[0];
 
     if (subKey && subAttributesMap[primaryKey]?.includes(subKey)) {
