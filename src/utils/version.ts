@@ -1,6 +1,6 @@
 import type { AsyncLocalStorage } from "node:async_hooks";
 
-import { VERSION_COOKIE_NAME } from "@/utils/cookie";
+import { VERSION_COOKIE_NAME, getCookie } from "@/utils/cookie";
 
 export type VersionInfo = { name: string; isDefault?: boolean };
 
@@ -69,10 +69,7 @@ export const createVersionResolver =
           if (store) {
             cookieVersion = store.version;
           } else if (typeof document !== "undefined") {
-            const match = document.cookie.match(
-              new RegExp(`(?:^|; )${VERSION_COOKIE_NAME}=([^;]*)`),
-            );
-            cookieVersion = match ? decodeURIComponent(match[1]) : undefined;
+            cookieVersion = getCookie(VERSION_COOKIE_NAME) ?? undefined;
           }
 
           // Inside a request context, share one fetch across all resolvers;
