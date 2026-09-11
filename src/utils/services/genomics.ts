@@ -1,4 +1,5 @@
 import { apiFetch } from "@/utils/apiFetch";
+import { createVersionResolver } from "@/utils/version";
 
 export type VersionItem = {
   id: string;
@@ -25,11 +26,13 @@ export type PublicVersionItem = {
   id: number;
   name: string;
   isDefault: boolean;
+  status: "DRAFT" | "PROCESSING" | "ERROR" | "READY" | "MISSING_REQUIRED_FILE";
   createdAt: string;
 };
 
 type FetchPublicVersionsResponse = {
   data: PublicVersionItem[];
+
   requestId: string;
 };
 
@@ -175,9 +178,14 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     const res = await fetch<FetchPublicVersionsResponse>(
       "genomicsservice",
       "/public/versions",
+      {
+        query: { status: "READY" },
+      },
     );
     return res.data;
   };
+
+  const resolveVersion = createVersionResolver(fetchPublicVersions);
 
   const fetchVersions = async (opts?: { page: number; pageSize: number }) => {
     const { page = 1, pageSize = 10 } = opts ?? {};
@@ -241,48 +249,60 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     );
   };
 
-  const fetchGenes = async (species: string, ids: string[]) => {
-    if (ids.length === 0) return [];
-    const res = await fetch<{
-      data: GeneDetail[];
-      requestId: string;
-    }>("genomicsservice", `/genes/${species}?ids=${ids.join(",")}`);
-    return res.data;
-  };
-
-  const fetchIBs = async (gene: string) => {
-    const res = await fetch<{
-      data: SilencingSeq[];
-      requestId: string;
-    }>("genomicsservice", `/silencingseqs?geneIds=${gene}`);
-    return res.data || [];
-  };
-
-  const fetchOrthology = async (gene: string) => {
-    const res = await fetch<{
-      data: GeneOrthology[];
-      requestId: string;
-    }>("genomicsservice", `/orthology/Tcas?genes=${gene}`);
-    return res.data[0] || { gene, orthologs: [] };
-  };
-
   const search = async (query: string) => {
+    const version = await resolveVersion();
+    let url = `/search?query=${encodeURIComponent(query)}`;
+    if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
       data: GeneSearchResult;
       requestId: string;
-    }>("genomicsservice", `/search?query=${encodeURIComponent(query)}`);
+    }>("genomicsservice", url);
     return res.data;
   };
 
   const suggest = async (query: string) => {
+    const version = await resolveVersion();
+    let url = `/search/_suggest?query=${encodeURIComponent(query)}`;
+    if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
       data: string[];
       requestId: string;
-    }>(
-      "genomicsservice",
-      `/search/_suggest?query=${encodeURIComponent(query)}`,
-    );
+    }>("genomicsservice", url);
     return res.data;
+  };
+
+  const fetchGenes = async (species: string, ids: string[]) => {
+    if (ids.length === 0) return [];
+    const version = await resolveVersion();
+    let url = `/genes/${species}?ids=${ids.join(",")}`;
+    if (version) url += `&version=${encodeURIComponent(version)}`;
+    const res = await fetch<{
+      data: GeneDetail[];
+      requestId: string;
+    }>("genomicsservice", url);
+    return res.data;
+  };
+
+  const fetchIBs = async (gene: string) => {
+    const version = await resolveVersion();
+    let url = `/silencingseqs?geneIds=${gene}`;
+    if (version) url += `&version=${encodeURIComponent(version)}`;
+    const res = await fetch<{
+      data: SilencingSeq[];
+      requestId: string;
+    }>("genomicsservice", url);
+    return res.data || [];
+  };
+
+  const fetchOrthology = async (gene: string) => {
+    const version = await resolveVersion();
+    let url = `/orthology/Tcas?genes=${gene}`;
+    if (version) url += `&version=${encodeURIComponent(version)}`;
+    const res = await fetch<{
+      data: GeneOrthology[];
+      requestId: string;
+    }>("genomicsservice", url);
+    return res.data[0] || { gene, orthologs: [] };
   };
 
   return {

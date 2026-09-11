@@ -11,7 +11,7 @@ const useApiFetch = () => {
     /* Safety net: normally the session is already populated from SSR or a prior
        fetchSession call, so this only runs for non-admin pages or edge cases
        where the store hasn't been hydrated yet. */
-    if (!isFetched) {
+    if (!isFetched && typeof window !== "undefined") {
       await Promise.race([
         new Promise<void>((resolve) => {
           const unsub = useSessionStore.subscribe((s) => {

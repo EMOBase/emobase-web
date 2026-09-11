@@ -1,5 +1,4 @@
 import { resolveBaseUrl } from "@/utils/url";
-import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
 
 export type JBrowseLinkParams = {
   assembly: string;
@@ -22,17 +21,15 @@ const toTrackId = (track: string | { configuration?: string }) =>
   typeof track === "string" ? track : track.configuration;
 
 export const getJBrowseLinkParams = async (
-  currentVersionName?: string,
+  currentVersionName: string | undefined,
 ): Promise<JBrowseLinkParams> => {
   const baseURL = resolveBaseUrl("jbrowse").replace(/\/+$/, "");
   const config: JBrowseConfig = await (
     await fetch(`${baseURL}/data/config.json`)
   ).json();
 
-  const currentVersion =
-    currentVersionName ?? (await getCurrentVersionName());
   const assembly =
-    currentVersion ||
+    currentVersionName ||
     config.defaultSession?.views?.[0]?.init?.assembly ||
     config.assemblies?.[0]?.name;
   const view =

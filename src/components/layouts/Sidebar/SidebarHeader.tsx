@@ -1,11 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import {
   SidebarHeader,
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { SidebarProps } from "./types";
+import genomicsService, {
+  type PublicVersionItem,
+} from "@/utils/services/genomics";
+import { useVersionStore } from "@/states/versionStore";
 
 const CustomSidebarHeader: React.FC<SidebarProps> = ({
   logo,
@@ -13,6 +24,53 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
   forceCollapsed,
 }) => {
   const { state } = useSidebar();
+  const [publicVersions, setPublicVersions] = useState<PublicVersionItem[]>([]);
+  const [versionsLoading, setVersionsLoading] = useState(true);
+  const { selectedVersion, setSelectedVersion, hydrateFromCookie } = useVersionStore();
+
+  useEffect(() => {
+    hydrateFromCookie();
+  }, []);
+
+  const handleVersionChange = (version: string) => {
+    setSelectedVersion(version);
+    window.location.assign(window.location.pathname + window.location.search);
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const { fetchPublicVersions } = genomicsService();
+        const versions = await fetchPublicVersions();
+        if (cancelled) return;
+        setPublicVersions(versions);
+        if (versions.length === 0) return;
+
+        const { selectedVersion, setSelectedVersion } =
+          useVersionStore.getState();
+        const stillValid =
+          selectedVersion &&
+          versions.some((v) => v.name === selectedVersion);
+
+        if (!stillValid) {
+          // Stale cookie: drop it (mirror the server's validation), then show
+          // the default in the UI without persisting a cookie the user didn't pick.
+          if (selectedVersion) setSelectedVersion(null);
+          const defaultVer = versions.find((v) => v.isDefault) ?? versions[0];
+          setSelectedVersion(defaultVer.name, { persist: false });
+        }
+      } catch {
+        if (!cancelled) setPublicVersions([]);
+      } finally {
+        if (!cancelled) setVersionsLoading(false);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <SidebarHeader>
@@ -46,7 +104,33 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
             <h1 className="text-text-main text-xl font-bold leading-tight tracking-tight font-display text-nowrap">
               {title}
             </h1>
-            <p className="text-muted text-xs font-normal">version 0.1</p>
+            <div className="flex items-center gap-1 min-h-[1.25rem]">
+              {versionsLoading ? (
+                <span className="text-muted text-xs font-normal">Loading...</span>
+              ) : publicVersions.length > 0 ? (
+                <Select
+                  value={selectedVersion ?? undefined}
+                  onValueChange={handleVersionChange}
+                >
+                  <SelectTrigger
+                    size="sm"
+                    className="h-auto border-none bg-transparent !px-0 !py-0 text-muted text-xs font-normal shadow-none hover:text-foreground transition-colors [&_svg]:hidden"
+                  >
+                    <SelectValue placeholder="Select version" />
+                  </SelectTrigger>
+                  <SelectContent align="start" sideOffset={4}>
+                    {publicVersions.map((v) => (
+                      <SelectItem key={v.id} value={v.name} className="text-xs">
+                        {v.name}
+                        {v.isDefault ? " (default)" : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <span className="text-muted text-xs font-normal">No versions</span>
+              )}
+            </div>
           </div>
         </div>
         {!forceCollapsed && (
