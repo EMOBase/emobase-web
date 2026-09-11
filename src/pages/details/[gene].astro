@@ -13,6 +13,7 @@ import GeneDetails, {
 } from "@/components/pages/details/GeneDetails";
 import GeneNotFound from "@/components/pages/details/GeneNotFound";
 import JBrowseGenomeView from "@/components/pages/details/GenomeBrowser/JBrowseGenomeView";
+import { type Homolog } from "@/components/pages/details/OrthologySection/types";
 import { getJBrowseLinkParams } from "@/utils/pages/details/browserLinkParams";
 import {
   getJBrowseConfig,
@@ -28,97 +29,97 @@ const { fetchByIds: fetchTermsByIds } = ontologyService("GO");
 const { gene = "" } = Astro.params;
 
 const geneInfo = (await fetchGenes(mainSpecies, [gene]))[0];
-const dsRNAs = mainSpecies === "Tcas" ? await fetchIBs(gene) : [];
-const phenotypes = await fetchPhenotypesByGene(gene);
 
-const orthology = await fetchOrthology(gene);
-const orthologySources = (orthology.orthologs || []).reduce(
-  (acc, o) => {
-    if (o.source) {
-      acc[o.gene] = [o.source, ...(acc[o.gene] || [])];
-    }
-    return acc;
-  },
-  {} as Record<string, string[]>,
-);
-
-const orthologousGenes = Object.entries(orthologySources)
-  .sort(([, a], [, b]) => b.length - a.length)
-  .map(([gene]) => gene);
-const anns = await fetchGOByGenes(orthologousGenes);
-const missingNames = new Set(
-  anns.filter((a) => !a.term.name).map((a) => a.term.id),
-);
-if (missingNames.size > 0) {
-  const terms = await fetchTermsByIds(Array.from(missingNames));
-  const termMap = new Map(terms.map((t) => [t.id, t.name]));
-  anns.forEach((a) => {
-    if (!a.term.name) {
-      a.term.name = termMap.get(a.term.id) || "";
-    }
-  });
-}
-const annsById = anns.reduce(
-  (acc, a) => {
-    acc[a.gene] = [...(acc[a.gene] ?? []), a];
-    return acc;
-  },
-  {} as Record<string, typeof anns>,
-);
-
-const dmelGenes = await fetchGenes("Dmel", orthologousGenes);
-
-const homologs = dmelGenes.map((gene) => ({
-  id: gene.id,
-  symbol: gene.symbol ?? "",
-  fullname: gene.fullname ?? "",
-  source: orthologySources[gene.id],
-  annotations: annsById[gene.id],
-}));
-
+let dsRNAs: Awaited<ReturnType<typeof fetchIBs>> = [];
+let phenotypes: Awaited<ReturnType<typeof fetchPhenotypesByGene>> = [];
+let homologs: Homolog[] = [];
 let linkTemplates: GeneLinkTemplate[] = [];
-
-try {
-  const items = await directus.request(readItems("gene_link_templates"));
-  linkTemplates = items
-    .map(({ label, template }) => ({
-      label: label || "",
-      template: template || "",
-    }))
-    .filter((link) => link.template.includes("{gene}"));
-} catch (err) {
-  console.error(" Error fetching gene link templates:", err);
-}
-
-const currentVersionName = await getCurrentVersionName();
-
 let browserLinkParams: Awaited<
   ReturnType<typeof getJBrowseLinkParams>
 > | undefined;
-
-try {
-  browserLinkParams = await getJBrowseLinkParams(currentVersionName);
-} catch (err) {
-  console.error("Error fetching JBrowse config:", err);
-}
-
 let jbrowseConfig: Awaited<ReturnType<typeof getJBrowseConfig>> | undefined;
+let zoomedInLocation: string | null = null;
 
-const zoomedInLocation = getZoomedInLocation(geneInfo);
-if (zoomedInLocation) {
-  try {
-    jbrowseConfig = await getJBrowseConfig(
-      zoomedInLocation,
-      currentVersionName,
-    );
-  } catch (err) {
-    console.error("Error building JBrowse config:", err);
+if (geneInfo) {
+  dsRNAs = mainSpecies === "Tcas" ? await fetchIBs(gene) : [];
+  phenotypes = await fetchPhenotypesByGene(gene);
+
+  const orthology = await fetchOrthology(gene);
+  const orthologySources = (orthology.orthologs || []).reduce(
+    (acc, o) => {
+      if (o.source) {
+        acc[o.gene] = [o.source, ...(acc[o.gene] || [])];
+      }
+      return acc;
+    },
+    {} as Record<string, string[]>,
+  );
+
+  const orthologousGenes = Object.entries(orthologySources)
+    .sort(([, a], [, b]) => b.length - a.length)
+    .map(([gene]) => gene);
+  const anns = await fetchGOByGenes(orthologousGenes);
+  const missingNames = new Set(
+    anns.filter((a) => !a.term.name).map((a) => a.term.id),
+  );
+  if (missingNames.size > 0) {
+    const terms = await fetchTermsByIds(Array.from(missingNames));
+    const termMap = new Map(terms.map((t) => [t.id, t.name]));
+    anns.forEach((a) => {
+      if (!a.term.name) {
+        a.term.name = termMap.get(a.term.id) || "";
+      }
+    });
   }
-}
+  const annsById = anns.reduce(
+    (acc, a) => {
+      acc[a.gene] = [...(acc[a.gene] ?? []), a];
+      return acc;
+    },
+    {} as Record<string, typeof anns>,
+  );
 
-if (!geneInfo) {
-  Astro.response.status = 404;
-  Astro.response.statusText = "Not Found";
+  const dmelGenes = await fetchGenes("Dmel", orthologousGenes);
+
+  homologs = dmelGenes.map((gene) => ({
+    id: gene.id,
+    symbol: gene.symbol ?? "",
+    fullname: gene.fullname ?? "",
+    source: orthologySources[gene.id],
+    annotations: annsById[gene.id],
+  }));
+
+  try {
+    const items = await directus.request(readItems("gene_link_templates"));
+    linkTemplates = items
+      .map(({ label, template }) => ({
+        label: label || "",
+        template: template || "",
+      }))
+      .filter((link) => link.template.includes("{gene}"));
+  } catch (err) {
+    console.error(" Error fetching gene link templates:", err);
+  }
+
+  const currentVersionName = await getCurrentVersionName();
+
+  try {
+    browserLinkParams = await getJBrowseLinkParams(currentVersionName);
+  } catch (err) {
+    console.error("Error fetching JBrowse config:", err);
+  }
+
+  zoomedInLocation = getZoomedInLocation(geneInfo);
+  if (zoomedInLocation) {
+    try {
+      jbrowseConfig = await getJBrowseConfig(
+        zoomedInLocation,
+        currentVersionName,
+      );
+    } catch (err) {
+      console.error("Error building JBrowse config:", err);
+    }
+  }
 }
 ---
 
