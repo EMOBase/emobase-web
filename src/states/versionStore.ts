@@ -12,14 +12,20 @@ const clearCookie = (name: string) => {
 
 interface VersionState {
   selectedVersion: string | null;
-  setSelectedVersion: (version: string | null) => void;
+  /** Sets the version in the store; persists it to the cookie unless `persist: false`. */
+  setSelectedVersion: (
+    version: string | null,
+    options?: { persist?: boolean },
+  ) => void;
   hydrateFromCookie: () => void;
 }
 
 export const useVersionStore = create<VersionState>()((set) => ({
   selectedVersion: null,
-  setSelectedVersion: (version) => {
+  setSelectedVersion: (version, options = {}) => {
+    const { persist = true } = options;
     set({ selectedVersion: version });
+    if (!persist) return;
     if (version) {
       setCookie(VERSION_COOKIE_NAME, version);
     } else {

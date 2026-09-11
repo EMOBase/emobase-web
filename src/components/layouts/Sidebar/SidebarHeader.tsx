@@ -45,9 +45,20 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
         const versions = await fetchPublicVersions();
         if (cancelled) return;
         setPublicVersions(versions);
-        if (!useVersionStore.getState().selectedVersion && versions.length > 0) {
+        if (versions.length === 0) return;
+
+        const { selectedVersion, setSelectedVersion } =
+          useVersionStore.getState();
+        const stillValid =
+          selectedVersion &&
+          versions.some((v) => v.name === selectedVersion);
+
+        if (!stillValid) {
+          // Stale cookie: drop it (mirror the server's validation), then show
+          // the default in the UI without persisting a cookie the user didn't pick.
+          if (selectedVersion) setSelectedVersion(null);
           const defaultVer = versions.find((v) => v.isDefault) ?? versions[0];
-          setSelectedVersion(defaultVer.name);
+          setSelectedVersion(defaultVer.name, { persist: false });
         }
       } catch {
         if (!cancelled) setPublicVersions([]);
@@ -56,7 +67,9 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
       }
     };
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
