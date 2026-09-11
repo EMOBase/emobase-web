@@ -1,7 +1,9 @@
 import { create } from "zustand";
-import { setCookie, getCookie } from "@/utils/cookie";
-
-const COOKIE_NAME = "emobase-version";
+import {
+  setCookie,
+  getCookie,
+  VERSION_COOKIE_NAME,
+} from "@/utils/cookie";
 
 const clearCookie = (name: string) => {
   if (typeof document === "undefined") return;
@@ -19,17 +21,15 @@ export const useVersionStore = create<VersionState>()((set) => ({
   setSelectedVersion: (version) => {
     set({ selectedVersion: version });
     if (version) {
-      setCookie(COOKIE_NAME, version);
+      setCookie(VERSION_COOKIE_NAME, version);
     } else {
-      clearCookie(COOKIE_NAME);
+      clearCookie(VERSION_COOKIE_NAME);
     }
   },
   hydrateFromCookie: () => {
-    const cookieVersion = getCookie(COOKIE_NAME);
+    const cookieVersion = getCookie(VERSION_COOKIE_NAME);
     if (cookieVersion) {
       set({ selectedVersion: cookieVersion });
     }
   },
 }));
-
-export { COOKIE_NAME as VERSION_COOKIE_NAME };

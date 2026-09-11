@@ -1,5 +1,7 @@
 import type { AsyncLocalStorage } from "node:async_hooks";
 
+import { VERSION_COOKIE_NAME } from "@/utils/cookie";
+
 export type VersionContext = { version?: string };
 
 let versionStorage: AsyncLocalStorage<VersionContext> | undefined;
@@ -59,7 +61,7 @@ export const createVersionResolver =
             cookieVersion = store.version;
           } else if (typeof document !== "undefined") {
             const match = document.cookie.match(
-              /(?:^|; )emobase-version=([^;]*)/,
+              new RegExp(`(?:^|; )${VERSION_COOKIE_NAME}=([^;]*)`),
             );
             cookieVersion = match ? decodeURIComponent(match[1]) : undefined;
           }
