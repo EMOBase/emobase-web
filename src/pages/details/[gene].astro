@@ -28,6 +28,7 @@ const { fetchByIds: fetchTermsByIds } = ontologyService("GO");
 
 const { gene = "" } = Astro.params;
 
+const currentVersionName = await getCurrentVersionName();
 const geneInfo = (await fetchGenes(mainSpecies, [gene]))[0];
 
 let dsRNAs: Awaited<ReturnType<typeof fetchIBs>> = [];
@@ -101,8 +102,6 @@ if (geneInfo) {
     console.error(" Error fetching gene link templates:", err);
   }
 
-  const currentVersionName = await getCurrentVersionName();
-
   try {
     browserLinkParams = await getJBrowseLinkParams(currentVersionName);
   } catch (err) {
@@ -170,7 +169,7 @@ if (geneInfo) {
         </div>
       </GeneDetails>
     ) : (
-      <GeneNotFound />
+      <GeneNotFound version={currentVersionName} />
     )
   }
 </Layout>
