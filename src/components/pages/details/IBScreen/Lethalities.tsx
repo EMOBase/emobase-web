@@ -52,8 +52,10 @@ const Lethalities: React.FC<LethalitiesProps> = ({ dsrnaId }) => {
     );
   }
 
+  if (dapi11 < 0 && dali11 < 0 && dali22 < 0) return null;
+
   return (
-    <div className="mb-6 space-y-3">
+    <div className="border-b border-neutral-100 dark:border-neutral-800 pb-5 mb-4 space-y-3">
       {dapi11 > 0 && (
         <LethalityRate
           days={11}

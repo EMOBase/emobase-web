@@ -1,5 +1,5 @@
 import Keycloak from "@auth/core/providers/keycloak";
-import { defineConfig } from "auth-astro";
+import { defineConfig } from "@zitadel/astro-auth";
 import { getEnv } from "./src/utils/env";
 
 import { resolveBaseUrl } from "./src/utils/url";
@@ -54,6 +54,7 @@ export default defineConfig({
           ...token,
           accessToken: account.access_token,
           refreshToken: account.refresh_token,
+          idToken: account.id_token,
           expiresAt: account.expires_at * 1000,
         };
       }

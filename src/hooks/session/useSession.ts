@@ -1,4 +1,4 @@
-import { signIn, signOut } from "auth-astro/client";
+import { signIn, signOut } from "@zitadel/astro-auth/client";
 
 import { useSessionStore } from "@/states/sessionStore";
 
@@ -13,14 +13,9 @@ export function useSession() {
     fetchSession(true);
   };
 
-  const login = () => signIn("keycloak");
+  const login = () => signIn("keycloak", { callbackUrl: "/admin" });
 
-  const logout = () =>
-    signOut().then(() => {
-      if (window.location.pathname.startsWith("/admin")) {
-        window.location.href = "/";
-      }
-    });
+  const logout = () => signOut({ callbackUrl: "/" });
 
   return {
     session,

@@ -8,6 +8,7 @@ const featureEnabled = {
   searchInstruction: isBeetle,
   helpPages: isBeetle,
   apiDocs: isBeetle,
+  dsrnaUpload: isBeetle,
 };
 
 export const hasFeature = (feature: keyof typeof featureEnabled) => {

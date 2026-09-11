@@ -1,13 +1,16 @@
 ---
 import Layout from "@/layouts/default.astro";
 import SearchResult from "@/components/pages/search/SearchResult";
-import geneService from "@/utils/services/geneService";
+import genomicsService from "@/utils/services/genomics";
 import phenotypeService from "@/utils/services/phenotypeService";
+import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
 
-const { search: searchByOrthology } = geneService();
+const { search: searchByOrthology } = genomicsService();
 const { search: searchByPhenotypes } = phenotypeService();
 
 const { term = "" } = Astro.params;
+
+const currentVersionName = await getCurrentVersionName();
 
 const penetrance = 0.8;
 const itemsPerPage = 10;
@@ -42,6 +45,7 @@ if (orthologyData?.genes && orthologyData.genes.length > 0) {
         term={term}
         orthologyData={orthologyData}
         phenotypeData={phenotypeData}
+        version={currentVersionName}
         client:load
       />
     </div>

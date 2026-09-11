@@ -47,7 +47,7 @@ const SequenceList: React.FC<SequenceListProps> = ({ dsrna }) => {
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+    <div className="flex flex-wrap items-center gap-4">
       {sequencesButtons.map((props, index) => (
         <Fragment key={props.text}>
           {index > 0 && <span className="text-neutral-300">|</span>}

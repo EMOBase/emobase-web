@@ -1,9 +1,7 @@
 import TableOfContents from "@/components/common/TableOfContents";
 import { type IBDsRNA } from "@/utils/constants/ibeetle";
-import type {
-  TriboliumGene,
-  DrosophilaGene,
-} from "@/utils/services/geneService";
+import type { GeneDetail } from "@/utils/services/genomics";
+import type { Homolog } from "@/components/pages/details/OrthologySection/types";
 import { type Phenotype } from "@/utils/constants/phenotype";
 import { stringToURLHash } from "@/utils/stringToURLHash";
 
@@ -15,30 +13,35 @@ import PublicationCRUD from "./PublicationCRUD";
 import PhenotypeCRUD from "./PhenotypeCRUD";
 import IBScreen from "./IBScreen";
 import { type ReactNode } from "react";
+import { type JBrowseLinkParams } from "@/utils/pages/details/browserLinkParams";
+import QueryProvider from "@/components/common/QueryProvider";
 
 type GeneDetailsProps = {
   gene: string;
   linkTemplates: GeneLinkTemplate[];
-  triboliumGene: TriboliumGene;
+  geneInfo: GeneDetail;
   dsRNAs: IBDsRNA[];
   phenotypes: Phenotype[];
-  homologs: (DrosophilaGene & { source: string[] })[];
+  homologs: Homolog[];
   jbrowseGenomeView?: ReactNode;
+  browserLinkParams?: JBrowseLinkParams;
 };
 
 const GeneDetails: React.FC<GeneDetailsProps> = ({
   gene,
   linkTemplates,
-  triboliumGene,
+  geneInfo,
   dsRNAs,
   phenotypes,
   homologs,
   jbrowseGenomeView,
+  browserLinkParams,
 }) => {
   const communityPhenotypes =
     phenotypes === undefined
       ? undefined
       : phenotypes.filter((p) => !p.iBeetleExperiment);
+
   const iBeetlePhenotypes =
     phenotypes === undefined
       ? undefined
@@ -64,7 +67,8 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
       props: {
         gene,
         linkTemplates,
-        triboliumGene,
+        geneInfo,
+        browserLinkParams,
       },
     },
     {
@@ -133,28 +137,30 @@ const GeneDetails: React.FC<GeneDetailsProps> = ({
   }));
 
   return (
-    <div className="max-w-6xl 3xl:max-w-[100rem] mx-auto flex flex-col lg:flex-row gap-10">
-      <div className="flex-1 flex flex-col gap-10 min-w-0">
-        {sections.map((section) => {
-          const sectionId = getSectionId(section);
+    <QueryProvider>
+      <div className="max-w-6xl 3xl:max-w-[100rem] mx-auto flex flex-col lg:flex-row gap-10">
+        <div className="flex-1 flex flex-col gap-10 min-w-0">
+          {sections.map((section) => {
+            const sectionId = getSectionId(section);
 
-          const props = section.props;
-          const Component = section.component as React.FC<
-            typeof props & { id: string; title: string }
-          >;
+            const props = section.props;
+            const Component = section.component as React.FC<
+              typeof props & { id: string; title: string }
+            >;
 
-          return (
-            <Component
-              key={sectionId}
-              id={sectionId}
-              title={section.header}
-              {...props}
-            />
-          );
-        })}
+            return (
+              <Component
+                key={sectionId}
+                id={sectionId}
+                title={section.header}
+                {...props}
+              />
+            );
+          })}
+        </div>
+        <TableOfContents items={toc} />
       </div>
-      <TableOfContents items={toc} />
-    </div>
+    </QueryProvider>
   );
 };
 
