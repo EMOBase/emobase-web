@@ -24,7 +24,10 @@ const phenotypeData = await searchByPhenotypes(
 );
 
 if (orthologyData?.genes && orthologyData.genes.length > 0) {
-  return Astro.redirect(`/details/${orthologyData.genes[0]}`);
+  const url = new URL(`/details/${orthologyData.genes[0]}`, Astro.url);
+  const versionOverride = Astro.url.searchParams.get("version");
+  if (versionOverride) url.searchParams.set("version", versionOverride);
+  return Astro.redirect(url.pathname + url.search);
 }
 ---
 

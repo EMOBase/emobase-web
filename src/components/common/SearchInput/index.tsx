@@ -23,6 +23,7 @@ import useService from "@/hooks/useService";
 import genomicsService from "@/utils/services/genomics";
 import { cn } from "@/utils/classname";
 import { hasFeature } from "@/utils/features";
+import { withVersionOverride } from "@/utils/version";
 
 import { SearchHelpModal } from "./SearchHelpModal";
 
@@ -72,7 +73,7 @@ const SearchInput = ({
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (searchValue.trim()) {
-      navigate(`/search/${searchValue.trim()}`);
+      navigate(withVersionOverride(`/search/${searchValue.trim()}`));
     }
   };
 

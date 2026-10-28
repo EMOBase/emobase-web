@@ -12,6 +12,7 @@ import LayoutConfig from "@/astros/LayoutConfig.astro";
 import EnvWarning from "@/astros/EnvWarning.astro";
 import Logo from "@/astros/Logo.astro";
 import SiteTitle from "@/astros/SiteTitle.astro";
+import VersionOverrideNotice from "@/components/common/VersionOverrideNotice";
 import { keycloakBaseUrl } from "@/utils/url";
 
 const url = Astro.url.pathname;
@@ -66,6 +67,7 @@ const { className, topbar = true, sidebarCollapsed = false } = Astro.props;
             className,
           )}
         >
+          <VersionOverrideNotice client:load />
           <slot />
         </main>
       </div>

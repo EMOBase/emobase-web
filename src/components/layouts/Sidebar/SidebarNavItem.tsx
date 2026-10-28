@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/collapsible";
 import { isPathActive } from "./constants";
 import type { NavItem } from "./types";
+import { withVersionOverride } from "@/utils/version";
 
 type SidebarNavItemProps = {
   item: NavItem;
@@ -51,7 +52,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
       isActive={isActive}
     >
       <a
-        href={item.href}
+        href={item.external ? item.href : withVersionOverride(item.href ?? "/")}
         target={item.external ? "_blank" : "_self"}
         className="flex items-center cursor-pointer"
       >
@@ -96,7 +97,11 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                 key={child.href}
                 render={
                   <a
-                    href={child.href}
+                    href={
+                      child.external
+                        ? child.href
+                        : withVersionOverride(child.href)
+                    }
                     target={child.external ? "_blank" : "_self"}
                     className="flex items-center justify-between w-full"
                   >
@@ -155,7 +160,11 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                     isActive={isPathActive(url, child.href || "")}
                   >
                     <a
-                      href={child.href}
+                      href={
+                        child.external
+                          ? child.href
+                          : withVersionOverride(child.href)
+                      }
                       target={child.external ? "_blank" : "_self"}
                       className="pr-6"
                     >

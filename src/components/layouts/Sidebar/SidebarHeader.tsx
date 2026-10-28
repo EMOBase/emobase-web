@@ -17,6 +17,7 @@ import genomicsService, {
   type PublicVersionItem,
 } from "@/utils/services/genomics";
 import { useVersionStore } from "@/states/versionStore";
+import { withVersionOverride } from "@/utils/version";
 
 const CustomSidebarHeader: React.FC<SidebarProps> = ({
   logo,
@@ -26,7 +27,8 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
   const { state } = useSidebar();
   const [publicVersions, setPublicVersions] = useState<PublicVersionItem[]>([]);
   const [versionsLoading, setVersionsLoading] = useState(true);
-  const { selectedVersion, setSelectedVersion, hydrateFromCookie } = useVersionStore();
+  const { selectedVersion, setSelectedVersion, hydrateFromCookie } =
+    useVersionStore();
 
   useEffect(() => {
     hydrateFromCookie();
@@ -34,7 +36,11 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
 
   const handleVersionChange = (version: string) => {
     setSelectedVersion(version);
-    window.location.assign(window.location.pathname + window.location.search);
+    // Selecting a version is explicit, so replace any temporary version from
+    // a shared link with the new saved preference.
+    const url = new URL(window.location.href);
+    url.searchParams.delete("version");
+    window.location.assign(`${url.pathname}${url.search}${url.hash}`);
   };
 
   useEffect(() => {
@@ -50,8 +56,7 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
         const { selectedVersion, setSelectedVersion } =
           useVersionStore.getState();
         const stillValid =
-          selectedVersion &&
-          versions.some((v) => v.name === selectedVersion);
+          selectedVersion && versions.some((v) => v.name === selectedVersion);
 
         if (!stillValid) {
           // Stale cookie: drop it (mirror the server's validation), then show
@@ -84,7 +89,7 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
           )}
         >
           <a
-            href="/"
+            href={withVersionOverride("/")}
             className={twMerge(
               "cursor-pointer",
               (forceCollapsed || state === "collapsed") &&
@@ -106,7 +111,9 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
             </h1>
             <div className="flex items-center gap-1 min-h-[1.25rem]">
               {versionsLoading ? (
-                <span className="text-muted text-xs font-normal">Loading...</span>
+                <span className="text-muted text-xs font-normal">
+                  Loading...
+                </span>
               ) : publicVersions.length > 0 ? (
                 <Select
                   value={selectedVersion ?? undefined}
@@ -128,7 +135,9 @@ const CustomSidebarHeader: React.FC<SidebarProps> = ({
                   </SelectContent>
                 </Select>
               ) : (
-                <span className="text-muted text-xs font-normal">No versions</span>
+                <span className="text-muted text-xs font-normal">
+                  No versions
+                </span>
               )}
             </div>
           </div>
