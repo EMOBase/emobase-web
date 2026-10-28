@@ -52,7 +52,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
       isActive={isActive}
     >
       <a
-        href={item.external ? item.href : withVersionOverride(item.href ?? "/")}
+        href={item.external ? item.href : withVersionOverride(item.href)}
         target={item.external ? "_blank" : "_self"}
         className="flex items-center cursor-pointer"
       >

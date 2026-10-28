@@ -46,7 +46,11 @@ export const getVersionOverride = (): string | undefined => {
 };
 
 /** Adds the current viewing override to a version-sensitive client link. */
-export const withVersionOverride = (href: string): string => {
+export function withVersionOverride(href: string): string;
+export function withVersionOverride(href: undefined): undefined;
+export function withVersionOverride(href?: string): string | undefined;
+export function withVersionOverride(href?: string): string | undefined {
+  if (!href) return href;
   const version = getVersionOverride();
   if (!version || typeof window === "undefined") return href;
 
@@ -55,7 +59,7 @@ export const withVersionOverride = (href: string): string => {
   return url.origin === window.location.origin
     ? `${url.pathname}${url.search}${url.hash}`
     : url.toString();
-};
+}
 
 export const runWithVersionContext = async <T>(
   selection: Pick<VersionContext, "overrideVersion" | "selectedVersion">,
