@@ -62,13 +62,13 @@ export function withVersionOverride(href?: string): string | undefined {
   }
   if (!version) return href;
 
-  try {
-    const url = new URL(href, "http://localhost");
-    url.searchParams.set("version", version);
-    return `${url.pathname}${url.search}${url.hash}`;
-  } catch {
-    return href;
-  }
+  const hashIdx = href.indexOf("#");
+  const [before, hash] =
+    hashIdx >= 0 ? [href.slice(0, hashIdx), href.slice(hashIdx)] : [href, ""];
+  const [path, search = ""] = before.split("?");
+  const params = new URLSearchParams(search);
+  params.set("version", version);
+  return `${path}?${params}${hash}`;
 }
 
 export const runWithVersionContext = async <T>(
