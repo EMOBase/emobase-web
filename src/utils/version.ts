@@ -42,7 +42,11 @@ export const getVersionContext = (): VersionContext | undefined =>
  */
 export const getVersionOverride = (): string | undefined => {
   if (typeof window === "undefined") return undefined;
-  return new URL(window.location.href).searchParams.get("version") || undefined;
+  const value = new URL(window.location.href).searchParams.get("version");
+  if (value == null) return undefined;
+  const trimmed = value.trim();
+  if (trimmed === "") return undefined;
+  return trimmed;
 };
 
 /** Adds the current viewing override to a version-sensitive client link. */
@@ -51,14 +55,27 @@ export function withVersionOverride(href: undefined): undefined;
 export function withVersionOverride(href?: string): string | undefined;
 export function withVersionOverride(href?: string): string | undefined {
   if (!href) return href;
-  const version = getVersionOverride();
-  if (!version || typeof window === "undefined") return href;
+  let version = getVersionOverride();
+  if (!version) {
+    const ctx = getVersionContext();
+    version = ctx?.overrideVersion;
+  }
+  if (!version) return href;
 
-  const url = new URL(href, window.location.origin);
-  url.searchParams.set("version", version);
-  return url.origin === window.location.origin
-    ? `${url.pathname}${url.search}${url.hash}`
-    : url.toString();
+  const base =
+    typeof window !== "undefined" ? window.location.origin : "http://localhost";
+  try {
+    const url = new URL(href, base);
+    url.searchParams.set("version", version);
+    if (typeof window !== "undefined") {
+      return url.origin === window.location.origin
+        ? `${url.pathname}${url.search}${url.hash}`
+        : url.toString();
+    }
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return href;
+  }
 }
 
 export const runWithVersionContext = async <T>(

@@ -7,6 +7,7 @@ import {
   getActiveView,
 } from "./constants";
 import type { NavItem, NavItemChild } from "./types";
+import { withVersionOverride } from "@/utils/version";
 
 export const useSidebarSections = (url: string) => {
   const { isLoggedIn } = useSession();
@@ -23,7 +24,7 @@ export const useSidebarSections = (url: string) => {
           children: favoriteGenes.map(
             (gene): NavItemChild => ({
               label: gene,
-              href: `/details/${gene}`,
+              href: withVersionOverride(`/details/${gene}`),
               actions: [
                 {
                   icon: "close",

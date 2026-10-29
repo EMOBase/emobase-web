@@ -67,7 +67,10 @@ const { className, topbar = true, sidebarCollapsed = false } = Astro.props;
             className,
           )}
         >
-          <VersionOverrideNotice client:load />
+          <VersionOverrideNotice
+            client:load
+            className={sidebarCollapsed ? "mb-0" : ""}
+          />
           <slot />
         </main>
       </div>

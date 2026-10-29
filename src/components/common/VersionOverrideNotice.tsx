@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { cn } from "@/utils/classname";
 import { getCookie, VERSION_COOKIE_NAME } from "@/utils/cookie";
 import genomicsService from "@/utils/services/genomics";
 
@@ -15,7 +16,11 @@ const fallbackVersion = (versions: { name: string; isDefault?: boolean }[]) =>
  * Explains the difference between a shared-link viewing override and the
  * user's saved selection.
  */
-export default function VersionOverrideNotice() {
+export default function VersionOverrideNotice({
+  className,
+}: {
+  className?: string;
+}) {
   const [notice, setNotice] = useState<NoticeState>(null);
 
   useEffect(() => {
@@ -66,7 +71,10 @@ export default function VersionOverrideNotice() {
 
   return (
     <section
-      className="mb-6 flex flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 sm:flex-row sm:items-center sm:justify-between"
+      className={cn(
+        "mb-6 flex flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 sm:flex-row sm:items-center sm:justify-between",
+        className,
+      )}
       role="status"
     >
       <p>
