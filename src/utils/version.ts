@@ -62,16 +62,9 @@ export function withVersionOverride(href?: string): string | undefined {
   }
   if (!version) return href;
 
-  const base =
-    typeof window !== "undefined" ? window.location.origin : "http://localhost";
   try {
-    const url = new URL(href, base);
+    const url = new URL(href, "http://localhost");
     url.searchParams.set("version", version);
-    if (typeof window !== "undefined") {
-      return url.origin === window.location.origin
-        ? `${url.pathname}${url.search}${url.hash}`
-        : url.toString();
-    }
     return `${url.pathname}${url.search}${url.hash}`;
   } catch {
     return href;
