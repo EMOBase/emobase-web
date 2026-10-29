@@ -6,31 +6,18 @@ export const API_SERVICES = [
   "publicationservice",
   "querypipelineservice",
   "geneservice",
+  "genomicsservice",
 ] as const;
 
 export type ApiService = (typeof API_SERVICES)[number];
 
-export type ApiOptions = {
-  /**
-   * The base url for the api services.
-   */
-  baseUrl: string;
-  /**
-   * The version of the api services.
-   */
-  version: string;
-  /**
-   * User-defined urls for api services when the app runs in the browser.
-   * If a url is not defined for a service, the default value is `${baseUrl}/${service}/${version}`.
-   */
-  urls?: {
-    [key in ApiService]?: string;
-  };
-  /**
-   * User-defined urls for api services when the app runs on the server.
-   * If a url is not defined for a service, the default value is the same as the client url, or `http://${service}:8080` in production environment.
-   */
-  ssrUrls?: {
-    [key in ApiService]?: string;
-  };
+export const API_SERVICE_ENVS: Record<ApiService, string> = {
+  phenotypeservice: "PUBLIC_API_PHENOTYPE_SERVICE",
+  imageservice: "PUBLIC_API_IMAGE_SERVICE",
+  ontologyservice: "PUBLIC_API_ONTOLOGY_SERVICE",
+  goannotationservice: "PUBLIC_API_GO_ANNOTATION_SERVICE",
+  publicationservice: "PUBLIC_API_PUBLICATION_SERVICE",
+  querypipelineservice: "PUBLIC_API_QUERY_PIPELINE_SERVICE",
+  geneservice: "PUBLIC_API_GENE_SERVICE",
+  genomicsservice: "PUBLIC_API_GENOMICS_SERVICE",
 };

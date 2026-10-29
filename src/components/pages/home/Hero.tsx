@@ -1,4 +1,5 @@
 import SearchInput from "@/components/common/SearchInput";
+import { withVersionOverride } from "@/utils/version";
 
 interface HeroProps {
   title: string;
@@ -43,7 +44,7 @@ const Hero = ({ title, description, examples }: HeroProps) => {
             {examples.map((example) => (
               <a
                 key={example}
-                href={`/search/${example}`}
+                href={withVersionOverride(`/search/${example}`)}
                 className="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-600 transition-colors"
               >
                 {example}

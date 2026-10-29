@@ -2,7 +2,7 @@ import React, { useState, Fragment } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FlybaseGeneId from "@/components/common/FlybaseGeneId";
-import { type GeneSearchResult } from "@/utils/services/geneService";
+import { type GeneSearchResult } from "@/utils/services/genomics";
 import { type PhenotypeSearchResult } from "@/utils/services/phenotypeService";
 import { shortName } from "@/utils/mainSpecies";
 
@@ -22,12 +22,14 @@ type SearchResultProps = {
   term: string;
   orthologyData: GeneSearchResult;
   phenotypeData: PhenotypeSearchResult;
+  version?: string;
 };
 
 const SearchResult: React.FC<SearchResultProps> = ({
   term,
   orthologyData,
   phenotypeData: defaultPhenotypeData,
+  version,
 }) => {
   const [phenotypeData, setPhenotypeData] =
     useState<PhenotypeSearchResult>(defaultPhenotypeData);
@@ -39,7 +41,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
   const orthologyBadge = (orthologies?.length || 0) + (otherGenes?.length || 0);
 
   if (orthologyBadge === 0 && phenotypeBadge === 0) {
-    return <NothingFound term={term} />;
+    return <NothingFound term={term} version={version} />;
   }
 
   return (

@@ -1,6 +1,18 @@
 import { create } from "zustand";
 import type { Session } from "@auth/core/types";
 
+const getInitialSession = (): Session | null => {
+  if (
+    typeof window !== "undefined" &&
+    (window as unknown as Record<string, unknown>)?.["__SESSION__"]
+  ) {
+    return (window as unknown as Record<string, unknown>)["__SESSION__"] as Session;
+  }
+  return null;
+};
+
+const initialSession = getInitialSession();
+
 interface SessionState {
   session: Session | null;
   loading: boolean;
@@ -11,9 +23,9 @@ interface SessionState {
 }
 
 export const useSessionStore = create<SessionState>((set, get) => ({
-  session: null,
-  loading: true,
-  isFetched: false,
+  session: initialSession,
+  loading: !initialSession,
+  isFetched: !!initialSession,
   setSession: (session) => set({ session, isFetched: true }),
   setLoading: (loading) => set({ loading }),
   fetchSession: async (force = false) => {
@@ -21,6 +33,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     if (get().isFetched && !get().loading && !force) return;
 
     set({ loading: true });
+
     try {
       const res = await fetch("/api/auth/session");
       if (res.ok) {

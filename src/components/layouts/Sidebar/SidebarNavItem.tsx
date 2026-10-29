@@ -19,28 +19,28 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { isPathActive } from "./constants";
 import type { NavItem } from "./types";
+import { withVersionOverride } from "@/utils/version";
 
 type SidebarNavItemProps = {
   item: NavItem;
   url: string;
   activeView?: string;
-  isLoading?: boolean;
 };
 
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   item,
   url,
   activeView,
-  isLoading,
 }) => {
   if (item.disabled) return null;
 
   const { state } = useSidebar();
   const hasChildren = item.children && item.children.length > 0;
   const isActive = item.id && activeView === item.id;
-  const hasActiveChild = (item?.children ?? []).some(
-    (child) => url === child.href,
+  const hasActiveChild = (item?.children ?? []).some((child) =>
+    isPathActive(url, child.href || ""),
   );
   const isCollapsed = state === "collapsed";
 
@@ -52,7 +52,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
       isActive={isActive}
     >
       <a
-        href={item.href}
+        href={item.external ? item.href : withVersionOverride(item.href)}
         target={item.external ? "_blank" : "_self"}
         className="flex items-center cursor-pointer"
       >
@@ -80,7 +80,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
 
   if (isCollapsed && hasChildren) {
     return (
-      <SidebarMenuItem key={`${item.id ?? item.label} ${isLoading}`}>
+      <SidebarMenuItem key={`${item.id ?? item.label} ${hasActiveChild}`}>
         <DropdownMenu>
           <DropdownMenuTrigger render={navButton} />
           <DropdownMenuContent
@@ -97,7 +97,11 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                 key={child.href}
                 render={
                   <a
-                    href={child.href}
+                    href={
+                      child.external
+                        ? child.href
+                        : withVersionOverride(child.href)
+                    }
                     target={child.external ? "_blank" : "_self"}
                     className="flex items-center justify-between w-full"
                   >
@@ -137,7 +141,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
 
   return (
     <Collapsible
-      key={`${item.id ?? item.label} ${isLoading}`}
+      key={`${item.id ?? item.label} ${hasActiveChild}`}
       asChild
       defaultOpen={hasActiveChild}
     >
@@ -151,9 +155,16 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                   key={child.href}
                   className="group/subitem relative"
                 >
-                  <SidebarMenuSubButton asChild isActive={url === child.href}>
+                  <SidebarMenuSubButton
+                    asChild
+                    isActive={isPathActive(url, child.href || "")}
+                  >
                     <a
-                      href={child.href}
+                      href={
+                        child.external
+                          ? child.href
+                          : withVersionOverride(child.href)
+                      }
                       target={child.external ? "_blank" : "_self"}
                       className="pr-6"
                     >

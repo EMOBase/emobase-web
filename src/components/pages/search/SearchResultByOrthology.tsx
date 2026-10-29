@@ -1,4 +1,4 @@
-import type { GeneSearchResult } from "@/utils/services/geneService";
+import type { GeneSearchResult } from "@/utils/services/genomics";
 import { mainSpecies, shortName } from "@/utils/mainSpecies";
 import { Icon } from "@/components/ui/icon";
 import IBBGeneId from "@/components/common/IBBGeneId";

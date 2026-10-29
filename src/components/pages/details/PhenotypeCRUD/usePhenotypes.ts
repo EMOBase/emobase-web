@@ -1,35 +1,33 @@
-import { create as createStore } from "zustand";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { Phenotype, PhenotypeInput } from "@/utils/constants/phenotype";
 import phenotypeService from "@/utils/services/phenotypeService";
 
-const { create, remove } = phenotypeService();
+const { fetchByGene, create } = phenotypeService();
 
-type State = {
-  data: Phenotype[];
+const phenotypeKeys = {
+  all: ["phenotypes"] as const,
+  byGene: (gene: string) => [...phenotypeKeys.all, gene] as const,
 };
 
-type Action = {
-  setData: (data: Phenotype[]) => void;
-  add: (input: PhenotypeInput) => Promise<void>;
-  remove: (id: string) => Promise<void>;
+export const usePhenotypes = (gene: string, initialData: Phenotype[]) =>
+  useQuery({
+    queryKey: phenotypeKeys.byGene(gene),
+    queryFn: () => fetchByGene(gene),
+    initialData,
+  });
+
+export const useCreatePhenotype = (gene: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: Omit<PhenotypeInput, "gene">) =>
+      create({ ...input, gene }),
+    onSuccess: (newPhenotype) => {
+      queryClient.setQueryData<Phenotype[]>(
+        phenotypeKeys.byGene(gene),
+        (old) => [...(old ?? []), newPhenotype],
+      );
+    },
+  });
 };
-
-const usePhenotypes = createStore<State & Action>((set) => ({
-  data: [],
-  setData: (data) => set({ data }),
-  add: async (input) => {
-    const phenotype = await create(input);
-    set((state) => ({
-      data: [...state.data, phenotype],
-    }));
-  },
-  remove: async (id: string) => {
-    await remove(id);
-    set((state) => ({
-      data: state.data.filter((p) => p.id !== id),
-    }));
-  },
-}));
-
-export default usePhenotypes;
