@@ -1,18 +1,45 @@
-const defaultValues: Record<string, string> = {
-  PUBLIC_APIS_BASE_URL: "/ibb/api",
-  PUBLIC_DOWNLOAD_URL: "/download/",
+const getPublicServer = (): string => {
+  try {
+    if (typeof window !== "undefined") {
+      return (
+        (window as any).__ENV__?.PUBLIC_SERVER ||
+        (import.meta.env as any)?.PUBLIC_SERVER ||
+        window.location.origin ||
+        ""
+      );
+    }
 
-  PUBLIC_UI_PAGE_GENOMEBROWSER: "/ibb/jbrowse2/",
-  PUBLIC_UI_PAGE_ONTOSCOPE: "/ibb/ontoscope",
-  PUBLIC_UI_PAGE_BLAST: "/ibb/blast/",
-  PUBLIC_UI_PAGE_API_DOC: "/ibb/swagger-ui/",
+    const processEnv = typeof process !== "undefined" ? process.env : {};
+    return (
+      processEnv.PUBLIC_SERVER || (import.meta.env as any)?.PUBLIC_SERVER || ""
+    );
+  } catch {
+    if (typeof window !== "undefined" && window.location?.origin) {
+      return window.location.origin;
+    }
+    return "";
+  }
+};
 
-  AUTH_TRUST_HOST: "true",
+const getDefaultValues = (publicServer: string): Record<string, string> => {
+  const base = publicServer || "";
 
-  KEYCLOAK_ISSUER: "/ibb/keycloak/realms/ibb",
-  KEYCLOAK_CLIENT_ID: "ibb-client",
+  return {
+    PUBLIC_APIS_BASE_URL: base + "/ibb/api",
+    PUBLIC_DOWNLOAD_URL: base + "/download/",
 
-  PUBLIC_DIRECTUS_URL: "/ibb/directus",
+    PUBLIC_UI_PAGE_GENOMEBROWSER: base + "/ibb/jbrowse2/",
+    PUBLIC_UI_PAGE_ONTOSCOPE: base + "/ibb/ontoscope",
+    PUBLIC_UI_PAGE_BLAST: base + "/ibb/blast/",
+    PUBLIC_UI_PAGE_API_DOC: base + "/ibb/swagger-ui/",
+
+    AUTH_TRUST_HOST: "true",
+
+    KEYCLOAK_ISSUER: base + "/ibb/keycloak/realms/ibb",
+    KEYCLOAK_CLIENT_ID: "ibb-client",
+
+    PUBLIC_DIRECTUS_URL: base + "/ibb/directus",
+  };
 };
 
 /**
@@ -21,6 +48,9 @@ const defaultValues: Record<string, string> = {
  */
 export const getEnv = (key: string): string => {
   try {
+    const publicServer = getPublicServer();
+    const defaultValues = getDefaultValues(publicServer);
+
     if (typeof window !== "undefined") {
       // Client-side: try runtime-injected env first, then fall back to build-time env
       return (
