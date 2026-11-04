@@ -69,13 +69,6 @@ const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
                   Review Dashboard
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  render={<a href="/admin/versions" />}
-                  className="text-slate-600 gap-2 px-3 py-2"
-                >
-                  <Icon name="published_with_changes" className="text-lg" />
-                  Data Management
-                </DropdownMenuItem>
-                <DropdownMenuItem
                   render={
                     <a
                       href={`${getEnv("PUBLIC_DIRECTUS_URL")}/admin`}
