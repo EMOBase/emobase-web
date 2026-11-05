@@ -18,6 +18,11 @@ export default defineConfig({
 
   security: {
     checkOrigin: false,
+    // Deployment domains are not known when the image is built. The app only
+    // listens on the internal Docker network behind nginx, which forwards the
+    // public Host and X-Forwarded-* headers. Astro ignores those headers for
+    // Request.url when this list is empty.
+    allowedDomains: [{}],
   },
 
   vite: {
