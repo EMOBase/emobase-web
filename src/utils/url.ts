@@ -17,7 +17,7 @@ export const keycloakBaseUrl = getKeyCloakBaseUrl(keycloakIssuerUrl);
  * Resolves base URLs for server-to-server communication within Docker.
  */
 export const resolveBaseUrl = (
-  type: "directus" | "keycloak" | "api" | "jbrowse",
+  type: "directus" | "keycloak" | "api",
   service?: ApiService,
 ): string => {
   const isServer = typeof window === "undefined";
@@ -29,7 +29,6 @@ export const resolveBaseUrl = (
       directus: directusUrl,
       keycloak: keycloakBaseUrl,
       api: `${apiBaseUrl}/${service}/v1`,
-      jbrowse: jbrowseBaseUrl,
     }[type];
 
   if (type === "directus") {
@@ -38,24 +37,6 @@ export const resolveBaseUrl = (
 
   if (type === "keycloak") {
     return `http://keycloak:8080`;
-  }
-
-  if (type === "jbrowse") {
-    // JBrowse2 may be served by this deployment (same origin as
-    // PUBLIC_SERVER) or by an external portal. Only rewrite the origin when
-    // it points at this deployment; otherwise keep the absolute URL.
-    const publicServer = getEnv("PUBLIC_SERVER");
-    try {
-      if (
-        publicServer &&
-        new URL(jbrowseBaseUrl).origin === new URL(publicServer).origin
-      ) {
-        return jbrowseBaseUrl.replace(/^https?:\/\/[^/]+/, "http://nginx:80");
-      }
-    } catch {
-      // Relative or malformed URL: leave it unchanged.
-    }
-    return jbrowseBaseUrl;
   }
 
   // Case type == 'api'

@@ -1,4 +1,4 @@
-import { resolveBaseUrl } from "@/utils/url";
+import { jbrowseBaseUrl } from "@/utils/url";
 
 export type JBrowseLinkParams = {
   assembly: string;
@@ -23,7 +23,7 @@ const toTrackId = (track: string | { configuration?: string }) =>
 export const getJBrowseLinkParams = async (
   currentVersionName: string | undefined,
 ): Promise<JBrowseLinkParams> => {
-  const baseURL = resolveBaseUrl("jbrowse").replace(/\/+$/, "");
+  const baseURL = jbrowseBaseUrl.replace(/\/+$/, "");
   const config: JBrowseConfig = await (
     await fetch(`${baseURL}/data/config.json`)
   ).json();

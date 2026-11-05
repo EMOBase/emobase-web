@@ -28,9 +28,7 @@ const getDefaultValues = (publicServer: string): Record<string, string> => {
     PUBLIC_APIS_BASE_URL: base + "/ibb/api",
     PUBLIC_DOWNLOAD_URL: base + "/download/",
 
-    PUBLIC_UI_PAGE_GENOMEBROWSER: base + "/ibb/jbrowse2/",
     PUBLIC_UI_PAGE_ONTOSCOPE: base + "/ibb/ontoscope",
-    PUBLIC_UI_PAGE_BLAST: base + "/ibb/blast/",
     PUBLIC_UI_PAGE_API_DOC: base + "/ibb/swagger-ui/",
 
     AUTH_TRUST_HOST: "true",

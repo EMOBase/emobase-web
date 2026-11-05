@@ -12,6 +12,7 @@ const tracklist = Astro.url.searchParams.get("tracklist");
 const genomebrowserBaseUrl = getEnv("PUBLIC_UI_PAGE_GENOMEBROWSER");
 
 const getUrl = () => {
+  if (!genomebrowserBaseUrl) return "";
   return `${genomebrowserBaseUrl}?${qs.stringify({
     loc: loc,
     assembly: assembly,
@@ -20,8 +21,14 @@ const getUrl = () => {
     config: "data/config.json",
   })}`;
 };
+
+const url = getUrl();
 ---
 
 <Layout topbar={false} sidebarCollapsed className="p-0 md:p-0">
-  <iframe src={getUrl()} width="100%" height="100%" allowfullscreen></iframe>
+  {url ? (
+    <iframe src={url} width="100%" height="100%" allowfullscreen></iframe>
+  ) : (
+    <p class="p-6">Genome browser is not configured for this deployment.</p>
+  )}
 </Layout>
