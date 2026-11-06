@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   Dialog,
   DialogContent,
@@ -8,7 +10,8 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { shortName, genePrefix } from "@/utils/mainSpecies";
+import { genePrefix, mainSpecies } from "@/utils/mainSpecies";
+import useMainSpeciesShortName from "@/hooks/useMainSpeciesShortName";
 
 interface SearchHelpModalProps {
   children: React.ReactElement;
@@ -21,8 +24,12 @@ const Eg = ({ children }: { children: string }) => (
 );
 
 export const SearchHelpModal = ({ children }: SearchHelpModalProps) => {
+  const [open, setOpen] = useState(false);
+  const shortName = useMainSpeciesShortName(open);
+  const speciesLabel = shortName ?? mainSpecies;
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={children} />
       <DialogContent className="max-h-9/10 flex flex-col">
         <DialogHeader>
@@ -39,7 +46,7 @@ export const SearchHelpModal = ({ children }: SearchHelpModalProps) => {
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
                 Utilize gene identifiers for{" "}
-                <em className="italic">{shortName}</em> (e.g., {genePrefix}{" "}
+                <em className="italic">{speciesLabel}</em> (e.g., {genePrefix}{" "}
                 number) or <em className="italic">Drosophila</em> (e.g. CG
                 number, FBgn number), gene names (e.g., knirps, croc) or iBeetle
                 number (e.g., iB_00108).

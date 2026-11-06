@@ -62,7 +62,7 @@ const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
               <DropdownMenuSeparator />
               <DropdownMenuGroup className="space-y-1 p-1">
                 <DropdownMenuItem
-                  render={<a href="/admin" />}
+                  render={<a href="/admin/review" />}
                   className="text-slate-600 gap-2 px-3 py-2"
                 >
                   <Icon name="dashboard" className="text-lg" />

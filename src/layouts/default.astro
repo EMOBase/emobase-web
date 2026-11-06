@@ -12,6 +12,7 @@ import LayoutConfig from "@/astros/LayoutConfig.astro";
 import EnvWarning from "@/astros/EnvWarning.astro";
 import Logo from "@/astros/Logo.astro";
 import SiteTitle from "@/astros/SiteTitle.astro";
+import VersionOverrideNotice from "@/components/common/VersionOverrideNotice";
 import { keycloakBaseUrl } from "@/utils/url";
 
 const url = Astro.url.pathname;
@@ -46,9 +47,9 @@ const { className, topbar = true, sidebarCollapsed = false } = Astro.props;
   </head>
   <body class="h-screen w-full overflow-hidden flex flex-col">
     <EnvWarning />
+    <Toaster client:load transition:persist position="bottom-right" />
     <div class="flex-1 flex overflow-hidden">
       <SessionManager client:load transition:persist />
-      <Toaster client:load transition:persist />
       <Sidebar
         url={url}
         forceCollapsed={sidebarCollapsed}
@@ -66,6 +67,10 @@ const { className, topbar = true, sidebarCollapsed = false } = Astro.props;
             className,
           )}
         >
+          <VersionOverrideNotice
+            client:load
+            className={sidebarCollapsed ? "mb-0" : ""}
+          />
           <slot />
         </main>
       </div>

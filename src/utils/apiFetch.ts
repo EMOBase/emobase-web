@@ -2,7 +2,9 @@ import qs from "qs";
 
 import { type ApiService } from "./constants/api";
 
-import { resolveBaseUrl } from "./url";
+import { getApiBaseUrl } from "./url";
+
+export { getApiBaseUrl, getPublicApiBaseUrl } from "./url";
 
 export const apiFetch = async <T>(
   service: ApiService,
@@ -25,7 +27,7 @@ export const apiFetch = async <T>(
       ...restOpts
     } = opts ?? {};
 
-    const baseURL = resolveBaseUrl("api", service);
+    const baseURL = getApiBaseUrl(service);
     // Ensure no double slashes when joining baseURL and request
     const sanitizedBaseURL = baseURL.endsWith("/")
       ? baseURL.slice(0, -1)
@@ -86,6 +88,3 @@ export const apiFetch = async <T>(
     throw err;
   }
 };
-
-export const getApiBaseUrl = (service: ApiService, forcePublic?: boolean) =>
-  resolveBaseUrl("api", service, forcePublic);

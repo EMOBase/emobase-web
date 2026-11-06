@@ -1,7 +1,11 @@
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 
-const GeneNotFound = () => {
+interface GeneNotFoundProps {
+  version?: string;
+}
+
+const GeneNotFound = ({ version }: GeneNotFoundProps) => {
   return (
     <div className="w-full h-full overflow-y-auto flex items-center justify-center p-6 bg-background-subtle">
       <div className="max-w-md w-full bg-white rounded-xl shadow-card border border-slate-200 p-12 md:p-16 text-center animate-in fade-in zoom-in duration-300">
@@ -18,7 +22,16 @@ const GeneNotFound = () => {
             Gene Not Found
           </h1>
           <p className="text-slate-500 text-sm leading-relaxed">
-            The requested gene record could not be found in our database.
+            The requested gene could not be found in the selected version
+            {version ? (
+              <strong className="font-semibold text-slate-700">
+                {" "}
+                ({version})
+              </strong>
+            ) : (
+              ""
+            )}
+            .
           </p>
         </div>
         <div className="mt-8">

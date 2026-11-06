@@ -11,12 +11,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { shortName } from "@/utils/mainSpecies";
+import { mainSpecies } from "@/utils/mainSpecies";
+import useMainSpeciesShortName from "@/hooks/useMainSpeciesShortName";
 
 import ProposeTermForm from "./Form";
 
 const ProposeTermButton = ({ gene }: { gene: string }) => {
   const [open, setOpen] = useState(false);
+  const shortName = useMainSpeciesShortName(open);
+  const speciesLabel = shortName ?? mainSpecies;
   const closeForm = () => setOpen(false);
 
   const [submittingType, setSubmittingType] = useState<"keep" | "close" | null>(
@@ -44,9 +47,9 @@ const ProposeTermButton = ({ gene }: { gene: string }) => {
         </DialogHeader>
         <div className="flex-1 overflow-y-auto px-6 pt-2 pb-4 space-y-6 scrollbar-thin">
           <p className="text-[13px] text-neutral-600 dark:text-neutral-400 leading-relaxed">
-            Assign a GO term to this <i className="font-medium">{shortName}</i>{" "}
-            gene by filling in the fields. Repeat to add several GO terms.
-            Search
+            Assign a GO term to this{" "}
+            <i className="font-medium">{speciesLabel}</i> gene by filling in the
+            fields. Repeat to add several GO terms. Search
             <a
               className="group/link inline-flex items-center gap-1 text-primary font-medium mx-1"
               href="https://amigo.geneontology.org/amigo/dd_browse"
@@ -58,8 +61,8 @@ const ProposeTermButton = ({ gene }: { gene: string }) => {
             for the correct GO ID. Use only the most specific term ("child
             terms" are more specific; the more general "parent" terms will be
             automatically linked). Only information based on{" "}
-            <i className="font-medium">{shortName}</i> data should be entered -
-            do not define terms just based on{" "}
+            <i className="font-medium">{speciesLabel}</i> data should be entered
+            - do not define terms just based on{" "}
             <i className="font-medium">Drosophila</i> knowledge. We will review
             this information and submit the annotation to the Gene Ontology
             consortium.

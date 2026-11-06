@@ -11,19 +11,19 @@ import {
 import CopyButton from "@/components/common/CopyButton";
 import DownloadButton from "@/components/common/DownloadButton";
 import type { IconName } from "@/utils/constants/icon";
-import { type Sequence } from "@/utils/services/geneService";
+import { type GeneSequence as Sequence } from "@/utils/services/genomics";
 
 type ViewSequencesButtonProps = {
   text: string;
   title: string;
-  sequences: Sequence[];
+  sequences: Sequence[] | undefined;
   icon: IconName;
 };
 
 const ViewSequencesButton: React.FC<ViewSequencesButtonProps> = ({
   text,
   title,
-  sequences,
+  sequences = [],
   icon,
 }) => {
   const padEvery = (str: string, numChar: number) => {
