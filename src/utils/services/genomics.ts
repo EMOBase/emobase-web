@@ -239,9 +239,9 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     if (version) url += `&version=${encodeURIComponent(version)}`;
     // The API only returns `genes` (the direct-match bucket that triggers the
     // redirect to the details page) when a species is named. Emobase-web is
-    // main-species-oriented, so ask for the main species; when it does not
-    // match, the API still falls back to the cross-species results.
-    if (mainSpecies) url += `&species=${encodeURIComponent(mainSpecies)}`;
+    // main-species-oriented, so always ask for the main species; when it does
+    // not match, the API still falls back to the cross-species results.
+    url += `&species=${encodeURIComponent(mainSpecies)}`;
     const res = await fetch<{
       data: GeneSearchResult;
       requestId: string;
@@ -251,26 +251,14 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
 
   const suggest = async (query: string) => {
     const version = await resolveVersion();
-
-    const fetchSuggestions = async (species?: string) => {
-      let url = `/search/_suggest?query=${encodeURIComponent(query)}`;
-      if (version) url += `&version=${encodeURIComponent(version)}`;
-      if (species) url += `&species=${encodeURIComponent(species)}`;
-      const res = await fetch<{
-        data: string[];
-        requestId: string;
-      }>("genomicsservice", url);
-      return res.data || [];
-    };
-
-    // Prefer the deployment's main species, like /search does. If it has no
-    // match, fall back to every species so Dmel/other-species autocomplete
-    // still works.
-    if (mainSpecies) {
-      const main = await fetchSuggestions(mainSpecies);
-      if (main.length > 0) return main;
-    }
-    return await fetchSuggestions();
+    let url = `/search/_suggest?query=${encodeURIComponent(query)}`;
+    if (version) url += `&version=${encodeURIComponent(version)}`;
+    url += `&species=${encodeURIComponent(mainSpecies)}`;
+    const res = await fetch<{
+      data: string[];
+      requestId: string;
+    }>("genomicsservice", url);
+    return res.data || [];
   };
 
   const fetchGenes = async (species: string, ids: string[]) => {
