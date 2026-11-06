@@ -1,4 +1,5 @@
 import { apiFetch } from "@/utils/apiFetch";
+import { mainSpecies } from "@/utils/mainSpecies";
 import { createVersionResolver } from "@/utils/version";
 
 export type VersionItem = {
@@ -236,6 +237,11 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     const version = await resolveVersion();
     let url = `/search?query=${encodeURIComponent(query)}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
+    // The API only returns `genes` (the direct-match bucket that triggers the
+    // redirect to the details page) when a species is named. Emobase-web is
+    // main-species-oriented, so ask for the main species; when it does not
+    // match, the API still falls back to the cross-species results.
+    if (mainSpecies) url += `&species=${encodeURIComponent(mainSpecies)}`;
     const res = await fetch<{
       data: GeneSearchResult;
       requestId: string;
