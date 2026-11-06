@@ -59,6 +59,7 @@ export const useSidebarSections = (url: string) => {
             tracks: linkParams.tracks.join(","),
             tracklist: "true",
           });
+          if (linkParams.loc) params.set("loc", linkParams.loc);
           href = `${GENOME_BROWSER_HREF}?${params.toString()}`;
         } catch (err) {
           console.error("Failed to resolve genome browser tracks:", err);

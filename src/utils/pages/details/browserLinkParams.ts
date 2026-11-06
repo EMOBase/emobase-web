@@ -3,6 +3,7 @@ import { jbrowseBaseUrl } from "@/utils/url";
 export type JBrowseLinkParams = {
   assembly: string;
   tracks: string[];
+  loc?: string;
 };
 
 type JBrowseConfig = {
@@ -11,6 +12,7 @@ type JBrowseConfig = {
     views?: {
       init?: {
         assembly?: string;
+        loc?: string;
         tracks?: (string | { configuration?: string })[];
       };
     }[];
@@ -53,5 +55,5 @@ export const getJBrowseLinkParams = async (
     throw new Error("No default assembly/tracks in JBrowse config");
   }
 
-  return { assembly, tracks };
+  return { assembly, tracks, loc: view?.init?.loc };
 };
