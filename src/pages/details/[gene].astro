@@ -35,17 +35,16 @@ let dsRNAs: Awaited<ReturnType<typeof fetchIBs>> = [];
 let phenotypes: Awaited<ReturnType<typeof fetchPhenotypesByGene>> = [];
 let homologs: Homolog[] = [];
 let linkTemplates: GeneLinkTemplate[] = [];
-let browserLinkParams: Awaited<
-  ReturnType<typeof getJBrowseLinkParams>
-> | undefined;
+let browserLinkParams:
+  Awaited<ReturnType<typeof getJBrowseLinkParams>> | undefined;
 let jbrowseConfig: Awaited<ReturnType<typeof getJBrowseConfig>> | undefined;
 let zoomedInLocation: string | null = null;
 
 if (geneInfo) {
-  dsRNAs = mainSpecies === "Tcas" ? await fetchIBs(gene) : [];
+  dsRNAs = await fetchIBs(mainSpecies, gene);
   phenotypes = await fetchPhenotypesByGene(gene);
 
-  const orthology = await fetchOrthology(gene);
+  const orthology = await fetchOrthology(mainSpecies, gene);
   const orthologySources = (orthology.orthologs || []).reduce(
     (acc, o) => {
       if (o.source) {
@@ -103,7 +102,7 @@ if (geneInfo) {
   }
 
   try {
-    browserLinkParams = await getJBrowseLinkParams(currentVersionName);
+    browserLinkParams = await getJBrowseLinkParams(geneInfo.assemblyKey);
   } catch (err) {
     console.error("Error fetching JBrowse config:", err);
   }
@@ -113,7 +112,7 @@ if (geneInfo) {
     try {
       jbrowseConfig = await getJBrowseConfig(
         zoomedInLocation,
-        currentVersionName,
+        geneInfo.assemblyKey,
       );
     } catch (err) {
       console.error("Error building JBrowse config:", err);

@@ -1,11 +1,13 @@
 ---
 import Layout from "@/layouts/default.astro";
 import SearchResult from "@/components/pages/search/SearchResult";
-import genomicsService from "@/utils/services/genomics";
+import genomicsService, {
+  type AssemblyVersion,
+} from "@/utils/services/genomics";
 import phenotypeService from "@/utils/services/phenotypeService";
 import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
 
-const { search: searchByOrthology } = genomicsService();
+const { search: searchByOrthology, fetchVersionDetail } = genomicsService();
 const { search: searchByPhenotypes } = phenotypeService();
 
 const { term = "" } = Astro.params;
@@ -22,6 +24,16 @@ const phenotypeData = await searchByPhenotypes(
   0,
   itemsPerPage,
 );
+
+let assemblies: AssemblyVersion[] = [];
+if (currentVersionName) {
+  try {
+    const detail = await fetchVersionDetail(currentVersionName);
+    assemblies = detail.data.assemblies ?? [];
+  } catch (err) {
+    console.error("Failed to fetch assemblies for search results:", err);
+  }
+}
 
 if (orthologyData?.genes && orthologyData.genes.length > 0) {
   const url = new URL(`/details/${orthologyData.genes[0]}`, Astro.url);
@@ -48,6 +60,7 @@ if (orthologyData?.genes && orthologyData.genes.length > 0) {
         term={term}
         orthologyData={orthologyData}
         phenotypeData={phenotypeData}
+        assemblies={assemblies}
         version={currentVersionName}
         client:load
       />

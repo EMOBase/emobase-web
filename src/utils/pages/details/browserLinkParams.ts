@@ -21,17 +21,23 @@ const toTrackId = (track: string | { configuration?: string }) =>
   typeof track === "string" ? track : track.configuration;
 
 export const getJBrowseLinkParams = async (
-  currentVersionName: string | undefined,
+  assemblyKey?: string,
 ): Promise<JBrowseLinkParams> => {
   const baseURL = jbrowseBaseUrl.replace(/\/+$/, "");
   const config: JBrowseConfig = await (
     await fetch(`${baseURL}/data/config.json`)
   ).json();
 
-  const assembly =
-    currentVersionName ||
+  // Assemblies are named by their assembly key (e.g. "v1a6"); use the key
+  // reported for the gene, and fall back to the default session's assembly
+  // when it is missing or unknown.
+  const defaultAssembly =
     config.defaultSession?.views?.[0]?.init?.assembly ||
     config.assemblies?.[0]?.name;
+  const assembly =
+    (assemblyKey && config.assemblies?.some((a) => a.name === assemblyKey)
+      ? assemblyKey
+      : undefined) || defaultAssembly;
   const view =
     config.defaultSession?.views?.find((v) => v.init?.assembly === assembly) ||
     config.defaultSession?.views?.[0];

@@ -50,29 +50,9 @@ type CreateVersionResponse = {
   requestId: string;
 };
 
-type JobItem = {
-  id: string;
-  versionId: string;
-  type:
-    | "GENOMIC.FNA"
-    | "GENOMIC.GFF"
-    | "RNA.FNA"
-    | "CDS.FNA"
-    | "PROTEIN.FAA"
-    | "ORTHOLOGY.TSV"
-    | "SYNONYM";
-  status: "PENDING" | "RUNNING" | "DONE" | "FAILED";
-  error?: string;
-};
-
-type FetchJobResponse = {
-  data: JobItem[];
-  requestId: string;
-};
-
 export type FileJobSummary = {
   id: number;
-  type: JobItem["type"] | string;
+  type: string;
   description: string;
   status: "PENDING" | "RUNNING" | "DONE" | "FAILED";
   payload: any;
@@ -90,16 +70,22 @@ export type FileDetail = {
   jobs: FileJobSummary[];
 };
 
-export type VersionDetailFiles = {
-  "genomic.fna"?: FileDetail | null;
-  "genomic.gff"?: FileDetail | null;
-  "rna.fna"?: FileDetail | null;
-  "cds.fna"?: FileDetail | null;
-  "protein.faa"?: FileDetail | null;
-  "dsrna.csv"?: FileDetail | null;
-  "jbrowse.track"?: FileDetail[];
-  "orthology.tsv"?: FileDetail[];
-  "species.synonym"?: FileDetail[];
+export type VersionStatus =
+  "DRAFT" | "PROCESSING" | "ERROR" | "READY" | "MISSING_REQUIRED_FILE";
+
+export type AssemblyVersion = {
+  id: number;
+  versionId: number;
+  name: string;
+  speciesCode: string;
+  speciesName: string;
+  imagePath?: string | null;
+  infoUrl?: string | null;
+  status: VersionStatus;
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  updatedBy: string;
 };
 
 type FetchVersionDetailResponse = {
@@ -107,12 +93,15 @@ type FetchVersionDetailResponse = {
     id: number;
     name: string;
     isDefault: boolean;
-    status: "DRAFT" | "PROCESSING" | "READY" | "ERROR";
+    status: VersionStatus;
     createdAt: string;
     createdBy: string;
     updatedAt: string;
     updatedBy: string;
-    files: VersionDetailFiles;
+    totalFileSize: number;
+    orthologyTSV: FileDetail[];
+    orthologyBundle: FileDetail[];
+    assemblies: AssemblyVersion[];
   };
   requestId: string;
 };
@@ -124,6 +113,8 @@ export type GeneSequence = {
 
 export type GeneDetail = {
   id: string;
+  assemblyVersionId: number;
+  assemblyKey: string;
   symbol?: string;
   fullname?: string;
   annotationId?: string;
@@ -203,14 +194,6 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     });
   };
 
-  const fetchJobs = async (version: string) => {
-    return await fetch<FetchJobResponse>("genomicsservice", "/jobs", {
-      query: {
-        version,
-      },
-    });
-  };
-
   const fetchVersionDetail = async (version: string) => {
     return await fetch<FetchVersionDetailResponse>(
       "genomicsservice",
@@ -283,9 +266,9 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     return res.data;
   };
 
-  const fetchIBs = async (gene: string) => {
+  const fetchIBs = async (species: string, gene: string) => {
     const version = await resolveVersion();
-    let url = `/silencingseqs?geneIds=${gene}`;
+    let url = `/silencingseqs/${encodeURIComponent(species)}?geneIds=${encodeURIComponent(gene)}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
       data: SilencingSeq[];
@@ -294,9 +277,9 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     return res.data || [];
   };
 
-  const fetchOrthology = async (gene: string) => {
+  const fetchOrthology = async (species: string, gene: string) => {
     const version = await resolveVersion();
-    let url = `/orthology/Tcas?genes=${gene}`;
+    let url = `/orthology/${encodeURIComponent(species)}?genes=${encodeURIComponent(gene)}`;
     if (version) url += `&version=${encodeURIComponent(version)}`;
     const res = await fetch<{
       data: GeneOrthology[];
@@ -309,7 +292,6 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
     fetchPublicVersions,
     fetchVersions,
     createVersion,
-    fetchJobs,
     fetchVersionDetail,
     deleteUploadFile,
     deleteVersion,

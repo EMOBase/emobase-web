@@ -109,7 +109,7 @@ export const getZoomedInLocation = (geneInfo: GeneDetail): string | null => {
 export const buildJBrowseConfig = (
   data: any,
   zoomedInLocationStr: string,
-  currentVersionName?: string,
+  assemblyKey?: string,
 ): JBrowseConfig => {
   const dataBaseURL = `${jbrowseBaseUrl.replace(/\/+$/, "")}/data`;
 
@@ -125,8 +125,7 @@ export const buildJBrowseConfig = (
   const view = defaultSession.view || defaultSession.views?.[0] || {};
   const initAssembly = view?.init?.assembly;
   const assembly =
-    (currentVersionName &&
-      assemblies.find((a) => a.name === currentVersionName)) ||
+    (assemblyKey && assemblies.find((a) => a.name === assemblyKey)) ||
     assemblies.find((a) => a.name === initAssembly) ||
     assemblies[0];
   const matchingView =
@@ -154,11 +153,9 @@ export const buildJBrowseConfig = (
 
 export const getJBrowseConfig = async (
   zoomedInLocationStr: string,
-  currentVersionName: string | undefined,
+  assemblyKey: string | undefined,
 ): Promise<JBrowseConfig> => {
   const baseURL = jbrowseBaseUrl.replace(/\/+$/, "");
-  const data = await (
-    await fetch(`${baseURL}/data/config.json`)
-  ).json();
-  return buildJBrowseConfig(data, zoomedInLocationStr, currentVersionName);
+  const data = await (await fetch(`${baseURL}/data/config.json`)).json();
+  return buildJBrowseConfig(data, zoomedInLocationStr, assemblyKey);
 };
