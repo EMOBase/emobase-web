@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import genomicsService from "@/utils/services/genomics";
 import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
+import { getJBrowseLinkParams } from "@/utils/pages/details/browserLinkParams";
 import { mainSpecies } from "@/utils/mainSpecies";
 import { useSession } from "@/hooks/session/useSession";
 import { useFavoriteGenes } from "@/states/favoriteGenes";
@@ -44,9 +45,25 @@ export const useSidebarSections = (url: string) => {
         if (!assembly || cancelled) return;
 
         const assemblyKey = `v${detail.data.id}a${assembly.id}`;
-        setGenomeBrowserHref(
-          `${GENOME_BROWSER_HREF}?assembly=${encodeURIComponent(assemblyKey)}`,
-        );
+        if (cancelled) return;
+
+        let href = `${GENOME_BROWSER_HREF}?assembly=${encodeURIComponent(assemblyKey)}`;
+        try {
+          // JBrowse only shows the tracks named in the URL. Use the
+          // default-session tracks for this assembly, i.e. the ones the admin
+          // selected when uploading them, exactly like the gene details link.
+          const linkParams = await getJBrowseLinkParams(assemblyKey);
+          if (cancelled) return;
+          const params = new URLSearchParams({
+            assembly: linkParams.assembly,
+            tracks: linkParams.tracks.join(","),
+            tracklist: "true",
+          });
+          href = `${GENOME_BROWSER_HREF}?${params.toString()}`;
+        } catch (err) {
+          console.error("Failed to resolve genome browser tracks:", err);
+        }
+        setGenomeBrowserHref(href);
       } catch (err) {
         console.error("Failed to resolve the genome browser assembly:", err);
       }
