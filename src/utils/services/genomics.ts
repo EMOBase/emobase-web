@@ -251,13 +251,26 @@ const genomicsService = (fetch: typeof apiFetch = apiFetch) => {
 
   const suggest = async (query: string) => {
     const version = await resolveVersion();
-    let url = `/search/_suggest?query=${encodeURIComponent(query)}`;
-    if (version) url += `&version=${encodeURIComponent(version)}`;
-    const res = await fetch<{
-      data: string[];
-      requestId: string;
-    }>("genomicsservice", url);
-    return res.data;
+
+    const fetchSuggestions = async (species?: string) => {
+      let url = `/search/_suggest?query=${encodeURIComponent(query)}`;
+      if (version) url += `&version=${encodeURIComponent(version)}`;
+      if (species) url += `&species=${encodeURIComponent(species)}`;
+      const res = await fetch<{
+        data: string[];
+        requestId: string;
+      }>("genomicsservice", url);
+      return res.data || [];
+    };
+
+    // Prefer the deployment's main species, like /search does. If it has no
+    // match, fall back to every species so Dmel/other-species autocomplete
+    // still works.
+    if (mainSpecies) {
+      const main = await fetchSuggestions(mainSpecies);
+      if (main.length > 0) return main;
+    }
+    return await fetchSuggestions();
   };
 
   const fetchGenes = async (species: string, ids: string[]) => {
