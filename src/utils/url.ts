@@ -82,7 +82,8 @@ export const getApiBaseUrl = (service: ApiService): string => {
   const publicUrl = getPublicApiBaseUrl(service);
   if (!isServer()) return publicUrl;
 
-  const { public: publicKey, internal: internalKey } = API_SERVICE_ENVS[service];
+  const { public: publicKey, internal: internalKey } =
+    API_SERVICE_ENVS[service];
   const internalUrl = getInternalUrl(internalKey);
   if (internalUrl) return internalUrl;
 
@@ -118,4 +119,27 @@ export const getKeycloakServerIssuer = (): string => {
     publicUrl,
   );
   return publicUrl;
+};
+
+/**
+ * Base URL used to fetch the JBrowse2 config.json.
+ *
+ * Browsers must use the public URL. Server-side calls (the gene details page
+ * and the sidebar) prefer INTERNAL_UI_PAGE_GENOMEBROWSER, because a public
+ * `localhost` URL points at the web container itself, not at the portal.
+ * The public URL is still used to resolve the data URIs inside the config for
+ * the browser.
+ */
+export const getJbrowseConfigBaseUrl = (): string => {
+  if (!isServer()) return jbrowseBaseUrl;
+
+  const internalUrl = getInternalUrl("INTERNAL_UI_PAGE_GENOMEBROWSER");
+  if (internalUrl) return internalUrl;
+
+  warnIfLoopbackFallback(
+    "PUBLIC_UI_PAGE_GENOMEBROWSER",
+    "INTERNAL_UI_PAGE_GENOMEBROWSER",
+    jbrowseBaseUrl,
+  );
+  return jbrowseBaseUrl;
 };

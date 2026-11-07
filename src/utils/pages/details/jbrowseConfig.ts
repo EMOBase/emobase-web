@@ -1,6 +1,6 @@
 import { type GeneDetail } from "@/utils/services/genomics";
 import configuration from "@/utils/config/genomebrowser/configuration.json";
-import { jbrowseBaseUrl } from "@/utils/url";
+import { jbrowseBaseUrl, getJbrowseConfigBaseUrl } from "@/utils/url";
 import { isNotNull } from "@/utils/filterFn";
 
 export type JBrowseConfig = {
@@ -155,7 +155,7 @@ export const getJBrowseConfig = async (
   zoomedInLocationStr: string,
   assemblyKey: string | undefined,
 ): Promise<JBrowseConfig> => {
-  const baseURL = jbrowseBaseUrl.replace(/\/+$/, "");
+  const baseURL = getJbrowseConfigBaseUrl().replace(/\/+$/, "");
   const data = await (await fetch(`${baseURL}/data/config.json`)).json();
   return buildJBrowseConfig(data, zoomedInLocationStr, assemblyKey);
 };
