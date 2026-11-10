@@ -11,7 +11,17 @@ export const getKeyCloakBaseUrl = (issuerUrl: string) => {
   return ibbIndex !== -1 ? issuerUrl.substring(0, ibbIndex) : "";
 };
 
+export const getKeycloakRealm = (issuerUrl: string) => {
+  const marker = "/ibb/keycloak/realms/";
+  const realmIndex = issuerUrl.indexOf(marker);
+  if (realmIndex === -1) return "";
+  return issuerUrl
+    .substring(realmIndex + marker.length)
+    .replace(/\/+$/, "");
+};
+
 export const keycloakBaseUrl = getKeyCloakBaseUrl(keycloakIssuerUrl);
+export const keycloakRealm = getKeycloakRealm(keycloakIssuerUrl) || "ibb";
 
 const isServer = () => typeof window === "undefined";
 const trimTrailingSlash = (url: string) => url.replace(/\/+$/, "");

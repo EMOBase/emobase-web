@@ -27,7 +27,13 @@ function getAvatarChars(name: string) {
   return words[0][0];
 }
 
-const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
+const Topbar = ({
+  keycloakBaseUrl,
+  keycloakRealm,
+}: {
+  keycloakBaseUrl: string;
+  keycloakRealm: string;
+}) => {
   const { session, logout } = useSession();
 
   return (
@@ -89,7 +95,7 @@ const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
                 <DropdownMenuItem
                   render={
                     <a
-                      href={`${keycloakBaseUrl}/ibb/keycloak/admin/ibb/console/`}
+                      href={`${keycloakBaseUrl}/ibb/keycloak/admin/${keycloakRealm}/console/`}
                       target="_blank"
                     />
                   }
