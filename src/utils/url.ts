@@ -7,12 +7,12 @@ export const apiBaseUrl = getUrlEnv("PUBLIC_APIS_BASE_URL");
 export const jbrowseBaseUrl = getUrlEnv("PUBLIC_UI_PAGE_GENOMEBROWSER");
 
 export const getKeyCloakBaseUrl = (issuerUrl: string) => {
-  const ibbIndex = issuerUrl.indexOf("/ibb/keycloak/");
-  return ibbIndex !== -1 ? issuerUrl.substring(0, ibbIndex) : "";
+  const keycloakIndex = issuerUrl.indexOf("/keycloak/");
+  return keycloakIndex !== -1 ? issuerUrl.substring(0, keycloakIndex) : "";
 };
 
 export const getKeycloakRealm = (issuerUrl: string) => {
-  const marker = "/ibb/keycloak/realms/";
+  const marker = "/keycloak/realms/";
   const realmIndex = issuerUrl.indexOf(marker);
   if (realmIndex === -1) return "";
   return issuerUrl

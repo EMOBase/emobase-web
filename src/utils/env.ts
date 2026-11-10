@@ -33,7 +33,7 @@ const getDefaultValues = (publicServer: string): Record<string, string> => {
 
     AUTH_TRUST_HOST: "true",
 
-    KEYCLOAK_ISSUER: base + "/ibb/keycloak/realms/ibb",
+    KEYCLOAK_ISSUER: "http://localhost:8081/keycloak/realms/ibb",
     KEYCLOAK_CLIENT_ID: "ibb-client",
 
     PUBLIC_DIRECTUS_URL: base + "/ibb/directus",

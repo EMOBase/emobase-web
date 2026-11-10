@@ -95,7 +95,7 @@ const Topbar = ({
                 <DropdownMenuItem
                   render={
                     <a
-                      href={`${keycloakBaseUrl}/ibb/keycloak/admin/${keycloakRealm}/console/`}
+                      href={`${keycloakBaseUrl}/keycloak/admin/${keycloakRealm}/console/`}
                       target="_blank"
                     />
                   }
