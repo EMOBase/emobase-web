@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import CopyButton from "@/components/common/CopyButton";
 import DownloadButton from "@/components/common/DownloadButton";
-import { type Sequence } from "@/utils/services/geneService";
+import { type GeneSequence as Sequence } from "@/utils/services/genomics";
 
 type ViewSequencesButtonProps = {
   text: string;

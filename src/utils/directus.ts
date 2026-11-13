@@ -1,11 +1,8 @@
 import { createDirectus, rest } from "@directus/sdk";
 import type { Schema } from "./directus-schema";
-import { getEnv } from "./env";
-import { resolveBaseUrl } from "./url";
+import { directusUrl, getDirectusUrl } from "./url";
 
 export * from "./directus-schema";
-
-const directusUrl = getEnv("PUBLIC_DIRECTUS_URL");
 
 if (
   !directusUrl &&
@@ -22,9 +19,7 @@ if (
   );
 }
 
-export const directus = createDirectus<Schema>(resolveBaseUrl("directus")).with(
-  rest(),
-);
+export const directus = createDirectus<Schema>(getDirectusUrl()).with(rest());
 
 export const getAssetUrl = (id: string) =>
   directusUrl ? `${directusUrl}/assets/${id}` : "";

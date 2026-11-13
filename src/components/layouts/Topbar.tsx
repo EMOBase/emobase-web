@@ -27,7 +27,13 @@ function getAvatarChars(name: string) {
   return words[0][0];
 }
 
-const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
+const Topbar = ({
+  keycloakBaseUrl,
+  keycloakRealm,
+}: {
+  keycloakBaseUrl: string;
+  keycloakRealm: string;
+}) => {
   const { session, logout } = useSession();
 
   return (
@@ -62,7 +68,7 @@ const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
               <DropdownMenuSeparator />
               <DropdownMenuGroup className="space-y-1 p-1">
                 <DropdownMenuItem
-                  render={<a href="/admin" />}
+                  render={<a href="/admin/review" />}
                   className="text-slate-600 gap-2 px-3 py-2"
                 >
                   <Icon name="dashboard" className="text-lg" />
@@ -89,7 +95,7 @@ const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
                 <DropdownMenuItem
                   render={
                     <a
-                      href={`${keycloakBaseUrl}/ibb/keycloak/admin/ibb/console/`}
+                      href={`${keycloakBaseUrl}/keycloak/admin/${keycloakRealm}/console/`}
                       target="_blank"
                     />
                   }

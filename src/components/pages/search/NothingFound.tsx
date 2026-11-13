@@ -1,7 +1,7 @@
 import { Icon } from "@/components/ui/icon";
 import { hasFeature } from "@/utils/features";
 
-const NothingFound = ({ term }: { term: string }) => {
+const NothingFound = ({ term, version }: { term: string; version?: string }) => {
   return (
     <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border-2 border-slate-100 border-dashed gap-8 animate-in zoom-in-95 duration-700">
       <div className="size-24 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 shadow-inner text-5xl">
@@ -14,7 +14,16 @@ const NothingFound = ({ term }: { term: string }) => {
         </h2>
         <p className="text-slate-500 text-base leading-relaxed mb-8">
           We couldn't find any genes, phenotypes, or orthology groups matching
-          your query.
+          your query in the selected version
+          {version ? (
+            <strong className="font-semibold text-slate-700">
+             {" "}
+              ({version})
+            </strong>
+          ) : (
+            ""
+          )}
+          .
         </p>
 
         <div className="flex flex-col gap-4 text-left bg-slate-50/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-100 shadow-sm">
