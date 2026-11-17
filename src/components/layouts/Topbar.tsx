@@ -92,24 +92,26 @@ const Topbar = ({
                     />
                   </span>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  render={
-                    <a
-                      href={`${keycloakBaseUrl}/keycloak/admin/${keycloakRealm}/console/`}
-                      target="_blank"
-                    />
-                  }
-                  className="text-slate-600 gap-2 px-3 py-2"
-                >
-                  <Icon name="group" className="text-lg" />
-                  User Management
-                  <span className="flex-1 inline-flex justify-end">
-                    <Icon
-                      name="open_in_new"
-                      className="text-base text-slate-400"
-                    />
-                  </span>
-                </DropdownMenuItem>
+                {keycloakBaseUrl && keycloakRealm && (
+                  <DropdownMenuItem
+                    render={
+                      <a
+                        href={`${keycloakBaseUrl}/keycloak/admin/${keycloakRealm}/console/`}
+                        target="_blank"
+                      />
+                    }
+                    className="text-slate-600 gap-2 px-3 py-2"
+                  >
+                    <Icon name="group" className="text-lg" />
+                    User Management
+                    <span className="flex-1 inline-flex justify-end">
+                      <Icon
+                        name="open_in_new"
+                        className="text-base text-slate-400"
+                      />
+                    </span>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup className="p-1">

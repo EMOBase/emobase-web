@@ -21,7 +21,7 @@ export const getKeycloakRealm = (issuerUrl: string) => {
 };
 
 export const keycloakBaseUrl = getKeyCloakBaseUrl(keycloakIssuerUrl);
-export const keycloakRealm = getKeycloakRealm(keycloakIssuerUrl) || "ibb";
+export const keycloakRealm = getKeycloakRealm(keycloakIssuerUrl);
 
 const isServer = () => typeof window === "undefined";
 const trimTrailingSlash = (url: string) => url.replace(/\/+$/, "");
