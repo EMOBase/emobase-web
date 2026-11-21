@@ -82,9 +82,8 @@ export const resourceItems: NavItem[] = [
   {
     label: "API Docs",
     icon: "api",
-    href: getEnv("PUBLIC_UI_PAGE_API_DOC"),
+    href: "/api-docs",
     disabled: apiDocsDisabled,
-    external: true,
   },
   {
     id: "RESOURCES",
@@ -104,9 +103,23 @@ export const resourceItems: NavItem[] = [
   },
 ];
 
+export const isPathActive = (
+  currentUrl: string,
+  targetUrl: string,
+): boolean => {
+  if (!targetUrl || targetUrl === "#") return false;
+  if (currentUrl === targetUrl) return true;
+  return currentUrl.startsWith(targetUrl + "/");
+};
+
 export const getActiveView = (url: string): NavItem["id"] | undefined => {
-  return homeItems
-    .concat(toolItems)
-    .concat(resourceItems)
-    .find((item) => item.href === url || item.matchingHref === url)?.id;
+  const allItems = homeItems.concat(toolItems).concat(resourceItems);
+
+  for (const item of allItems) {
+    if (item.id && isPathActive(url, item.href || item.matchingHref || "")) {
+      return item.id;
+    }
+  }
+
+  return undefined;
 };

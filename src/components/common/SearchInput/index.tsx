@@ -20,9 +20,10 @@ import {
   InputGroupAddon,
 } from "@/components/ui/input-group";
 import useService from "@/hooks/useService";
-import geneService from "@/utils/services/geneService";
+import genomicsService from "@/utils/services/genomics";
 import { cn } from "@/utils/classname";
 import { hasFeature } from "@/utils/features";
+import { withVersionOverride } from "@/utils/version";
 
 import { SearchHelpModal } from "./SearchHelpModal";
 
@@ -39,9 +40,10 @@ const SearchInput = ({
   className,
   initialValue = "",
 }: SearchInputProps) => {
-  const { suggest } = useService(geneService);
+  const { suggest } = useService(genomicsService);
   const [searchValue, setSearchValue] = useState(initialValue);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [highlightedValue, setHighlightedValue] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const portalRef = useRef<HTMLDivElement>(null);
@@ -69,10 +71,11 @@ const SearchInput = ({
     300,
   );
 
-  const handleSubmit = (e?: React.FormEvent) => {
+  const handleSubmit = (e?: React.FormEvent, value?: string) => {
     e?.preventDefault();
-    if (searchValue.trim()) {
-      navigate(`/search/${searchValue.trim()}`);
+    const target = (value ?? searchValue).trim();
+    if (target) {
+      navigate(withVersionOverride(`/search/${target}`));
     }
   };
 
@@ -83,7 +86,22 @@ const SearchInput = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key !== "Enter" || e.nativeEvent.isComposing) {
+      return;
+    }
+
+    // When a suggestion is highlighted (e.g. via arrow keys), search for that
+    // suggestion rather than the partially typed query. Base UI's own Enter
+    // handler would only commit the item to the input, so take over here.
+    if (highlightedValue) {
+      // Prevent the big variant's form from submitting the stale typed query.
+      e.preventDefault();
+      handleSubmit(undefined, highlightedValue);
+      return;
+    }
+
+    // The big variant is a form and submits on Enter by itself.
+    if (size === "small") {
       handleSubmit();
     }
   };
@@ -120,6 +138,9 @@ const SearchInput = ({
         if (val) {
           setSearchValue(val);
         }
+      }}
+      onItemHighlighted={(value: string | undefined) => {
+        setHighlightedValue(value ?? null);
       }}
     >
       <div className="contents">

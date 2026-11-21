@@ -1,0 +1,153 @@
+import type { AsyncLocalStorage } from "node:async_hooks";
+
+import { VERSION_COOKIE_NAME, getCookie } from "@/utils/cookie";
+
+export type VersionInfo = { name: string; isDefault?: boolean };
+
+// The `versionsPromise` is a per-request cache of the public versions fetch,
+// so every resolver created during one SSR render shares a single network call.
+export type VersionContext = {
+  overrideVersion?: string;
+  selectedVersion?: string;
+  versionsPromise?: Promise<VersionInfo[]>;
+};
+
+let versionStorage: AsyncLocalStorage<VersionContext> | undefined;
+let versionStoragePromise:
+  Promise<AsyncLocalStorage<VersionContext>> | undefined;
+
+// `AsyncLocalStorage` is Node-only. It's created lazily on the server so this
+// module stays evaluable in the client bundle, where `node:async_hooks` is
+// externalized for the browser. The lazy path is never triggered on the client.
+const getVersionStorage = (): Promise<AsyncLocalStorage<VersionContext>> => {
+  if (!versionStoragePromise) {
+    versionStoragePromise = import("node:async_hooks").then(
+      ({ AsyncLocalStorage }) => {
+        versionStorage = new AsyncLocalStorage<VersionContext>();
+        return versionStorage;
+      },
+    );
+  }
+  return versionStoragePromise;
+};
+
+export const getVersionContext = (): VersionContext | undefined =>
+  versionStorage?.getStore();
+
+/**
+ * Returns the version explicitly requested by the current browser URL.
+ * This is intentionally separate from the selected-version cookie: a shared
+ * link is a temporary viewing override and must not change the user's saved
+ * selection.
+ */
+export const getVersionOverride = (): string | undefined => {
+  if (typeof window === "undefined") return undefined;
+  const value = new URL(window.location.href).searchParams.get("version");
+  if (value == null) return undefined;
+  const trimmed = value.trim();
+  if (trimmed === "") return undefined;
+  return trimmed;
+};
+
+/** Adds the current viewing override to a version-sensitive client link. */
+export function withVersionOverride(href: string): string;
+export function withVersionOverride(href: undefined): undefined;
+export function withVersionOverride(href?: string): string | undefined;
+export function withVersionOverride(href?: string): string | undefined {
+  if (!href) return href;
+  let version = getVersionOverride();
+  if (!version) {
+    const ctx = getVersionContext();
+    version = ctx?.overrideVersion;
+  }
+  if (!version) return href;
+
+  const hashIdx = href.indexOf("#");
+  const [before, hash] =
+    hashIdx >= 0 ? [href.slice(0, hashIdx), href.slice(hashIdx)] : [href, ""];
+  const [path, search = ""] = before.split("?");
+  const params = new URLSearchParams(search);
+  params.set("version", version);
+  return `${path}?${params}${hash}`;
+}
+
+export const runWithVersionContext = async <T>(
+  selection: Pick<VersionContext, "overrideVersion" | "selectedVersion">,
+  fn: () => T | Promise<T>,
+): Promise<T> => {
+  const storage = await getVersionStorage();
+  return await storage.run(selection, fn);
+};
+
+export type ResolverOptions = {
+  /** Fall back to the default version when none is selected. */
+  fallback?: boolean;
+};
+
+/**
+ * Creates a resolver for the viewed version. A URL override wins when valid;
+ * an invalid override falls back to the saved selection, then to the default
+ * when `fallback` is enabled. The result is memoized per resolver instance;
+ * server resolvers in one request share a `/public/versions` fetch.
+ */
+export const createVersionResolver = (
+  fetchVersions: () => Promise<VersionInfo[]>,
+  options: ResolverOptions = {},
+): (() => Promise<string | undefined>) => {
+  const { fallback = false } = options;
+  let resolvedVersion: Promise<string | undefined> | undefined;
+  return (): Promise<string | undefined> => {
+    if (!resolvedVersion) {
+      resolvedVersion = (async (): Promise<string | undefined> => {
+        const store = getVersionContext();
+        let overrideVersion: string | undefined;
+        let selectedVersion: string | undefined;
+        if (store) {
+          overrideVersion = store.overrideVersion;
+          selectedVersion = store.selectedVersion;
+        } else if (typeof document !== "undefined") {
+          // A URL override applies only to this view. The cookie remains the
+          // user's selected version and is never changed by following a link.
+          overrideVersion = getVersionOverride();
+          selectedVersion = getCookie(VERSION_COOKIE_NAME) ?? undefined;
+        }
+
+        // Inside a request context, share one fetch across all resolvers;
+        // on failure drop the cache so a later resolver can retry.
+        const fetchVersionsOnce = (): Promise<VersionInfo[]> => {
+          if (!store) return fetchVersions();
+          const cached = store.versionsPromise;
+          if (cached) return cached;
+          const promise = fetchVersions();
+          store.versionsPromise = promise;
+          promise.catch(() => {
+            if (store.versionsPromise === promise) delete store.versionsPromise;
+          });
+          return promise;
+        };
+
+        let versions: VersionInfo[] | undefined;
+
+        if (overrideVersion || selectedVersion) {
+          versions = await fetchVersionsOnce();
+          if (
+            overrideVersion &&
+            versions.some((v) => v.name === overrideVersion)
+          )
+            return overrideVersion;
+          if (
+            selectedVersion &&
+            versions.some((v) => v.name === selectedVersion)
+          )
+            return selectedVersion;
+        }
+
+        if (!fallback) return undefined;
+
+        versions ??= await fetchVersionsOnce();
+        return versions.find((v) => v.isDefault)?.name || versions[0]?.name;
+      })();
+    }
+    return resolvedVersion;
+  };
+};

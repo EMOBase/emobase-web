@@ -27,7 +27,13 @@ function getAvatarChars(name: string) {
   return words[0][0];
 }
 
-const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
+const Topbar = ({
+  keycloakBaseUrl,
+  keycloakRealm,
+}: {
+  keycloakBaseUrl: string;
+  keycloakRealm: string;
+}) => {
   const { session, logout } = useSession();
 
   return (
@@ -62,7 +68,7 @@ const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
               <DropdownMenuSeparator />
               <DropdownMenuGroup className="space-y-1 p-1">
                 <DropdownMenuItem
-                  render={<a href="/admin" />}
+                  render={<a href="/admin/review" />}
                   className="text-slate-600 gap-2 px-3 py-2"
                 >
                   <Icon name="dashboard" className="text-lg" />
@@ -86,24 +92,26 @@ const Topbar = ({ keycloakBaseUrl }: { keycloakBaseUrl: string }) => {
                     />
                   </span>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  render={
-                    <a
-                      href={`${keycloakBaseUrl}/ibb/keycloak/admin/ibb/console/`}
-                      target="_blank"
-                    />
-                  }
-                  className="text-slate-600 gap-2 px-3 py-2"
-                >
-                  <Icon name="group" className="text-lg" />
-                  User Management
-                  <span className="flex-1 inline-flex justify-end">
-                    <Icon
-                      name="open_in_new"
-                      className="text-base text-slate-400"
-                    />
-                  </span>
-                </DropdownMenuItem>
+                {keycloakBaseUrl && keycloakRealm && (
+                  <DropdownMenuItem
+                    render={
+                      <a
+                        href={`${keycloakBaseUrl}/keycloak/admin/${keycloakRealm}/console/`}
+                        target="_blank"
+                      />
+                    }
+                    className="text-slate-600 gap-2 px-3 py-2"
+                  >
+                    <Icon name="group" className="text-lg" />
+                    User Management
+                    <span className="flex-1 inline-flex justify-end">
+                      <Icon
+                        name="open_in_new"
+                        className="text-base text-slate-400"
+                      />
+                    </span>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup className="p-1">

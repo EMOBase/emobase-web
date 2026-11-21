@@ -113,15 +113,15 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({
         </h4>
       </div>
 
-      <div className="flex flex-col md:flex-row min-h-[300px]">
-        <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-gray-200 bg-gray-50/30 p-4 space-y-1">
+      <div className="flex flex-col md:flex-row 3xl:flex-col min-h-[300px]">
+        <div className="w-full md:w-64 3xl:w-full border-b md:border-b-0 md:border-r 3xl:border-b 3xl:border-r-0 border-gray-200 bg-gray-50/30 p-4 space-y-1 3xl:flex 3xl:flex-row 3xl:gap-1 3xl:space-y-0">
           {aspects.map(({ id, title }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-[11px] font-bold uppercase tracking-wider rounded-md rounded-l-xs transition-all ${
+              className={`w-full 3xl:w-auto 3xl:flex-1 3xl:justify-center flex items-center gap-3 px-4 3xl:px-2 py-3 text-[11px] font-bold uppercase tracking-wider rounded-md rounded-l-xs 3xl:rounded-t-md 3xl:rounded-b-xs transition-all ${
                 activeTab === id
-                  ? "text-gray-900 bg-white shadow-sm border-l-4 border-primary"
+                  ? "text-gray-900 bg-white shadow-sm border-l-4 3xl:border-l-0 3xl:border-b-4 border-primary"
                   : "text-gray-400 hover:text-primary hover:bg-white/50"
               }`}
             >
@@ -149,7 +149,10 @@ const GeneOntology: React.FC<GeneOntologyProps> = ({
                       {term.id}
                     </span>
                   </div>
-                  <Icon name="open_in_new" className="text-gray-300 group-hover:text-primary text-[18px]" />
+                  <Icon
+                    name="open_in_new"
+                    className="text-gray-300 group-hover:text-primary text-[18px]"
+                  />
                 </a>
               ))}
             </div>
