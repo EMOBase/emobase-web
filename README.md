@@ -1,143 +1,62 @@
-# EMOBase Web Frontend
+# EMOBase species web UI
 
-## 🚀 Project Structure
+Astro server-rendered frontend for one species site in EMOBase. It renders
+Directus-managed content and links to the portal's genomics API, JBrowse2 and
+BLAST for the species' data.
 
+The image is published as `ghcr.io/emobase/emobase-web` and deployed by
+[`emobase-deploy`](https://github.com/EMOBase/emobase-deploy).
+
+- [Species deployment](https://github.com/EMOBase/emobase-deploy/tree/dev)
+- [Portal deployment](https://github.com/EMOBase/emobase-portal-deploy)
+- [Deployment guide](https://github.com/EMOBase/emobase-docs/blob/main/DEPLOYMENT.md)
+
+## Requirements
+
+- Node.js 22+ and npm
+- A running species stack, or local Directus, genomics API and Keycloak
+  endpoints for the data-backed pages
+
+## Local development
+
+```bash
+npm install
+cp .env.example .env
+# Set PUBLIC_SERVER and the API, Keycloak and Directus URLs.
+
+npm run dev
+```
+
+The dev server listens on `http://localhost:4321`. To connect it to a running
+local Docker stack, including the `.env` values and the Keycloak dev origin,
+see [DEVELOPMENT.md](DEVELOPMENT.md). `npm run check` type-checks the project
+and `npm run build` produces the production build.
+
+## Project structure
 
 ```text
-/
-├── public/          # Static assets
-├── src/
-│   ├── astros/      # Server-only Astro components
-│   ├── components/  # React components
-│   │   ├── common/  # Shared components
-│   │   ├── form/    # Form components (Tanstack Form compatible)
-│   │   ├── layouts/ # Components for layouts
-│   │   ├── pages/   # Page-specific components
-│   │   └── ui/      # Core UI primitives
-│   ├── hooks/       # Custom React hooks
-│   ├── layouts/     # Project layouts
-│   ├── pages/       # Route handlers
-│   ├── states/      # State management
-│   ├── styles/      # Global CSS
-│   └── utils/       # Helper functions
-├── astro.config.mjs # Astro configuration
-├── auth.config.mjs  # Auth.js/Keycloak configuration
-├── Dockerfile       # Production build definition
-└── package.json     # Dependencies & Scripts
+src/
+├── astros/      Server-only Astro components
+├── components/  React components (common, form, layouts, pages, ui)
+├── hooks/       Custom React hooks
+├── layouts/     Project layouts
+├── pages/       Route handlers
+├── states/      State management
+├── styles/      Global CSS
+└── utils/       Helper functions and API clients
+astro.config.mjs   Astro configuration
+auth.config.mjs    Auth.js/Keycloak configuration
+Dockerfile         Production image
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Deployment
 
-## 💻 Local Development
+Deploy through [`emobase-deploy`](https://github.com/EMOBase/emobase-deploy/tree/dev):
+it runs the species nginx, proxies Directus at `/ibb/directus` and connects the
+site to the shared infrastructure. Do not add a separate compose/nginx setup
+for this repository.
 
-Instructions for setting up and running the project locally on your machine:
+## Development tasks
 
-1. **Prerequisites**: Ensure you have [Node.js 22+](https://nodejs.org/) installed.
-2. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
-3. **Environment Setup**: Copy the example environment file and update it with your local settings.
-   ```bash
-   cp .env.example .env
-   ```
-4. **Start Developing**:
-   ```bash
-   npm run dev
-   ```
-   The site will be available at `http://localhost:4321`.
-
-## 🐳 Docker Deployment
-
-### 1. Docker Compose Integration
-
-To deploy this service alongside other components, include it in your `compose.yml`.
-
-```yaml
-services:
-  emobase-web:
-    # Build from source
-    build: ./path/to/emobase-web # Update context path as needed
-    # Or use pre-built image
-    # image: your-registry/emobase-web:latest
-    restart: always
-    environment:
-      - PUBLIC_APIS_BASE_URL=https://api.example.com/api
-      - PUBLIC_UI_PAGE_GENOMEBROWSER=https://genome.example.com/jbrowse2/
-      - AUTH_SECRET=your_secret_here
-      # ... other environment variables
-    # Alternatively, use an env_file
-    # env_file:
-    #   - .env
-```
-
-### 2. Nginx Configuration
-
-When deploying behind Nginx, ensure you pass the correct headers so that the application can correctly handle redirects and authentication callbacks.
-
-Sample Nginx configuration:
-
-```nginx
-server {
-    listen 80;
-    server_name example.com;
-
-    location / {
-        proxy_pass http://emobase-web:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        # Important for WebSocket support (if needed)
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
-}
-```
-
-### 3. Technical Details
-- **Adapter**: `@astrojs/node` in `standalone` mode.
-- **Ports**: Listens on port `8080` by default.
-- **Base Image**: `node:22` (Build) / `node:22-slim` (Runtime).
-
----
-
-## 🎨 Icon Data Regeneration
-
-The `<Icon />` component (`src/components/ui/icon.tsx`) renders Material Symbols from pre-bundled SVG path data. The data is stored in `src/utils/constants/icon.ts`.
-
-Run after updating the `@material-symbols/svg-*` packages or adding a new icon:
-
-```bash
-node scripts/generate-icon-data.mjs
-```
-
-This updates `src/utils/constants/icon.ts`, ensuring all icons are available for the `<Icon />` component.
-
-**When using a new icon:** add the icon name to `ICON_NAMES` array in `scripts/generate-icon-data.mjs`, then run the command above. The script automatically generates both the outlined and fill variants for all weights — just use the base name (e.g. if `<Icon name="home" />` or `<Icon name="home" fill />`, add `"home"`).
-
-## 🛠 Directus Schema Synchronization
-
-The project uses TypeScript types derived directly from the Directus data model. When you change the schema in Directus, follow these steps to update the types:
-
-### 1. Obtain an Access Token
-Run the following command to log in as admin and get an `access_token`:
-
-```bash
-curl -X POST http://localhost:9090/ibb/cms/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@example.com", "password": "admin"}'
-```
-
-### 2. Regenerate Types
-Use the `directus-sdk-typegen` tool with the token obtained above:
-
-```bash
-npx directus-sdk-typegen \
-  -u http://localhost:9090/ibb/cms \
-  -o src/utils/directus-schema.ts \
-  -t [YOUR_ACCESS_TOKEN]
-```
-
-This will update `src/utils/directus-schema.ts`, ensuring full type safety and auto-completion for your Directus collections.
+See [DEVELOPMENT.md](DEVELOPMENT.md) for connecting the dev server to the local
+Docker stack, regenerating the icon data and the Directus schema types.
