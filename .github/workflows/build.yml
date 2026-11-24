@@ -6,6 +6,7 @@ name: Publish Docker image
 #
 # Automatic builds:
 #   push to main   -> :main, :latest, :sha-<short>
+#   push to dev    -> :dev, :sha-<short>
 #   tag v1.2.3     -> :v1.2.3, :1.2.3, :1.2, :sha-<short>
 #
 # Manual build on any branch (e.g. an unmerged feature branch):
@@ -18,8 +19,9 @@ on:
   push:
     branches:
       - main
+      - dev
     tags:
-      - "*"
+      - "v*"
   workflow_dispatch:
 
 concurrency:
