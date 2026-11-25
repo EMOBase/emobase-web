@@ -16,17 +16,20 @@ export default defineConfig({
     authAstro({ configFile: "./auth.config.mjs", injectEndpoints: false }),
   ],
 
-  // Every deployment host is a subdomain of uni-goettingen.de, and Astro only
-  // trusts forwarded Host / X-Forwarded-* headers for hosts listed here — at
-  // build time, so an unlisted domain needs a rebuild. `**` also covers the
-  // species hosts nested one level deeper (lsta.emobase.uni-goettingen.de);
-  // `*` alone would not.
-  // Local development on localhost is outside the allowlist: start the dev
-  // server with DISABLE_ORIGIN_CHECK=true. It is read when this config loads,
-  // so it is a local/dev switch, not something a built image can toggle.
+  // Deployments run on arbitrary hostnames (VM names, temporary test domains),
+  // and this image is built once. An allowlist is build-time, so it cannot name
+  // them all; an unlisted Host makes Astro replace the request origin with
+  // localhost, which breaks OAuth redirects and absolute links.
+  //
+  // Trust any Host instead. This is only safe because emobase-deploy puts the
+  // species nginx in front: it serves a single server_name (PUBLIC_HOST), sends
+  // every other Host to a default server that returns 444, and overwrites
+  // X-Forwarded-Host with the host it accepted. The app port is loopback-only,
+  // so there is no path to the app that skips that proxy. Never publish the app
+  // port or remove the nginx host check while this is `[{}]`.
   security: {
     checkOrigin: process.env.DISABLE_ORIGIN_CHECK !== "true",
-    allowedDomains: [{ hostname: "**.uni-goettingen.de", protocol: "https" }],
+    allowedDomains: [{}],
   },
 
   vite: {
