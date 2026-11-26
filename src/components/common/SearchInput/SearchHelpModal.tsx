@@ -10,7 +10,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { genePrefix, mainSpecies } from "@/utils/mainSpecies";
+import { mainSpecies } from "@/utils/mainSpecies";
 import useMainSpeciesShortName from "@/hooks/useMainSpeciesShortName";
 
 interface SearchHelpModalProps {
@@ -46,10 +46,10 @@ export const SearchHelpModal = ({ children }: SearchHelpModalProps) => {
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
                 Utilize gene identifiers for{" "}
-                <em className="italic">{speciesLabel}</em> (e.g., {genePrefix}{" "}
-                number) or <em className="italic">Drosophila</em> (e.g. CG
-                number, FBgn number), gene names (e.g., knirps, croc) or iBeetle
-                number (e.g., iB_00108).
+                <em className="italic">{speciesLabel}</em> (e.g., TC number) or{" "}
+                <em className="italic">Drosophila</em> (e.g. CG number, FBgn
+                number), gene names (e.g., knirps, croc) or iBeetle number
+                (e.g., iB_00108).
               </p>
             </div>
           </div>
