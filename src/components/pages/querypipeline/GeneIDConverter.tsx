@@ -16,9 +16,10 @@ const { submit } = queryPipelineService();
 
 type GeneIDConverterProps = {
   steps: QueryPipelineStep[];
+  version?: string;
 };
 
-const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
+const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps, version }) => {
   const [ids, setIds] = useState("");
   const [pipeline, setPipeline] = useState<string[]>([]);
   const [result, setResult] = useState<string>();
@@ -35,6 +36,7 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
     submit(
       steps.filter((step) => pipeline.includes(step.name)),
       ids,
+      version,
     )
       .then((result) => {
         setResult(result);

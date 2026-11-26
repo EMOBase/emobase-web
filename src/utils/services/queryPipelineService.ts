@@ -8,10 +8,15 @@ const querypipelineService = (fetch: typeof apiFetch = apiFetch) => {
     );
   };
 
-  const submit = async (steps: QueryPipelineStep[], input: string) => {
+  const submit = async (
+    steps: QueryPipelineStep[],
+    input: string,
+    version?: string,
+  ) => {
     const payload = new FormData();
     payload.append("steps", JSON.stringify(steps));
     payload.append("data", input);
+    if (version) payload.append("version", version);
     return (
       (await fetch<string>("querypipelineservice", "/pipelines", {
         body: payload,
