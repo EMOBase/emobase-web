@@ -1,10 +1,8 @@
-import { useEffect } from "react";
-
 import { Icon } from "@/components/ui/icon";
 import type { Phenotype } from "@/utils/constants/phenotype";
 import type { IBDsRNA } from "@/utils/constants/ibeetle";
 
-import usePhenotypes from "./usePhenotypes";
+import { usePhenotypes } from "./usePhenotypes";
 import AddPhenotypeButton from "./AddPhenotypeButton";
 import PhenotypeList from "./PhenotypeList";
 
@@ -23,12 +21,7 @@ const PhenotypeCRUD: React.FC<PhenotypeCRUDProps> = ({
   phenotypes: defaultPhenotypes,
   dsRNAs,
 }) => {
-  const phenotypes = usePhenotypes((state) => state.data);
-  const setPhenotypes = usePhenotypes((state) => state.setData);
-
-  useEffect(() => {
-    setPhenotypes(defaultPhenotypes);
-  }, [defaultPhenotypes]);
+  const { data: phenotypes } = usePhenotypes(gene, defaultPhenotypes);
 
   return (
     <div id={id}>

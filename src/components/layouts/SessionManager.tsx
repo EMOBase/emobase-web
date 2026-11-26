@@ -13,7 +13,10 @@ export default function SessionManager() {
   const { logout, refresh } = useSession();
 
   useEffect(() => {
-    fetchSession();
+    const state = useSessionStore.getState();
+    if (!state.isFetched) {
+      fetchSession();
+    }
   }, [fetchSession]);
 
   useEffect(() => {
