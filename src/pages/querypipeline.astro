@@ -2,16 +2,12 @@
 import Layout from "@/layouts/default.astro";
 import GeneIDConverter from "@/components/pages/querypipeline/GeneIDConverter";
 import queryPipelineService from "@/utils/services/queryPipelineService";
-import { getCurrentVersionName } from "@/utils/pages/details/currentVersion";
 
 const { fetchSteps } = queryPipelineService();
 
-const [steps, version] = await Promise.all([
-  fetchSteps(),
-  getCurrentVersionName(),
-]);
+const steps = await fetchSteps();
 ---
 
 <Layout>
-  <GeneIDConverter client:load steps={steps} version={version} />
+  <GeneIDConverter client:load steps={steps} />
 </Layout>

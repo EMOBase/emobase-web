@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { isNotUndefined } from "@/utils/filterFn";
 import type { QueryPipelineStep } from "@/utils/constants/querypipeline";
 import queryPipelineService from "@/utils/services/queryPipelineService";
+import { getCookie, VERSION_COOKIE_NAME } from "@/utils/cookie";
+import { getVersionOverride } from "@/utils/version";
 
 import StepList from "./StepList";
 import CurrentPipeline from "./CurrentPipeline";
@@ -16,10 +18,9 @@ const { submit } = queryPipelineService();
 
 type GeneIDConverterProps = {
   steps: QueryPipelineStep[];
-  version?: string;
 };
 
-const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps, version }) => {
+const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps }) => {
   const [ids, setIds] = useState("");
   const [pipeline, setPipeline] = useState<string[]>([]);
   const [result, setResult] = useState<string>();
@@ -32,6 +33,9 @@ const GeneIDConverter: React.FC<GeneIDConverterProps> = ({ steps, version }) => 
 
   const handleSubmit = () => {
     setIsSubmitting(true);
+
+    const version =
+      getVersionOverride() ?? getCookie(VERSION_COOKIE_NAME) ?? undefined;
 
     submit(
       steps.filter((step) => pipeline.includes(step.name)),
